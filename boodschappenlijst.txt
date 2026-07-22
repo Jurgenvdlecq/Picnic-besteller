@@ -1,24 +1,25 @@
 # Weekmenu:
-#   Maandag: Rijst met roerei en groente
-#   Dinsdag: Aardappelblokjes + Kipburger + Snijbonen
+#   Maandag: Kipsaté met rijst
+#   Dinsdag: Kroketjes + Kipburger + Bloemkool
 #   Woensdag: Kip met rijst en paprika
-#   Donderdag: Eieren met spek en avocado
-#   Vrijdag (2p): Biefstuk + Bloemkool
+#   Donderdag: Beef stroganoff met rijst
+#   Vrijdag (2p): Biefstuk + Broccoli
 #   Zondag: Patat + Kipnuggets
 #
-2 x rijst
-12 x eieren
-1 x wokgroente
-1 x Aardappelblokjes
+2 x kipfilet
+1 x saté saus
+3 x rijst
+1 x kroepoek
+1 x Kroketjes
 1 x Kipburger
-1 x Snijbonen
-1 x kipfilet
-2 x paprika
-1 x ui
-1 x spekreepjes
-2 x avocado
-1 x Biefstuk
 1 x Bloemkool
+2 x paprika
+2 x ui
+1 x runderreepjes
+1 x champignons
+1 x creme fraiche
+1 x Biefstuk
+1 x Broccoli
 1 x Patat (airfryer)
 1 x Kipnuggets
 3 x Alpro yoghurt mild & creamy natural
