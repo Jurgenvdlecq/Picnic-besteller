@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Weekmenu-controle planning (launchd)
+    =====================================
+
+    Draait elke vrijdag om 18:00 een check: is boodschappenlijst.txt deze
+    week al bijgewerkt via weekmenu.py? Zo niet, dan krijg je een melding
+    en een herinnering in de Reminders-app — op tijd om het weekend nog
+    het weekmenu te kiezen, vóórdat de Picnic-bestelling op zondag 8:00
+    gewoon de oude lijst zou herhalen.
+
+    INSTALLATIE:
+    1. Pas hieronder het pad naar "controleer_weekmenu.py" aan naar waar
+       jij het bestand hebt opgeslagen.
+    2. Kopieer dit bestand naar:
+       ~/Library/LaunchAgents/nl.jurgen.picnic-check.plist
+       (in Terminal: cp picnic_check.plist ~/Library/LaunchAgents/nl.jurgen.picnic-check.plist)
+    3. Activeer het met:
+       launchctl load ~/Library/LaunchAgents/nl.jurgen.picnic-check.plist
+
+    UITZETTEN:
+       launchctl unload ~/Library/LaunchAgents/nl.jurgen.picnic-check.plist
+
+    TIP: als de herinnering niet in Reminders verschijnt, open dan eerst
+    de Reminders-app handmatig één keer en geef macOS toestemming als
+    daarom gevraagd wordt (Systeeminstellingen > Privacy en beveiliging).
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>nl.jurgen.picnic-check</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/jurgen/Downloads/controleer_weekmenu.py</string>
+    </array>
+
+    <!-- Elke vrijdag (Weekday 5) om 18:00 uur -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>5</integer>
+        <key>Hour</key>
+        <integer>18</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/picnic_check_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/picnic_check_stderr.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

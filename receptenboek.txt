@@ -1,0 +1,202 @@
+# Receptenboek
+# =============
+# Jullie complete verzameling recepten. Elk recept:
+#   Gerecht: <naam>
+#   Label: <label>       (optioneel — zie labels hieronder)
+#   Actief: ja/nee        (optioneel — standaard "ja" als je niks invult)
+#   gevolgd door ingrediënten (aantal x product)
+# Lege regel = scheiding tussen recepten.
+#
+# LABELS die het systeem herkent:
+#   makkelijk     -> gebruikt voor maandag (snel wereldgerecht/pasta/rijst)
+#   vrijdag_veel  -> gebruikt voor vrijdag bij 4 personen (even week)
+#   (geen label)  -> vrije pool, gebruikt voor donderdag
+#
+# ACTIEF: JA/NEE
+#   Alleen recepten met Actief: ja doen mee in de automatische rotatie.
+#   Actief: nee betekent: staat in het boek om te raadplegen of handmatig
+#   te kiezen (via naam typen bij het aanpassen van een dag), maar wordt
+#   nooit automatisch voorgesteld.
+#
+# Woensdag gebruikt altijd het gerecht "Kip met rijst en paprika" hieronder.
+
+Gerecht: Kip met rijst en paprika
+1 x kipfilet
+1 x rijst
+2 x paprika
+1 x ui
+
+# --- Label: makkelijk (maandag) ---
+
+Gerecht: Kofta met pitabroodjes
+Label: makkelijk
+1 x rundergehakt
+4 x pitabroodjes
+1 x komkommer
+1 x knoflooksaus
+
+Gerecht: Pasta bolognese uit een pot
+Label: makkelijk
+1 x gehakt (500 gram)
+1 x pasta
+1 x bolognesesaus pot
+1 x geraspte kaas
+
+Gerecht: Rijst met roerei en groente
+Label: makkelijk
+1 x rijst
+6 x eieren
+1 x wokgroente
+
+Gerecht: Kipsaté met rijst
+Label: makkelijk
+1 x kipfilet
+1 x saté saus
+1 x rijst
+1 x kroepoek
+
+Gerecht: Nasi met kipreepjes en ei
+Label: makkelijk
+1 x rijst
+1 x kipfilet
+2 x eieren
+1 x nasi kruidenmix
+1 x wokgroente
+
+Gerecht: Burrito bowl met gehakt en rijst
+Label: makkelijk
+1 x rundergehakt
+1 x rijst
+1 x zwarte bonen
+1 x maïs
+1 x geraspte kaas
+
+Gerecht: Griekse kip bowl met tzatziki
+Label: makkelijk
+1 x kipfilet
+1 x rijst
+1 x tzatziki
+1 x komkommer
+1 x cherrytomaatjes
+
+# --- Label: vrijdag_veel (vrijdag bij 4 personen) ---
+
+Gerecht: Aardappelblokjes met hamburger en broccoli
+Label: vrijdag_veel
+1 x aardappelblokjes
+4 x hamburger
+1 x broccoli
+
+Gerecht: Pannenkoeken
+Label: vrijdag_veel
+1 x pannenkoekenmix
+1 x melk
+1 x eieren
+1 x stroop
+
+Gerecht: Ovenschotel aardappel, gehakt en groente
+Label: vrijdag_veel
+1 x aardappelblokjes
+1 x rundergehakt
+1 x wokgroente
+1 x geraspte kaas
+
+Gerecht: Loaded fries met kipreepjes
+Label: vrijdag_veel
+1 x aviko friet
+1 x kipfilet
+1 x geraspte kaas
+1 x knoflooksaus
+
+# --- Geen label (algemene pool, donderdag) ---
+
+Gerecht: Rundergehaktballen met zoete aardappel
+1 x rundergehakt
+2 x zoete aardappel
+1 x ui
+1 x knoflook
+
+Gerecht: Omelet met spinazie en kip
+6 x eieren
+1 x spinazie
+1 x kipfilet
+
+Gerecht: Rundergehakt-curry
+1 x rundergehakt
+1 x kokosmelk
+1 x paprika
+1 x ui
+1 x currypasta
+
+Gerecht: Eieren met spek en avocado
+6 x eieren
+1 x spekreepjes
+2 x avocado
+
+Gerecht: Kip tikka masala met rijst
+1 x kipfilet
+1 x tikka masala saus
+1 x rijst
+1 x ui
+
+Gerecht: Beef stroganoff met rijst
+1 x runderreepjes
+1 x champignons
+1 x ui
+1 x creme fraiche
+1 x rijst
+
+Gerecht: Gehaktschotel met bloemkoolpuree
+1 x rundergehakt
+1 x bloemkool
+1 x ui
+1 x geraspte kaas
+
+Gerecht: Kip fajita bowl
+1 x kipfilet
+2 x paprika
+1 x ui
+1 x rijst
+
+Gerecht: Runderreepjes teriyaki met broccoli
+1 x runderreepjes
+1 x teriyakisaus
+1 x broccoli
+1 x rijst
+
+Gerecht: Gevulde paprika met gehakt en rijst
+1 x rundergehakt
+3 x paprika
+1 x rijst
+1 x geraspte kaas
+
+Gerecht: Kip cacciatore met aardappelpuree
+1 x kipfilet
+1 x tomatensaus
+1 x champignons
+1 x aardappelpuree
+
+Gerecht: Chili con carne met rijst
+1 x rundergehakt
+1 x kidneybonen
+1 x tomatenblokjes
+1 x paprika
+1 x rijst
+
+# --- Actief: nee (naslag, niet in automatische rotatie) ---
+
+Gerecht: Kip cordon bleu zelfgemaakt
+Actief: nee
+4 x kipfilet
+4 x ham
+4 x kaasplakken
+1 x paneermeel
+2 x eieren
+
+Gerecht: Beef Wellington
+Actief: nee
+1 x runderhaas
+1 x bladerdeeg
+1 x champignons (250 gram)
+4 x plakjes parmaham
+1 x mosterd

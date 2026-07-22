@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Picnic boodschappen-planning (launchd)
+    =======================================
+
+    Dit bestand vertelt macOS om het Picnic-script elke week automatisch
+    te draaien, zonder dat er iemand achter de computer hoeft te zitten.
+
+    INSTALLATIE:
+    1. Pas hieronder het pad naar "picnic_boodschappen.py" aan naar waar
+       jij het bestand hebt opgeslagen (bijv. /Users/jurgen/Downloads/...).
+    2. Kopieer dit bestand naar: ~/Library/LaunchAgents/nl.jurgen.picnic.plist
+       (in Terminal: cp picnic.plist ~/Library/LaunchAgents/nl.jurgen.picnic.plist)
+    3. Activeer het met:
+       launchctl load ~/Library/LaunchAgents/nl.jurgen.picnic.plist
+    4. Klaar. Het draait vanaf nu elke zondag om 08:00 automatisch.
+
+    LET OP: je Mac moet aan staan (of uit de slaapstand komen) op dat
+    moment. Staat hij in slaapstand, dan draait het script pas zodra je
+    de Mac weer wakker maakt (macOS haalt gemiste taken niet automatisch in).
+
+    UITZETTEN:
+       launchctl unload ~/Library/LaunchAgents/nl.jurgen.picnic.plist
+
+    LOGS BEKIJKEN:
+       Open "picnic_log.txt" in dezelfde map als het script, of kijk in
+       /tmp/picnic_stdout.log en /tmp/picnic_stderr.log voor foutmeldingen
+       van Python/launchd zelf.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>nl.jurgen.picnic</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/jurgen/Downloads/picnic_boodschappen.py</string>
+        <string>--automatisch</string>
+    </array>
+
+    <!-- Elke zondag (Weekday 0) om 08:00 uur -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>0</integer>
+        <key>Hour</key>
+        <integer>8</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/picnic_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/picnic_stderr.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

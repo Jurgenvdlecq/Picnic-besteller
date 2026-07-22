@@ -1,0 +1,33 @@
+# Dag-opties
+# ============
+# Losse lijstjes waaruit het weekmenu willekeurig combineert. Elke sectie
+# begint met een regel "== Sectienaam ==". Eén optie per regel; met
+# "aantal x naam" kun je een hoeveelheid opgeven (anders telt 1x).
+# Pas gerust aan/vul aan — geen code nodig.
+
+== dinsdag_aardappel ==
+Aardappelblokjes
+Kroketjes
+Rostirondjes
+
+== dinsdag_vlees ==
+Hamburger
+Kipschnitzel
+Kipburger
+
+== groente ==
+Broccoli
+Sperziebonen
+Snijbonen
+Bloemkool
+
+== vrijdag_vlees_klein ==
+Biefstuk
+Vleeslapje
+
+== zondag_snack ==
+Frikandel
+Carrero
+Mini kaassoufflé
+Oude kaas stengels
+Kipnuggets
