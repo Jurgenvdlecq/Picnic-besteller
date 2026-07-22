@@ -2,11 +2,17 @@
 Picnic boodschappenlijst-tool
 -----------------------------
 Logt in op je eigen Picnic-account en voegt automatisch een vaste lijst
-producten toe aan je mandje. Werkt via de (niet-officiële) python-picnic-api.
+producten toe aan je mandje. Werkt via de (niet-officiële) python-picnic-api2.
 
 INSTALLATIE (eenmalig):
-    pip3 install --upgrade python-picnic-api2 --break-system-packages
-    (zorg dat je minimaal versie 1.3.3 hebt, i.v.m. 2FA-ondersteuning)
+    pip3 install --upgrade -r requirements.txt --break-system-packages
+
+    LET OP: 2FA-ondersteuning (Picnic2FARequired e.a.) zit pas sinds versie
+    1.3.3 van python-picnic-api2 in de library, en die versie vereist
+    Python 3.13 of hoger. Heb je een oudere Python, dan installeert pip
+    zonder waarschuwing stilletjes een oudere versie zónder 2FA-steun — en
+    dan blijft inloggen hangen zodra Picnic om een SMS-code vraagt. Check
+    dus eerst je Python-versie met: python3 --version
 
 INLOGGEGEVENS:
     Zet je gegevens als omgevingsvariabelen, zodat ze niet in dit bestand
@@ -16,6 +22,10 @@ INLOGGEGEVENS:
         export PICNIC_PASSWORD="jouwwachtwoord"
 
     Of vul ze direct in als je het script alleen lokaal gebruikt (zie onderaan).
+
+    Voor automatisch draaien zonder Mac (bijv. via GitHub Actions) kun je in
+    plaats van gebruikersnaam/wachtwoord ook een al opgeslagen sessie-token
+    meegeven via de omgevingsvariabele PICNIC_SESSION_TOKEN — zie de gids.
 
 GEBRUIK:
     python3 picnic_boodschappen.py
@@ -50,7 +60,37 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from python_picnic_api2 import PicnicAPI, Picnic2FARequired, Picnic2FAError
+
+import requests
+
+try:
+    from python_picnic_api2 import PicnicAPI, Picnic2FARequired, Picnic2FAError
+except ImportError:
+    sys.exit(
+        "Kon Picnic2FARequired/Picnic2FAError niet importeren uit python_picnic_api2.\n"
+        "Dit betekent dat er een te oude versie van de library is geïnstalleerd "
+        "(zonder 2FA-ondersteuning) — daardoor bleef inloggen eerder vastlopen.\n\n"
+        "Los het op met:\n"
+        "  python3 --version   (moet 3.13 of hoger zijn)\n"
+        "  pip3 install --upgrade -r requirements.txt --break-system-packages\n"
+    )
+
+# Zonder timeout blijft een requests-aanroep bij een netwerkhapering voor
+# onbepaalde tijd hangen (dit was de oorzaak van het "vastlopen" bij inloggen).
+# Alle Picnic-aanroepen lopen via één requests.Session, dus we geven die een
+# standaard-timeout mee voor elke aanvraag die geen eigen timeout opgeeft.
+STANDAARD_TIMEOUT_SECONDEN = 20
+
+
+def beveilig_tegen_hangen(api: PicnicAPI) -> None:
+    origineel_request = api.session.request
+
+    def request_met_timeout(method, url, *args, **kwargs):
+        kwargs.setdefault("timeout", STANDAARD_TIMEOUT_SECONDEN)
+        return origineel_request(method, url, *args, **kwargs)
+
+    api.session.request = request_met_timeout
+
 
 # Bestand waarin het sessie-token lokaal wordt bewaard, zodat je niet elke
 # keer opnieuw hoeft in te loggen (en 2FA niet elke keer nodig is).
@@ -132,18 +172,25 @@ def laad_boodschappenlijst() -> list:
 
 
 def log_in(automatisch: bool = False) -> PicnicAPI:
-    # 1. Probeer eerst een eerder opgeslagen sessie-token
-    if TOKEN_BESTAND.exists():
-        opgeslagen_token = TOKEN_BESTAND.read_text().strip()
-        if opgeslagen_token:
-            api = PicnicAPI(country_code="NL", auth_token=opgeslagen_token)
-            if api.logged_in():
-                try:
-                    api.get_user()  # test of het token nog echt geldig is
-                    log("Ingelogd met opgeslagen sessie (geen 2FA nodig).\n", automatisch)
-                    return api
-                except Exception:
-                    pass  # token verlopen of ongeldig, val terug op normale login
+    # 1. Probeer eerst een al bekend sessie-token: PICNIC_SESSION_TOKEN (handig
+    #    voor draaien zonder Mac, bijv. GitHub Actions, waar TOKEN_BESTAND niet
+    #    bewaard blijft tussen runs) heeft voorrang boven het lokale bestand.
+    kandidaat_token = os.environ.get("PICNIC_SESSION_TOKEN", "").strip()
+    if not kandidaat_token and TOKEN_BESTAND.exists():
+        kandidaat_token = TOKEN_BESTAND.read_text().strip()
+
+    if kandidaat_token:
+        api = PicnicAPI(country_code="NL", auth_token=kandidaat_token)
+        beveilig_tegen_hangen(api)
+        if api.logged_in():
+            try:
+                api.get_user()  # test of het token nog echt geldig is
+                log("Ingelogd met opgeslagen sessie (geen 2FA nodig).\n", automatisch)
+                return api
+            except requests.exceptions.RequestException as e:
+                log(f"✗ Kon Picnic niet bereiken om de sessie te controleren: {e}", automatisch)
+            except Exception:
+                pass  # token verlopen of ongeldig, val terug op normale login
 
     # 2. Sessie is verlopen of er is nog nooit ingelogd.
     if automatisch:
@@ -152,7 +199,8 @@ def log_in(automatisch: bool = False) -> PicnicAPI:
         # plaats van vast te lopen op een input()-vraag die nooit komt.
         bericht = (
             "Sessie verlopen of nog geen sessie opgeslagen. "
-            "Start het script één keer handmatig (zonder --automatisch) om opnieuw in te loggen."
+            "Start het script één keer handmatig (zonder --automatisch) om opnieuw in te loggen, "
+            "of zet een geldig token in PICNIC_SESSION_TOKEN."
         )
         log(f"✗ {bericht}", automatisch)
         stuur_melding("Picnic-script gestopt", bericht)
@@ -167,18 +215,27 @@ def log_in(automatisch: bool = False) -> PicnicAPI:
         password = input("Picnic wachtwoord: ").strip()
 
     api = PicnicAPI(country_code="NL")
+    beveilig_tegen_hangen(api)
 
     try:
-        api.login(username=username, password=password)
-    except Picnic2FARequired:
-        print("\nJe Picnic-account vraagt om tweestapsverificatie (2FA).")
-        api.generate_2fa_code(channel="SMS")
-        code = input("Vul de code in die je via SMS hebt ontvangen: ").strip()
         try:
-            api.verify_2fa_code(code)
-        except Picnic2FAError:
-            print("De ingevoerde code klopt niet. Start het script opnieuw.")
-            sys.exit(1)
+            api.login(username=username, password=password)
+        except Picnic2FARequired:
+            print("\nJe Picnic-account vraagt om tweestapsverificatie (2FA).")
+            api.generate_2fa_code(channel="SMS")
+            code = input("Vul de code in die je via SMS hebt ontvangen: ").strip()
+            try:
+                api.verify_2fa_code(code)
+            except Picnic2FAError:
+                print("De ingevoerde code klopt niet. Start het script opnieuw.")
+                sys.exit(1)
+    except requests.exceptions.Timeout:
+        sys.exit(
+            f"Picnic reageerde niet binnen {STANDAARD_TIMEOUT_SECONDEN} seconden "
+            "(netwerkprobleem?). Controleer je internetverbinding en probeer opnieuw."
+        )
+    except requests.exceptions.RequestException as e:
+        sys.exit(f"Kon geen verbinding maken met Picnic: {e}")
 
     if not api.logged_in():
         print("Inloggen mislukt. Controleer je gegevens.")

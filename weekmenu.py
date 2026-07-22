@@ -34,8 +34,13 @@ GEBRUIK:
     Enter te drukken voor een willekeurig alternatief, ook een receptnaam
     (of een deel ervan) typen — dan wordt dat recept gekozen, ook als het
     normaal niet in de rotatie zit (Actief: nee).
+
+    Met de vlag --automatisch wordt het voorgestelde weekmenu direct
+    geaccepteerd zonder vragen te stellen (voor gebruik zonder Terminal,
+    bijv. via GitHub Actions).
 """
 
+import argparse
 import random
 import re
 import sys
@@ -493,6 +498,15 @@ def laat_gebruiker_aanpassen(weekmenu: list, pools: dict, dag_opties: dict, even
 # ---------------------------------------------------------------------------
 
 def main():
+    parser = argparse.ArgumentParser(description="Weekmenu-tool")
+    parser.add_argument(
+        "--automatisch",
+        action="store_true",
+        help="Accepteer het voorgestelde weekmenu direct, zonder interactieve vragen "
+             "(voor gebruik via een planner zoals GitHub Actions of launchd).",
+    )
+    args = parser.parse_args()
+
     bestaat_receptenboek = zorg_dat_bestand_bestaat(RECEPTENBOEK_BESTAND, VOORBEELD_RECEPTENBOEK, "receptenboek")
     bestaat_opties = zorg_dat_bestand_bestaat(DAG_OPTIES_BESTAND, VOORBEELD_DAG_OPTIES, "dag-opties bestand")
     bestaat_standaard = zorg_dat_bestand_bestaat(STANDAARDLIJST_BESTAND, VOORBEELD_STANDAARDLIJST, "standaardlijst")
@@ -512,7 +526,11 @@ def main():
           f"({'even' if even_week else 'oneven'} weeknummer).\n")
 
     weekmenu = stel_weekmenu_samen(pools, dag_opties, even_week, geschiedenis)
-    weekmenu = laat_gebruiker_aanpassen(weekmenu, pools, dag_opties, even_week, geschiedenis, receptenboek)
+    if args.automatisch:
+        for dag in weekmenu:
+            print(f"  {dag['dag']}: {dag['naam']}")
+    else:
+        weekmenu = laat_gebruiker_aanpassen(weekmenu, pools, dag_opties, even_week, geschiedenis, receptenboek)
 
     schrijf_boodschappenlijst(weekmenu, standaardlijst)
 

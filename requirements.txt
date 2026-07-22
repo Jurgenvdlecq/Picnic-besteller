@@ -1,0 +1,5 @@
+# 2FA-ondersteuning (Picnic2FARequired/generate_2fa_code/verify_2fa_code) zit
+# pas sinds versie 1.3.3 in de library, en die vereist Python 3.13 of hoger.
+# Versie 2.0.0+ heeft een andere (Pydantic-gebaseerde) API die niet compatibel
+# is met dit script, dus die sluiten we bewust uit.
+python-picnic-api2>=1.3.4,<2.0.0

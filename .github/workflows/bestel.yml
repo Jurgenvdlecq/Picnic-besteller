@@ -1,0 +1,62 @@
+name: Bestel bij Picnic
+
+# Twee manieren om dit te laten draaien, zodat je geen Mac nodig hebt:
+#   1. Automatisch elke zondagochtend (zie de cron hieronder).
+#   2. Handmatig vanaf je telefoon: open de GitHub-app (of github.com in
+#      Safari) -> deze repo -> tabblad "Actions" -> "Bestel bij Picnic" ->
+#      "Run workflow".
+#
+# Voorwaarde: de secret PICNIC_SESSION_TOKEN moet gezet zijn (Settings ->
+# Secrets and variables -> Actions). Zie picnic_stap_voor_stap_gids.md voor
+# hoe je die eenmalig ophaalt (dat vereist één keer inloggen incl. 2FA,
+# want dat kan niet headless in de cloud).
+
+on:
+  workflow_dispatch:
+    inputs:
+      nieuw_weekmenu:
+        description: "Eerst een nieuw weekmenu kiezen (ja) of de huidige boodschappenlijst.txt gebruiken zoals die in de repo staat (nee)?"
+        required: true
+        default: "ja"
+        type: choice
+        options:
+          - "ja"
+          - "nee"
+  schedule:
+    # 07:00 UTC ~ 08:00/09:00 Nederlandse tijd (afhankelijk van zomer/wintertijd).
+    - cron: "0 7 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  bestellen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo ophalen
+        uses: actions/checkout@v4
+
+      - name: Python 3.13 installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Dependencies installeren
+        run: pip install -r requirements.txt
+
+      - name: Weekmenu kiezen
+        if: ${{ github.event_name == 'schedule' || inputs.nieuw_weekmenu == 'ja' }}
+        run: python3 weekmenu.py --automatisch
+
+      - name: Bestellen bij Picnic
+        env:
+          PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
+        run: python3 picnic_boodschappen.py --automatisch
+
+      - name: Wijzigingen terugzetten in de repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add boodschappenlijst.txt weekmenu_geschiedenis.txt
+          git diff --staged --quiet || git commit -m "Automatische bestelling: weekmenu en boodschappenlijst bijgewerkt"
+          git push
