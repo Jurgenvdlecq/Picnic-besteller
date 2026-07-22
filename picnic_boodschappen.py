@@ -54,11 +54,12 @@ AUTOMATISCH OP DE ACHTERGROND DRAAIEN (bv. elke week vanzelf):
 """
 
 import argparse
+import json
 import os
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
@@ -99,6 +100,11 @@ TOKEN_BESTAND = Path.home() / ".picnic_sessie_token.txt"
 # Logbestand voor automatische (achtergrond-)runs, zodat je kunt terugkijken
 # wat er is gebeurd zonder dat er een Terminal open hoeft te staan.
 LOG_BESTAND = Path(__file__).parent / "picnic_log.txt"
+
+# Samenvatting van de laatste bestelling (datum, geschatte prijs, niet
+# gevonden producten), zodat de website dit kan tonen zonder zelf bij
+# Picnic te hoeven inloggen.
+OVERZICHT_BESTAND = Path(__file__).parent / "laatste_bestelling.json"
 
 # ---------------------------------------------------------------------------
 # De boodschappenlijst staat in een los tekstbestand, in dezelfde map als dit
@@ -252,12 +258,14 @@ def log_in(automatisch: bool = False) -> PicnicAPI:
     return api
 
 
-def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bool = False):
+def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bool = False) -> dict:
+    """Zoekt en voegt een product toe. Geeft een resultaat-dict terug zodat
+    main() een overzicht (prijs, niet-gevonden producten) kan bijhouden."""
     try:
         resultaten = api.search(naam)
     except Exception as e:
         log(f"  ✗ Fout bij zoeken naar '{naam}': {e}", automatisch)
-        return
+        return {"status": "niet_gevonden", "gezocht_op": naam}
 
     # search() geeft een lijst met groepen terug, elk met een 'items'-lijst
     # van daadwerkelijke producten.
@@ -270,15 +278,18 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
 
     if not gevonden_producten:
         log(f"  ✗ Geen resultaat gevonden voor '{naam}'.", automatisch)
-        return
+        return {"status": "niet_gevonden", "gezocht_op": naam}
 
     product = gevonden_producten[0]
     product_id = product.get("id")
     product_naam = product.get("name", "onbekend product")
+    # display_price staat in centen (bijv. 249 = €2,49); niet elk product
+    # heeft dit veld gevuld.
+    prijs_cent = product.get("display_price")
 
     if not product_id:
         log(f"  ✗ Geen geldig product-ID gevonden voor '{naam}'.", automatisch)
-        return
+        return {"status": "niet_gevonden", "gezocht_op": naam}
 
     try:
         api.add_product(product_id, count=aantal)
@@ -288,8 +299,15 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
         alternatieven = [p.get("name") for p in gevonden_producten[1:3] if p.get("name")]
         if alternatieven:
             log(f"    (andere opties waren: {', '.join(alternatieven)})", automatisch)
+        return {
+            "status": "toegevoegd",
+            "naam": product_naam,
+            "aantal": aantal,
+            "prijs_cent": prijs_cent * aantal if isinstance(prijs_cent, (int, float)) else None,
+        }
     except Exception as e:
         log(f"  ✗ Kon '{product_naam}' niet toevoegen: {e}", automatisch)
+        return {"status": "fout", "gezocht_op": naam}
 
 
 def los_toevoegen(api: PicnicAPI):
@@ -317,8 +335,10 @@ def main():
     boodschappenlijst = laad_boodschappenlijst()
 
     log(f"Producten toevoegen aan mandje (uit {LIJST_BESTAND.name}):", automatisch)
-    for item in boodschappenlijst:
+    resultaten = [
         voeg_product_toe(api, item["naam"], item.get("aantal", 1), automatisch=automatisch)
+        for item in boodschappenlijst
+    ]
 
     if not automatisch:
         los_toevoegen(api)
@@ -328,8 +348,29 @@ def main():
     for item in cart.get("items", []):
         log(f"  - {item.get('name', '?')}", automatisch)
 
+    schrijf_overzicht(resultaten)
+
     if automatisch:
         stuur_melding("Picnic boodschappen bijgewerkt", "De vaste lijst is toegevoegd aan je mandje.")
+
+
+def schrijf_overzicht(resultaten: list):
+    """Schrijft een klein overzicht (datum, geschatte prijs, niet-gevonden
+    producten) weg, zodat de website dit kan tonen zonder zelf in te loggen."""
+    toegevoegd = [r for r in resultaten if r.get("status") == "toegevoegd"]
+    niet_gevonden = [r["gezocht_op"] for r in resultaten if r.get("status") in ("niet_gevonden", "fout")]
+    prijzen = [r["prijs_cent"] for r in toegevoegd if r.get("prijs_cent") is not None]
+
+    overzicht = {
+        "datum": datetime.now(timezone.utc).isoformat(),
+        "aantal_producten": len(toegevoegd),
+        "totaal_prijs_cent": sum(prijzen) if prijzen else None,
+        "niet_gevonden": niet_gevonden,
+    }
+    try:
+        OVERZICHT_BESTAND.write_text(json.dumps(overzicht, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass  # niet kritiek als dit niet lukt
 
 
 if __name__ == "__main__":

@@ -135,7 +135,9 @@ def laad_receptenboek() -> list:
         if regel.lower().startswith("gerecht:"):
             if huidig:
                 gerechten.append(huidig)
-            huidig = {"naam": regel.split(":", 1)[1].strip(), "label": None, "actief": True, "ingredienten": []}
+            huidig = {"naam": regel.split(":", 1)[1].strip(), "label": None, "vlees": None, "actief": True, "ingredienten": []}
+        elif regel.lower().startswith("vlees:") and huidig is not None:
+            huidig["vlees"] = regel.split(":", 1)[1].strip().lower()
         elif regel.lower().startswith("label:") and huidig is not None:
             huidig["label"] = regel.split(":", 1)[1].strip().lower()
         elif regel.lower().startswith("actief:") and huidig is not None:
