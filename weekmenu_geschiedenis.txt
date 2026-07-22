@@ -1,6 +1,12 @@
 maandag|Rijst met roerei en groente
+maandag|Kipsaté met rijst
 dinsdag|Aardappelblokjes + Kipburger + Snijbonen
+dinsdag|Kroketjes + Kipburger + Bloemkool
+woensdag|Kip met rijst en paprika
 woensdag|Kip met rijst en paprika
 donderdag|Eieren met spek en avocado
+donderdag|Beef stroganoff met rijst
 vrijdag_klein|Biefstuk + Bloemkool
+vrijdag_klein|Biefstuk + Broccoli
+zondag|Patat + Kipnuggets
 zondag|Patat + Kipnuggets
