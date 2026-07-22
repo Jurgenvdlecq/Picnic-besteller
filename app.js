@@ -715,14 +715,36 @@ document.getElementById("pin-invoer").addEventListener("keydown", (e) => {
   if (e.key === "Enter") document.getElementById("pin-knop").click();
 });
 
-document.getElementById("token-knop").onclick = () => {
+async function testToken(waarde) {
+  const res = await fetch(API, { headers: { Authorization: `Bearer ${waarde}`, Accept: "application/vnd.github+json" } });
+  return res.ok;
+}
+
+document.getElementById("token-knop").onclick = async () => {
+  const knop = document.getElementById("token-knop");
+  const foutEl = document.getElementById("token-fout");
   const waarde = document.getElementById("token-invoer").value.trim();
   if (!waarde) {
-    document.getElementById("token-fout").textContent = "Vul een geldige sleutel in.";
+    foutEl.textContent = "Vul een geldige sleutel in.";
     return;
   }
-  localStorage.setItem(TOKEN_KEY, waarde);
-  laadWeekmenuScherm();
+
+  knop.disabled = true;
+  foutEl.textContent = "Sleutel wordt gecontroleerd...";
+  try {
+    const geldig = await testToken(waarde);
+    if (!geldig) {
+      foutEl.textContent = "Deze sleutel werkt niet — check of je 'm goed hebt gekopieerd en of Contents + Actions op 'Read and write' staan.";
+      return;
+    }
+    localStorage.setItem(TOKEN_KEY, waarde);
+    foutEl.textContent = "";
+    laadWeekmenuScherm();
+  } catch (e) {
+    foutEl.textContent = "Kon de sleutel niet controleren (netwerkprobleem?). Probeer opnieuw.";
+  } finally {
+    knop.disabled = false;
+  }
 };
 
 bestelKnop.onclick = bestelNu;

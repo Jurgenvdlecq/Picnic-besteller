@@ -1,10 +1,14 @@
 name: Bestel bij Picnic
 
 # Twee manieren om dit te laten draaien, zodat je geen Mac nodig hebt:
-#   1. Automatisch elke zondagochtend (zie de cron hieronder).
+#   1. Automatisch elke zondagochtend (zie de cron hieronder) — bestelt
+#      gewoon wat er al in boodschappenlijst.txt staat (jouw keuze via de
+#      website, of anders nog de lijst van vorige week; controleer_weekmenu.py
+#      waarschuwt je als je bent vergeten die bij te werken).
 #   2. Handmatig vanaf je telefoon: open de GitHub-app (of github.com in
 #      Safari) -> deze repo -> tabblad "Actions" -> "Bestel bij Picnic" ->
-#      "Run workflow".
+#      "Run workflow". Daar kun je zelf kiezen of er eerst een nieuw
+#      weekmenu gekozen moet worden.
 #
 # Voorwaarde: de secret PICNIC_SESSION_TOKEN moet gezet zijn (Settings ->
 # Secrets and variables -> Actions). Zie picnic_stap_voor_stap_gids.md voor
@@ -45,7 +49,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Weekmenu kiezen
-        if: ${{ github.event_name == 'schedule' || inputs.nieuw_weekmenu == 'ja' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.nieuw_weekmenu == 'ja' }}
         run: python3 weekmenu.py --automatisch
 
       - name: Bestellen bij Picnic
