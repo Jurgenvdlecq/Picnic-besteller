@@ -19,6 +19,7 @@ Er zijn negen bestanden, die je allemaal in **dezelfde map** zet
 | `requirements.txt` | De precieze library-versie die dit script nodig heeft |
 | `picnic.plist` / `picnic_check.plist` | Optioneel — automatisering **op je Mac** via launchd |
 | `.github/workflows/bestel.yml` | Optioneel — automatisering **in de cloud**, ook vanaf je iPhone te starten |
+| `index.html` / `app.js` / `style.css` | Optioneel — een website waarop jij (en je vrouw) het weekmenu kunnen kiezen en direct bestellen |
 
 > **Belangrijk over de library-versie:** 2FA-ondersteuning (de SMS-code bij
 > het inloggen) zit pas sinds versie 1.3.3 van `python-picnic-api2` in de
@@ -206,6 +207,73 @@ je aangepast wilt hebben, Claude past de code aan en pusht het naar de
 
 ---
 
+## Deel 3 — Zelf het weekmenu kiezen op een website (samen met je vrouw)
+
+In plaats van blind te vertrouwen op het automatisch gekozen weekmenu, kun
+je ook een eigen website openen waarop je per dag een ander voorstel kan
+opvragen of zelf een recept kiezen — en met één druk op de knop meteen
+bestellen. Deze website hoort bij dit project (`index.html`) en werkt op
+elke telefoon of computer, ook die van je vrouw.
+
+> **Let op — dit is een ander soort sleutel dan Stap 8.** Bij Stap 8 heb je
+> een Picnic-sleutel opgeslagen als *GitHub-secret* (onzichtbaar, ook voor
+> jezelf). Voor de website hieronder heb je een *GitHub-sleutel* (token)
+> nodig die je zelf bewaart op je telefoon — die geeft de website
+> toestemming om namens jou een bestelling te starten. Behandel 'm als een
+> wachtwoord: niet doorsturen, niet in een screenshot zetten die je deelt.
+
+### Stap 13 — De website "aanzetten" (eenmalig)
+
+1. Ga op github.com naar deze repo → **Settings** → **Pages** (in het menu links).
+2. Bij **Source** kies je **"Deploy from a branch"**.
+3. Bij **Branch** kies je **main** en **/ (root)**, klik **Save**.
+4. Wacht 1-2 minuten. Ververs de pagina — bovenaan verschijnt een link zoals
+   `https://jurgenvdlecq.github.io/Picnic-besteller/`. Dat is jullie website.
+
+> Krijg je hier een melding dat dit niet kan voor een privé-repo? Laat het
+> me weten, dan zoeken we samen een oplossing.
+
+### Stap 14 — Een sleutel aanmaken voor de website (eenmalig)
+
+1. Ga naar github.com → klik rechtsboven op je profielfoto → **Settings**.
+2. Helemaal onderaan het linkermenu: **Developer settings**.
+3. **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+4. Vul in:
+   - **Repository access**: "Only select repositories" → kies **Picnic-besteller**.
+   - Bij **Permissions** → **Repository permissions**: zet **Contents** op
+     "Read and write" én **Actions** op "Read and write" (alle andere op "No access").
+5. Klik **Generate token** en **kopieer de sleutel meteen** (begint met
+   `github_pat_...`) — die zie je daarna nooit meer terug.
+
+### Stap 15 — De website openen en instellen (eenmalig per toestel)
+
+1. Open de link uit Stap 13 in Safari (op je iPhone of die van je vrouw).
+2. Vul de pincode in die jullie hebben afgesproken.
+3. Plak bij "GitHub-sleutel" de sleutel uit Stap 14 en tik op **Opslaan**.
+   (Dit onthoudt de sleutel voortaan alleen op dít toestel.)
+4. Zet de website op het beginscherm zoals eerder beschreven (Delen-icoon →
+   "Zet op beginscherm"), zodat het voortaan als een gewoon app-icoontje werkt.
+
+### Stap 16 — Weekmenu kiezen en bestellen
+
+1. Je ziet meteen een voorgesteld weekmenu, per dag.
+2. Tik op **"Ander voorstel"** voor een ander willekeurig gerecht die dag,
+   of (bij maandag/donderdag/vrijdag) op **"Kies zelf recept"** om te zoeken
+   in het hele receptenboek. Woensdag staat vast.
+3. Tevreden? Tik onderaan op **"Bestel nu bij Picnic"**. Na ongeveer een
+   halve tot hele minuut staan de producten in je Picnic-mandje — open
+   daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
+
+### Stap 17 — Ook voor je vrouw
+
+Herhaal Stap 15 op haar telefoon: dezelfde link, dezelfde pincode, en plak
+daarbij ofwel dezelfde sleutel (stuur die eenmalig via een privébericht),
+of maak in Stap 14 een tweede, aparte sleutel speciaal voor haar aan — dat
+heeft als voordeel dat je die later apart kunt intrekken zonder de jouwe
+te hoeven vervangen.
+
+---
+
 ## Bonus (optioneel) — Automatisch draaien op je Mac zelf (launchd)
 
 Wil je liever dat het via je eigen Mac blijft lopen in plaats van de cloud?
@@ -250,6 +318,7 @@ kiezen (relevant als je deze Mac-route gebruikt in plaats van Deel 2):
 | Eén keer, voor bestellen zonder Mac | Stap 8 | Mac (token ophalen) + github.com |
 | Elke week, automatisch | `bestel.yml` (schedule) of `picnic.plist` | Cloud, of je Mac |
 | Op elk moment, handmatig | "Run workflow" in de GitHub-app | Overal, ook je iPhone |
+| Zelf weekmenu kiezen + bestellen | Website (Deel 3) | Overal, ook je iPhone — en die van je vrouw |
 | Snelle boodschap/recept aanpassen | Bestand bewerken in de GitHub-app | Overal, ook je iPhone |
 | Grotere codewijziging | Deze Claude-chat | Overal, ook je iPhone |
 

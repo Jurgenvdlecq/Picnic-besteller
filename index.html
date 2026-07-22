@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Picnic bestellen</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="scherm-pin" class="scherm">
+    <h1>Picnic bestellen</h1>
+    <p class="uitleg">Vul de pincode in</p>
+    <input type="password" id="pin-invoer" inputmode="numeric" pattern="[0-9]*" maxlength="8" autofocus />
+    <button id="pin-knop">Ontgrendel</button>
+    <div class="foutmelding" id="pin-fout"></div>
+  </div>
+
+  <div id="scherm-token" class="scherm verborgen">
+    <h1>Eenmalig instellen</h1>
+    <p class="uitleg">
+      Plak hier de GitHub-sleutel (deze wordt alleen op dit toestel bewaard,
+      nergens anders gedeeld).
+    </p>
+    <input type="text" id="token-invoer" placeholder="github_pat_..." />
+    <button id="token-knop">Opslaan</button>
+    <div class="foutmelding" id="token-fout"></div>
+  </div>
+
+  <div id="scherm-laden" class="scherm verborgen">
+    <p class="uitleg">Weekmenu wordt opgehaald...</p>
+  </div>
+
+  <div id="app" class="verborgen">
+    <h1>Voorgesteld weekmenu</h1>
+    <p class="top-info" id="week-info"></p>
+
+    <div id="dagen"></div>
+
+    <div id="bestel-knop-wrap">
+      <div id="status"></div>
+      <button id="bestel-knop">Bestel nu bij Picnic</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
