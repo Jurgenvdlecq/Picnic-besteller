@@ -61,6 +61,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add boodschappenlijst.txt weekmenu_geschiedenis.txt laatste_bestelling.json
+          git add boodschappenlijst.txt weekmenu_geschiedenis.txt laatste_bestelling.json gekozen_producten.json
           git diff --staged --quiet || git commit -m "Automatische bestelling: weekmenu en boodschappenlijst bijgewerkt"
           git push

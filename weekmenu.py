@@ -5,7 +5,7 @@ Stelt een weekmenu samen volgens een vast dagpatroon:
 
     Maandag    - "makkelijk"-gerecht uit het receptenboek (wereldgerecht/pasta/rijst)
     Dinsdag    - AVG: willekeurige combi aardappel + vlees + groente
-    Woensdag   - altijd hetzelfde vaste gerecht (kip met rijst)
+    Woensdag   - vrije rotatie uit de algemene pool (nooit hetzelfde als donderdag)
     Donderdag  - vrije rotatie uit de algemene pool ("wees creatief")
     Vrijdag    - even week (4p): "vrijdag_veel"-gerecht uit het receptenboek
                  oneven week (2p): vlees + groente combi
@@ -30,10 +30,10 @@ BESTANDEN:
 GEBRUIK:
     python3 weekmenu.py
 
-    Bij het aanpassen van maandag/donderdag/vrijdag kun je, in plaats van
-    Enter te drukken voor een willekeurig alternatief, ook een receptnaam
-    (of een deel ervan) typen — dan wordt dat recept gekozen, ook als het
-    normaal niet in de rotatie zit (Actief: nee).
+    Bij het aanpassen van maandag/woensdag/donderdag/vrijdag kun je, in
+    plaats van Enter te drukken voor een willekeurig alternatief, ook een
+    receptnaam (of een deel ervan) typen — dan wordt dat recept gekozen,
+    ook als het normaal niet in de rotatie zit (Actief: nee).
 
     Met de vlag --automatisch wordt het voorgestelde weekmenu direct
     geaccepteerd zonder vragen te stellen (voor gebruik zonder Terminal,
@@ -52,8 +52,6 @@ DAG_OPTIES_BESTAND = Path(__file__).parent / "dag_opties.txt"
 STANDAARDLIJST_BESTAND = Path(__file__).parent / "standaardlijst.txt"
 GESCHIEDENIS_BESTAND = Path(__file__).parent / "weekmenu_geschiedenis.txt"
 BOODSCHAPPENLIJST = Path(__file__).parent / "boodschappenlijst.txt"
-
-WOENSDAG_GERECHT = "kip met rijst en paprika"  # moet exact overeenkomen (hoofdletterongevoelig)
 
 AANTAL_PATROON = re.compile(r"^\s*(\d+)\s*[xX]\s*(.+)$")
 
@@ -213,11 +211,19 @@ def sla_geschiedenis_op(geschiedenis: dict):
     GESCHIEDENIS_BESTAND.write_text("\n".join(regels) + "\n", encoding="utf-8")
 
 
-def kies_uit_pool(pool: list, categorie: str, geschiedenis: dict) -> dict:
+def kies_uit_pool(pool: list, categorie: str, geschiedenis: dict, uitgesloten_naam: str = None) -> dict:
     """Kiest 1 gerecht uit een pool, met voorrang voor gerechten die het
-    langst niet gekozen zijn binnen deze categorie."""
+    langst niet gekozen zijn binnen deze categorie. Met uitgesloten_naam
+    kun je voorkomen dat dezelfde week een gerecht 2x gekozen wordt (bijv.
+    woensdag en donderdag die uit dezelfde pool putten)."""
     if not pool:
         return None
+
+    kandidaten_pool = pool
+    if uitgesloten_naam:
+        gefilterd = [g for g in pool if g["naam"] != uitgesloten_naam]
+        if gefilterd:
+            kandidaten_pool = gefilterd
 
     eerdere_keuzes = geschiedenis.get(categorie, [])
 
@@ -227,7 +233,7 @@ def kies_uit_pool(pool: list, categorie: str, geschiedenis: dict) -> dict:
             return -1
         return len(eerdere_keuzes) - 1 - eerdere_keuzes[::-1].index(naam)
 
-    gesorteerd = sorted(pool, key=recentheid)
+    gesorteerd = sorted(kandidaten_pool, key=recentheid)
     kandidaten = gesorteerd[: max(2, len(gesorteerd) // 2)]
     return random.choice(kandidaten)
 
@@ -259,25 +265,15 @@ def combineer_ingredienten(*groepen) -> list:
 
 
 def bepaal_pools(receptenboek: list) -> dict:
-    # Woensdag mag ook gevonden worden als het toevallig Actief: nee heeft
-    # (het is een vast gerecht, geen onderdeel van de "rotatie").
-    woensdag_gerecht = next(
-        (g for g in receptenboek if g["naam"].strip().lower() == WOENSDAG_GERECHT), None
-    )
-    if not woensdag_gerecht:
-        print(f"⚠ Let op: geen gerecht gevonden met de naam '{WOENSDAG_GERECHT}' in {RECEPTENBOEK_BESTAND.name}.")
-        woensdag_gerecht = {"naam": "Kip met rijst (niet gevonden in receptenboek)", "ingredienten": []}
-
     actieve_recepten = [g for g in receptenboek if g["actief"]]
 
     return {
         "makkelijk": [g for g in actieve_recepten if g["label"] == "makkelijk"],
         "vrijdag_veel": [g for g in actieve_recepten if g["label"] == "vrijdag_veel"],
-        "algemeen": [
-            g for g in actieve_recepten
-            if g["label"] is None and g["naam"].strip().lower() != WOENSDAG_GERECHT
-        ],
-        "woensdag": woensdag_gerecht,
+        # Woensdag en donderdag putten allebei uit deze "algemeen"-pool
+        # (zie kies_uit_pool's uitgesloten_naam: zo krijgen ze binnen
+        # dezelfde week niet toevallig hetzelfde gerecht).
+        "algemeen": [g for g in actieve_recepten if g["label"] is None],
     }
 
 
@@ -327,10 +323,14 @@ def stel_weekmenu_samen(pools: dict, dag_opties: dict, even_week: bool, geschied
 
     weekmenu.append(kies_dinsdag(dag_opties))
 
-    weekmenu.append({"dag": "Woensdag", "naam": pools["woensdag"]["naam"],
-                      "ingredienten": pools["woensdag"]["ingredienten"], "categorie": "woensdag"})
-
     do_gerecht = kies_uit_pool(pools["algemeen"], "donderdag", geschiedenis)
+    woe_gerecht = kies_uit_pool(
+        pools["algemeen"], "woensdag", geschiedenis,
+        uitgesloten_naam=do_gerecht["naam"] if do_gerecht else None,
+    )
+    weekmenu.append({"dag": "Woensdag", "naam": woe_gerecht["naam"] if woe_gerecht else "(pool leeg)",
+                      "ingredienten": woe_gerecht["ingredienten"] if woe_gerecht else [], "categorie": "woensdag"})
+
     weekmenu.append({"dag": "Donderdag", "naam": do_gerecht["naam"] if do_gerecht else "(pool leeg)",
                       "ingredienten": do_gerecht["ingredienten"] if do_gerecht else [], "categorie": "donderdag"})
 
@@ -379,7 +379,7 @@ def schrijf_boodschappenlijst(weekmenu: list, standaardlijst: list):
 # Interactieve aanpassing
 # ---------------------------------------------------------------------------
 
-NAAM_TYPBARE_CATEGORIEEN = {"maandag", "donderdag", "vrijdag_veel"}
+NAAM_TYPBARE_CATEGORIEEN = {"maandag", "woensdag", "donderdag", "vrijdag_veel"}
 
 
 def maak_dag_entry(dag_label: str, categorie: str, gerecht: dict) -> dict:
@@ -397,9 +397,9 @@ def herkies_dag(weekmenu: list, index: int, pools: dict, dag_opties: dict, even_
     categorie = weekmenu[index]["categorie"]
     vorige_naam = weekmenu[index]["naam"]
 
-    if categorie == "woensdag":
-        print("Woensdag is een vast gerecht en kan niet gewisseld worden.")
-        return False
+    def andere_dag_naam(cat_naam):
+        gevonden = next((d for d in weekmenu if d["categorie"] == cat_naam), None)
+        return gevonden["naam"] if gevonden else None
 
     herkies_functies = {
         "maandag": lambda: (lambda g: {
@@ -407,10 +407,14 @@ def herkies_dag(weekmenu: list, index: int, pools: dict, dag_opties: dict, even_
             "ingredienten": g["ingredienten"] if g else [], "categorie": "maandag",
         })(kies_uit_pool(pools["makkelijk"], "maandag", geschiedenis)),
         "dinsdag": lambda: kies_dinsdag(dag_opties),
+        "woensdag": lambda: (lambda g: {
+            "dag": "Woensdag", "naam": g["naam"] if g else "(pool leeg)",
+            "ingredienten": g["ingredienten"] if g else [], "categorie": "woensdag",
+        })(kies_uit_pool(pools["algemeen"], "woensdag", geschiedenis, uitgesloten_naam=andere_dag_naam("donderdag"))),
         "donderdag": lambda: (lambda g: {
             "dag": "Donderdag", "naam": g["naam"] if g else "(pool leeg)",
             "ingredienten": g["ingredienten"] if g else [], "categorie": "donderdag",
-        })(kies_uit_pool(pools["algemeen"], "donderdag", geschiedenis)),
+        })(kies_uit_pool(pools["algemeen"], "donderdag", geschiedenis, uitgesloten_naam=andere_dag_naam("woensdag"))),
         "vrijdag_veel": lambda: kies_vrijdag(dag_opties, pools, even_week, geschiedenis),
         "vrijdag_klein": lambda: kies_vrijdag(dag_opties, pools, even_week, geschiedenis),
         "zondag": lambda: kies_zondag(dag_opties),

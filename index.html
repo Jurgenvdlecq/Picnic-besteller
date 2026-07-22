@@ -45,38 +45,55 @@
       </div>
     </header>
 
-    <main id="dagen-wrap">
+    <div id="kies-scherm">
+      <main id="dagen-wrap">
+        <div class="kaart">
+          <div class="kaart-titel">
+            <span class="naam">Vaste boodschappen</span>
+            <span class="tag">deze week</span>
+          </div>
+          <div id="standaard-lijst"></div>
+          <div class="std-footnote">Vink uit wat je deze week niet nodig hebt, of pas het aantal aan. Volgende week staat alles weer op de standaardhoeveelheid.</div>
+        </div>
+
+        <div id="dagen"></div>
+
+        <div class="kaart">
+          <div class="kaart-titel">
+            <span class="naam">Extra producten</span>
+            <span class="tag">los</span>
+          </div>
+          <div id="losse-lijst"></div>
+          <div class="losse-invoer">
+            <input type="text" id="los-naam" placeholder="Productnaam" />
+            <input type="text" id="los-aantal" placeholder="Aantal" inputmode="numeric" value="1" />
+            <button id="los-toevoegen-knop" class="secundair">Toevoegen</button>
+          </div>
+        </div>
+      </main>
+
+      <div id="kassabon-wrap"></div>
+    </div>
+
+    <div id="controle-scherm" class="verborgen">
       <div class="kaart">
         <div class="kaart-titel">
-          <span class="naam">Vaste boodschappen</span>
-          <span class="tag">deze week</span>
+          <span class="naam">Controleer je producten</span>
+          <span class="tag">bij Picnic gevonden</span>
         </div>
-        <div id="standaard-lijst"></div>
-        <div class="std-footnote">Vink uit wat je deze week niet nodig hebt. Volgende week staat alles weer aan.</div>
+        <p class="uitleg" style="margin: 4px 0 12px 0; text-align: left;">
+          Klopt een product niet? Tik op "Andere optie kiezen" voor de
+          alternatieven die Picnic teruggaf.
+        </p>
+        <div id="controle-lijst"></div>
       </div>
-
-      <div id="dagen"></div>
-
-      <div class="kaart">
-        <div class="kaart-titel">
-          <span class="naam">Extra producten</span>
-          <span class="tag">los</span>
-        </div>
-        <div id="losse-lijst"></div>
-        <div class="losse-invoer">
-          <input type="text" id="los-naam" placeholder="Productnaam" />
-          <input type="text" id="los-aantal" placeholder="Aantal" inputmode="numeric" value="1" />
-          <button id="los-toevoegen-knop" class="secundair">Toevoegen</button>
-        </div>
-      </div>
-    </main>
-
-    <div id="kassabon-wrap"></div>
+    </div>
 
     <div id="bestel-knop-wrap">
       <div id="waarschuwingen"></div>
       <div id="status"></div>
-      <button id="bestel-knop">Bestel nu bij Picnic</button>
+      <button id="terug-knop" class="secundair verborgen">‹ Terug naar weekmenu</button>
+      <button id="actie-knop">Zoek producten op</button>
     </div>
   </div>
 
