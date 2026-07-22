@@ -147,6 +147,67 @@ button:disabled {
   border: 1px solid var(--border);
 }
 
+.nieuw-gerecht-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nieuw-gerecht-form textarea {
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: 100%;
+  min-height: 90px;
+  font-family: inherit;
+}
+
+.losse-invoer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.losse-invoer input[type="text"] {
+  letter-spacing: normal;
+  text-align: left;
+  font-size: 1rem;
+  padding: 10px 12px;
+}
+
+#los-naam {
+  flex: 3;
+}
+
+#los-aantal {
+  flex: 1;
+  min-width: 60px;
+}
+
+.losse-invoer button {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 10px 14px;
+}
+
+.losse-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.losse-item button {
+  width: auto;
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--accent);
+  border: none;
+}
+
 #bestel-knop-wrap {
   position: sticky;
   bottom: 0;

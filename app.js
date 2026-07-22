@@ -430,15 +430,25 @@ const dagenEl = document.getElementById("dagen");
 const weekInfoEl = document.getElementById("week-info");
 const statusEl = document.getElementById("status");
 const bestelKnop = document.getElementById("bestel-knop");
+const losseLijstEl = document.getElementById("losse-lijst");
+const losNaamEl = document.getElementById("los-naam");
+const losAantalEl = document.getElementById("los-aantal");
+
+// Bepaalt welk label een handmatig toegevoegd gerecht krijgt in
+// receptenboek.txt, per dag-categorie waarvoor dat mogelijk is.
+const LABEL_VOOR_CATEGORIE = { maandag: "makkelijk", donderdag: null, vrijdag_veel: "vrijdag_veel" };
 
 let staat = {
   pools: null,
   dagOpties: null,
   standaardlijst: null,
   receptenboek: null,
+  receptenboekRuweTekst: "",
+  receptenboekGewijzigd: false,
   geschiedenis: null,
   evenWeek: false,
   weekmenu: [],
+  losseProducten: [],
 };
 
 function toonScherm(scherm) {
@@ -485,6 +495,12 @@ function renderWeekmenu() {
         zoekKnop.textContent = "Kies zelf recept";
         zoekKnop.onclick = () => toonZoekveld(kaart, index);
         knoppen.appendChild(zoekKnop);
+
+        const nieuwKnop = document.createElement("button");
+        nieuwKnop.className = "secundair";
+        nieuwKnop.textContent = "Nieuw gerecht toevoegen";
+        nieuwKnop.onclick = () => toonNieuwGerechtForm(kaart, index);
+        knoppen.appendChild(nieuwKnop);
       }
 
       kaart.appendChild(knoppen);
@@ -527,6 +543,97 @@ function toonZoekveld(kaart, index) {
   zoekveld.focus();
 }
 
+function bouwReceptenboekBlok(gerecht) {
+  const regels = [`Gerecht: ${gerecht.naam}`];
+  if (gerecht.label) regels.push(`Label: ${gerecht.label}`);
+  for (const ingredient of gerecht.ingredienten) regels.push(ingredient);
+  return regels.join("\n");
+}
+
+function toonNieuwGerechtForm(kaart, index) {
+  if (kaart.querySelector(".nieuw-gerecht-form")) return; // al open
+
+  const form = document.createElement("div");
+  form.className = "nieuw-gerecht-form";
+
+  const naamVeld = document.createElement("input");
+  naamVeld.type = "text";
+  naamVeld.placeholder = "Naam van het gerecht";
+
+  const ingredientenVeld = document.createElement("textarea");
+  ingredientenVeld.placeholder = "Ingrediënten, één per regel, bijv.:\n1 x kipfilet\n2 x paprika";
+
+  const foutEl = document.createElement("div");
+  foutEl.className = "foutmelding";
+
+  const opslaanKnop = document.createElement("button");
+  opslaanKnop.textContent = "Toevoegen aan receptenboek en kiezen";
+  opslaanKnop.onclick = () => {
+    const naam = naamVeld.value.trim();
+    const ingredienten = ingredientenVeld.value
+      .split("\n")
+      .map((r) => r.trim())
+      .filter(Boolean);
+
+    if (!naam || ingredienten.length === 0) {
+      foutEl.textContent = "Vul een naam en minstens 1 ingrediënt in.";
+      return;
+    }
+
+    const categorie = staat.weekmenu[index].categorie;
+    const nieuwGerecht = { naam, label: LABEL_VOOR_CATEGORIE[categorie], actief: true, ingredienten };
+
+    staat.receptenboek.push(nieuwGerecht);
+    staat.receptenboekRuweTekst = staat.receptenboekRuweTekst.trimEnd() + "\n\n" + bouwReceptenboekBlok(nieuwGerecht) + "\n";
+    staat.receptenboekGewijzigd = true;
+    staat.pools = bepaalPools(staat.receptenboek);
+
+    const dagLabel = staat.weekmenu[index].dag;
+    staat.weekmenu[index] = { dag: dagLabel, naam, ingredienten, categorie };
+    renderWeekmenu();
+  };
+
+  form.appendChild(naamVeld);
+  form.appendChild(ingredientenVeld);
+  form.appendChild(opslaanKnop);
+  form.appendChild(foutEl);
+  kaart.appendChild(form);
+  naamVeld.focus();
+}
+
+function renderLosseProducten() {
+  losseLijstEl.innerHTML = "";
+  staat.losseProducten.forEach((item, i) => {
+    const rij = document.createElement("div");
+    rij.className = "losse-item";
+
+    const label = document.createElement("span");
+    label.textContent = `${item.aantal} x ${item.naam}`;
+    rij.appendChild(label);
+
+    const verwijderKnop = document.createElement("button");
+    verwijderKnop.textContent = "✕";
+    verwijderKnop.onclick = () => {
+      staat.losseProducten.splice(i, 1);
+      renderLosseProducten();
+    };
+    rij.appendChild(verwijderKnop);
+
+    losseLijstEl.appendChild(rij);
+  });
+}
+
+document.getElementById("los-toevoegen-knop").onclick = () => {
+  const naam = losNaamEl.value.trim();
+  const aantal = parseInt(losAantalEl.value, 10) || 1;
+  if (!naam) return;
+  staat.losseProducten.push({ naam, aantal });
+  losNaamEl.value = "";
+  losAantalEl.value = "1";
+  renderLosseProducten();
+  losNaamEl.focus();
+};
+
 async function laadWeekmenuScherm() {
   toonScherm(schermLaden);
 
@@ -538,14 +645,18 @@ async function laadWeekmenuScherm() {
   ]);
 
   staat.receptenboek = laadReceptenboek(receptenTekst);
+  staat.receptenboekRuweTekst = receptenTekst;
+  staat.receptenboekGewijzigd = false;
   staat.dagOpties = laadDagOpties(dagOptiesTekst);
   staat.standaardlijst = laadStandaardlijst(standaardTekst);
   staat.geschiedenis = laadGeschiedenis(geschiedenisTekst);
   staat.evenWeek = isEvenWeek();
   staat.pools = bepaalPools(staat.receptenboek);
   staat.weekmenu = stelWeekmenuSamen(staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
+  staat.losseProducten = [];
 
   renderWeekmenu();
+  renderLosseProducten();
   toonScherm(appEl);
 }
 
@@ -555,7 +666,12 @@ async function bestelNu() {
   statusEl.textContent = "Bezig met opslaan van je weekmenu...";
 
   try {
-    const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, staat.standaardlijst);
+    if (staat.receptenboekGewijzigd) {
+      await githubPutFile("receptenboek.txt", staat.receptenboekRuweTekst, "Nieuw gerecht toegevoegd via de website");
+    }
+
+    const alleProducten = [...staat.standaardlijst, ...staat.losseProducten];
+    const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten);
     await githubPutFile("boodschappenlijst.txt", lijstTekst, "Weekmenu gekozen via de website");
 
     const nieuweGeschiedenis = werkGeschiedenisBij(staat.geschiedenis, staat.weekmenu);

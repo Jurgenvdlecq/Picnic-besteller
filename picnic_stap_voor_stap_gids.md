@@ -260,8 +260,17 @@ elke telefoon of computer, ook die van je vrouw.
 2. Tik op **"Ander voorstel"** voor een ander willekeurig gerecht die dag,
    of (bij maandag/donderdag/vrijdag) op **"Kies zelf recept"** om te zoeken
    in het hele receptenboek. Woensdag staat vast.
-3. Tevreden? Tik onderaan op **"Bestel nu bij Picnic"**. Na ongeveer een
-   halve tot hele minuut staan de producten in je Picnic-mandje — open
+3. Ken je dat gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
+   naam en de ingrediënten (één per regel, bijv. "1 x kipfilet") en tik op
+   toevoegen. Het gerecht wordt meteen voor die dag gekozen, én permanent
+   opgeslagen in `receptenboek.txt` — vanaf nu kan het systeem 'm ook in de
+   toekomst weer automatisch voorstellen.
+4. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
+   fles wijn)? Vul dat in bij **"Extra producten"** onderaan en tik op
+   **Toevoegen**. Je kan er zoveel toevoegen als je wilt, en weer
+   verwijderen met het kruisje.
+5. Tevreden? Tik onderaan op **"Bestel nu bij Picnic"**. Na ongeveer een
+   halve tot hele minuut staan alle producten in je Picnic-mandje — open
    daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
 
 ### Stap 17 — Ook voor je vrouw
