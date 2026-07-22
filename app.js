@@ -3,7 +3,8 @@
 const OWNER = "Jurgenvdlecq";
 const REPO = "Picnic-besteller";
 const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
-const WORKFLOW_FILE = "bestel.yml";
+const BESTEL_WORKFLOW = "bestel.yml";
+const ZOEKEN_WORKFLOW = "zoek_producten.yml";
 
 // SHA-256 van de pincode, zodat de code zelf niet in platte tekst in de
 // paginabron staat. Dit is geen sterke beveiliging (view-source + brute
@@ -14,9 +15,6 @@ const PIN_HASH = "88cf986449b61aeba90a4baedfaeba95cc12e8d04dedfebe53b78dd29fc0a4
 const UNLOCKED_KEY = "picnic_unlocked";
 const TOKEN_KEY = "picnic_gh_token";
 
-const WOENSDAG_GERECHT = "kip met rijst en paprika";
-const NAAM_TYPBARE_CATEGORIEEN = new Set(["maandag", "donderdag", "vrijdag_veel"]);
-
 // Volgorde + weergavenaam voor de vlees-filterknoppen. "overig" vangt
 // gerechten op zonder (herkend) Vlees:-label.
 const VLEES_VOLGORDE = ["kip", "rund", "varken", "ei-vega", "overig"];
@@ -24,9 +22,10 @@ const VLEES_LABELS = { kip: "Kip", rund: "Rund", varken: "Varken", "ei-vega": "E
 
 // Bepaalt welk label een handmatig toegevoegd gerecht krijgt in
 // receptenboek.txt, per dag-categorie waarvoor dat mogelijk is.
-const LABEL_VOOR_CATEGORIE = { maandag: "makkelijk", donderdag: null, vrijdag_veel: "vrijdag_veel" };
+const LABEL_VOOR_CATEGORIE = { maandag: "makkelijk", woensdag: null, donderdag: null, vrijdag_veel: "vrijdag_veel" };
 const POOL_VOOR_CATEGORIE = {
   maandag: (pools) => pools.makkelijk,
+  woensdag: (pools) => pools.algemeen,
   donderdag: (pools) => pools.algemeen,
   vrijdag_veel: (pools) => pools.vrijdag_veel,
 };
@@ -208,29 +207,31 @@ function combineerIngredienten(...groepen) {
 }
 
 function bepaalPools(receptenboek) {
-  let woensdagGerecht = receptenboek.find((g) => g.naam.trim().toLowerCase() === WOENSDAG_GERECHT);
-  if (!woensdagGerecht) {
-    woensdagGerecht = { naam: "Kip met rijst (niet gevonden in receptenboek)", ingredienten: [] };
-  }
   const actieveRecepten = receptenboek.filter((g) => g.actief);
-
   return {
     makkelijk: actieveRecepten.filter((g) => g.label === "makkelijk"),
     vrijdag_veel: actieveRecepten.filter((g) => g.label === "vrijdag_veel"),
-    algemeen: actieveRecepten.filter((g) => g.label === null && g.naam.trim().toLowerCase() !== WOENSDAG_GERECHT),
-    woensdag: woensdagGerecht,
+    // Woensdag en donderdag putten allebei uit deze pool (zie kiesUitPool's
+    // uitgeslotenNaam: zo krijgen ze niet toevallig hetzelfde gerecht).
+    algemeen: actieveRecepten.filter((g) => g.label === null),
   };
 }
 
-function kiesUitPool(pool, categorie, geschiedenis) {
+function kiesUitPool(pool, categorie, geschiedenis, uitgeslotenNaam) {
   if (!pool || pool.length === 0) return null;
-  const eerdereKeuzes = geschiedenis[categorie] || [];
 
+  let kandidatenPool = pool;
+  if (uitgeslotenNaam) {
+    const gefilterd = pool.filter((g) => g.naam !== uitgeslotenNaam);
+    if (gefilterd.length > 0) kandidatenPool = gefilterd;
+  }
+
+  const eerdereKeuzes = geschiedenis[categorie] || [];
   function recentheid(gerecht) {
     return eerdereKeuzes.lastIndexOf(gerecht.naam); // -1 als nooit eerder gekozen
   }
 
-  const gesorteerd = [...pool].sort((a, b) => recentheid(a) - recentheid(b));
+  const gesorteerd = [...kandidatenPool].sort((a, b) => recentheid(a) - recentheid(b));
   const aantalKandidaten = Math.max(2, Math.floor(gesorteerd.length / 2));
   return pickRandom(gesorteerd.slice(0, aantalKandidaten));
 }
@@ -256,14 +257,15 @@ function samenstellenVrijdagKlein(onderdelen) {
 }
 
 function samenstellenZondag(onderdelen) {
-  const { snack } = onderdelen;
+  const snacks = onderdelen.snacks || [];
   const patat = { naam: "Patat (airfryer)", aantal: 1 };
-  const naam = snack ? `Patat + ${snack.naam}` : "Patat (airfryer)";
-  return { dag: "Zondag", naam, ingredienten: combineerIngredienten(patat, snack), categorie: "zondag", onderdelen };
+  const naam = snacks.length ? `Patat + ${snacks.map((s) => s.naam).join(" + ")}` : "Patat (airfryer)";
+  return { dag: "Zondag", naam, ingredienten: combineerIngredienten(patat, ...snacks), categorie: "zondag", onderdelen };
 }
 
 function kiesZondag(dagOpties) {
-  return samenstellenZondag({ snack: pickRandom(dagOpties.zondag_snack) });
+  const snack = pickRandom(dagOpties.zondag_snack);
+  return samenstellenZondag({ snacks: snack ? [snack] : [] });
 }
 
 function kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis) {
@@ -272,7 +274,7 @@ function kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis) {
     return {
       dag: "Vrijdag (4p)",
       naam: gerecht ? gerecht.naam : "(geen 'vrijdag_veel'-gerecht gevonden)",
-      ingredienten: gerecht ? gerecht.ingredienten : [],
+      ingredienten: gerecht ? [...gerecht.ingredienten] : [],
       categorie: "vrijdag_veel",
       vlees: gerecht ? gerecht.vlees : null,
     };
@@ -290,25 +292,27 @@ function stelWeekmenuSamen(pools, dagOpties, vierPersonen, geschiedenis) {
   weekmenu.push({
     dag: "Maandag",
     naam: ma ? ma.naam : "(geen 'makkelijk'-gerecht gevonden)",
-    ingredienten: ma ? ma.ingredienten : [],
+    ingredienten: ma ? [...ma.ingredienten] : [],
     categorie: "maandag",
     vlees: ma ? ma.vlees : null,
   });
 
   weekmenu.push(kiesDinsdag(dagOpties));
 
+  const doo = kiesUitPool(pools.algemeen, "donderdag", geschiedenis);
+  const woe = kiesUitPool(pools.algemeen, "woensdag", geschiedenis, doo ? doo.naam : null);
   weekmenu.push({
     dag: "Woensdag",
-    naam: pools.woensdag.naam,
-    ingredienten: pools.woensdag.ingredienten,
+    naam: woe ? woe.naam : "(pool leeg)",
+    ingredienten: woe ? [...woe.ingredienten] : [],
     categorie: "woensdag",
+    vlees: woe ? woe.vlees : null,
   });
 
-  const doo = kiesUitPool(pools.algemeen, "donderdag", geschiedenis);
   weekmenu.push({
     dag: "Donderdag",
     naam: doo ? doo.naam : "(pool leeg)",
-    ingredienten: doo ? doo.ingredienten : [],
+    ingredienten: doo ? [...doo.ingredienten] : [],
     categorie: "donderdag",
     vlees: doo ? doo.vlees : null,
   });
@@ -322,7 +326,11 @@ function stelWeekmenuSamen(pools, dagOpties, vierPersonen, geschiedenis) {
 function herkiesDag(weekmenu, index, pools, dagOpties, vierPersonen, geschiedenis) {
   const categorie = weekmenu[index].categorie;
   const vorigeNaam = weekmenu[index].naam;
-  if (categorie === "woensdag") return false;
+
+  function anderDagNaam(catNaam) {
+    const d = weekmenu.find((d) => d.categorie === catNaam);
+    return d ? d.naam : null;
+  }
 
   const herkiesFuncties = {
     maandag: () => {
@@ -330,18 +338,28 @@ function herkiesDag(weekmenu, index, pools, dagOpties, vierPersonen, geschiedeni
       return {
         dag: "Maandag",
         naam: g ? g.naam : "(geen 'makkelijk'-gerecht gevonden)",
-        ingredienten: g ? g.ingredienten : [],
+        ingredienten: g ? [...g.ingredienten] : [],
         categorie: "maandag",
         vlees: g ? g.vlees : null,
       };
     },
     dinsdag: () => kiesDinsdag(dagOpties),
+    woensdag: () => {
+      const g = kiesUitPool(pools.algemeen, "woensdag", geschiedenis, anderDagNaam("donderdag"));
+      return {
+        dag: "Woensdag",
+        naam: g ? g.naam : "(pool leeg)",
+        ingredienten: g ? [...g.ingredienten] : [],
+        categorie: "woensdag",
+        vlees: g ? g.vlees : null,
+      };
+    },
     donderdag: () => {
-      const g = kiesUitPool(pools.algemeen, "donderdag", geschiedenis);
+      const g = kiesUitPool(pools.algemeen, "donderdag", geschiedenis, anderDagNaam("woensdag"));
       return {
         dag: "Donderdag",
         naam: g ? g.naam : "(pool leeg)",
-        ingredienten: g ? g.ingredienten : [],
+        ingredienten: g ? [...g.ingredienten] : [],
         categorie: "donderdag",
         vlees: g ? g.vlees : null,
       };
@@ -452,39 +470,45 @@ async function githubPutFile(path, inhoud, boodschap) {
   if (!res.ok) throw new Error(`Kon ${path} niet opslaan (${res.status})`);
 }
 
-async function dispatchWorkflow() {
-  const res = await fetch(`${API}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {
+async function dispatchWorkflow(workflowFile, inputs) {
+  const res = await fetch(`${API}/actions/workflows/${workflowFile}/dispatches`, {
     method: "POST",
     headers: ghHeaders({ "Content-Type": "application/json" }),
-    body: JSON.stringify({ ref: "main", inputs: { nieuw_weekmenu: "nee" } }),
+    body: JSON.stringify({ ref: "main", inputs: inputs || {} }),
   });
-  if (!res.ok) throw new Error(`Kon de bestelling niet starten (${res.status})`);
+  if (!res.ok) throw new Error(`Kon de actie niet starten (${res.status})`);
 }
 
-async function vindLaatsteRun(naDatum) {
-  const res = await fetch(`${API}/actions/workflows/${WORKFLOW_FILE}/runs?per_page=5`, { headers: ghHeaders() });
+async function vindLaatsteRun(workflowFile, naDatum) {
+  const res = await fetch(`${API}/actions/workflows/${workflowFile}/runs?per_page=5`, { headers: ghHeaders() });
   if (!res.ok) return null;
   const data = await res.json();
   return (data.workflow_runs || []).find((r) => new Date(r.created_at) >= naDatum) || null;
 }
 
-async function volgBestelling(startTijd, statusEl) {
+async function volgWorkflow(workflowFile, startTijd, statusEl, wachtBoodschap) {
   let run = null;
   for (let poging = 0; poging < 20 && !run; poging++) {
     await sleep(3000);
-    run = await vindLaatsteRun(startTijd);
+    run = await vindLaatsteRun(workflowFile, startTijd);
   }
-  if (!run) {
-    statusEl.textContent = "Kon de status niet vinden — check over een minuutje de Picnic-app.";
-    return;
-  }
+  if (!run) return null;
 
-  statusEl.innerHTML = `Bestelling wordt verwerkt... <a href="${run.html_url}" target="_blank" rel="noopener">bekijk voortgang</a>`;
+  statusEl.innerHTML = `${wachtBoodschap} <a href="${run.html_url}" target="_blank" rel="noopener">bekijk voortgang</a>`;
 
   while (run.status !== "completed") {
     await sleep(4000);
     const res = await fetch(run.url, { headers: ghHeaders() });
     if (res.ok) run = await res.json();
+  }
+  return run;
+}
+
+async function volgBestelling(startTijd, statusEl) {
+  const run = await volgWorkflow(BESTEL_WORKFLOW, startTijd, statusEl, "Bestelling wordt verwerkt...");
+  if (!run) {
+    statusEl.textContent = "Kon de status niet vinden — check over een minuutje de Picnic-app.";
+    return;
   }
 
   if (run.conclusion === "success") {
@@ -532,10 +556,14 @@ const standaardLijstEl = document.getElementById("standaard-lijst");
 const kassabonEl = document.getElementById("kassabon-wrap");
 const waarschuwingenEl = document.getElementById("waarschuwingen");
 const statusEl = document.getElementById("status");
-const bestelKnop = document.getElementById("bestel-knop");
 const losseLijstEl = document.getElementById("losse-lijst");
 const losNaamEl = document.getElementById("los-naam");
 const losAantalEl = document.getElementById("los-aantal");
+const kiesSchermEl = document.getElementById("kies-scherm");
+const controleSchermEl = document.getElementById("controle-scherm");
+const controleLijstEl = document.getElementById("controle-lijst");
+const terugKnop = document.getElementById("terug-knop");
+const actieKnop = document.getElementById("actie-knop");
 
 let staat = {
   pools: null,
@@ -550,7 +578,11 @@ let staat = {
   weekmenu: [],
   losseProducten: [],
   filters: {},
+  ingredientenOpen: new Set(),
   laatsteBestelling: null,
+  stap: "kiezen",
+  productVoorstellen: null,
+  productKeuzeIndex: {},
 };
 
 function toonScherm(scherm) {
@@ -564,6 +596,25 @@ function ververs() {
   renderWeekmenu();
   renderKassabon();
 }
+
+function gaNaarStap(stap) {
+  staat.stap = stap;
+  kiesSchermEl.classList.toggle("verborgen", stap !== "kiezen");
+  controleSchermEl.classList.toggle("verborgen", stap !== "controleren");
+  terugKnop.classList.toggle("verborgen", stap !== "controleren");
+
+  if (stap === "kiezen") {
+    statusEl.textContent = "";
+    actieKnop.textContent = "Zoek producten op";
+    actieKnop.onclick = startZoeken;
+  } else if (stap === "controleren") {
+    renderControleScherm();
+    actieKnop.textContent = "Definitief bestellen bij Picnic";
+    actieKnop.onclick = bevestigBestelling;
+  }
+}
+
+terugKnop.onclick = () => gaNaarStap("kiezen");
 
 // --- Kop: personen-schuifje + laatst besteld ---
 
@@ -615,9 +666,103 @@ function renderStandaardlijst() {
     naamEl.onclick = wissel;
     rij.appendChild(naamEl);
 
-    rij.appendChild(maakEl("div", "std-aantal", `${item.aantal}×`));
+    const stepper = maakEl("div", "stepper");
+    stepper.appendChild(
+      maakKnop("stap-knop", "–", () => {
+        item.aantal = Math.max(1, item.aantal - 1);
+        ververs();
+      })
+    );
+    stepper.appendChild(maakEl("span", "stepper-waarde", `${item.aantal}×`));
+    stepper.appendChild(
+      maakKnop("stap-knop", "+", () => {
+        item.aantal += 1;
+        ververs();
+      })
+    );
+    rij.appendChild(stepper);
+
     standaardLijstEl.appendChild(rij);
   }
+}
+
+// --- Ingrediënten per dag: inzien/aanpassen ---
+
+function bouwIngredientenSectie(kaart, dag, index) {
+  const wrap = maakEl("div", "ingredienten-wrap");
+  const open = staat.ingredientenOpen.has(index);
+
+  wrap.appendChild(
+    maakKnop("ingredienten-toggle", `${open ? "▾" : "▸"} Ingrediënten (${dag.ingredienten.length})`, () => {
+      if (staat.ingredientenOpen.has(index)) staat.ingredientenOpen.delete(index);
+      else staat.ingredientenOpen.add(index);
+      ververs();
+    })
+  );
+
+  if (open) {
+    const lijst = maakEl("div", "ingredienten-lijst");
+    dag.ingredienten.forEach((regel, i) => {
+      const item = parseAantalNaam(regel);
+      const rij = maakEl("div", "ingredient-rij");
+      rij.appendChild(maakEl("span", "ingredient-naam", item.naam));
+
+      const stepper = maakEl("div", "stepper");
+      stepper.appendChild(
+        maakKnop("stap-knop", "–", () => {
+          const huidig = parseAantalNaam(staat.weekmenu[index].ingredienten[i]);
+          huidig.aantal = Math.max(1, huidig.aantal - 1);
+          staat.weekmenu[index].ingredienten[i] = `${huidig.aantal} x ${huidig.naam}`;
+          ververs();
+        })
+      );
+      stepper.appendChild(maakEl("span", "stepper-waarde", `${item.aantal}×`));
+      stepper.appendChild(
+        maakKnop("stap-knop", "+", () => {
+          const huidig = parseAantalNaam(staat.weekmenu[index].ingredienten[i]);
+          huidig.aantal += 1;
+          staat.weekmenu[index].ingredienten[i] = `${huidig.aantal} x ${huidig.naam}`;
+          ververs();
+        })
+      );
+      rij.appendChild(stepper);
+
+      rij.appendChild(
+        maakKnop("ingredient-verwijder", "✕", () => {
+          staat.weekmenu[index].ingredienten.splice(i, 1);
+          ververs();
+        })
+      );
+
+      lijst.appendChild(rij);
+    });
+    wrap.appendChild(lijst);
+
+    const invoerRij = maakEl("div", "ingredient-invoer");
+    const naamVeld = document.createElement("input");
+    naamVeld.type = "text";
+    naamVeld.className = "ing-naam";
+    naamVeld.placeholder = "Extra ingrediënt";
+    const aantalVeld = document.createElement("input");
+    aantalVeld.type = "text";
+    aantalVeld.className = "ing-aantal";
+    aantalVeld.inputMode = "numeric";
+    aantalVeld.value = "1";
+    invoerRij.appendChild(naamVeld);
+    invoerRij.appendChild(aantalVeld);
+    invoerRij.appendChild(
+      maakKnop("secundair", "Toevoegen", () => {
+        const naam = naamVeld.value.trim();
+        if (!naam) return;
+        const aantal = parseInt(aantalVeld.value, 10) || 1;
+        staat.weekmenu[index].ingredienten.push(`${aantal} x ${naam}`);
+        ververs();
+      })
+    );
+    wrap.appendChild(invoerRij);
+  }
+
+  kaart.appendChild(wrap);
 }
 
 // --- Dagkaarten ---
@@ -625,24 +770,12 @@ function renderStandaardlijst() {
 function renderWeekmenu() {
   dagenEl.innerHTML = "";
   staat.weekmenu.forEach((dag, index) => {
-    if (dag.categorie === "woensdag") {
-      dagenEl.appendChild(bouwVasteKaart(dag));
-    } else if (POOL_VOOR_CATEGORIE[dag.categorie]) {
+    if (POOL_VOOR_CATEGORIE[dag.categorie]) {
       dagenEl.appendChild(bouwGerechtKaart(dag, index));
     } else {
       dagenEl.appendChild(bouwCombiKaart(dag, index));
     }
   });
-}
-
-function bouwVasteKaart(dag) {
-  const kaart = maakEl("section", "kaart vast-kaart");
-  const links = document.createElement("div");
-  links.appendChild(maakEl("div", "dag-eyebrow", dag.dag));
-  links.appendChild(maakEl("div", "naam", dag.naam));
-  kaart.appendChild(links);
-  kaart.appendChild(maakEl("div", "vast-badge", "altijd hetzelfde"));
-  return kaart;
 }
 
 function bouwGerechtKaart(dag, index) {
@@ -655,17 +788,19 @@ function bouwGerechtKaart(dag, index) {
   const huidigFilter = staat.filters[dag.categorie];
 
   const chipsEl = maakEl("div", "chips");
-  const alleChip = maakKnop("chip" + (huidigFilter === "alle" ? " actief" : ""), "Alles", () => {
-    staat.filters[dag.categorie] = "alle";
-    renderWeekmenu();
-  });
-  chipsEl.appendChild(alleChip);
-  for (const v of beschikbareVlezen) {
-    const chip = maakKnop("chip" + (huidigFilter === v ? " actief" : ""), VLEES_LABELS[v], () => {
-      staat.filters[dag.categorie] = v;
+  chipsEl.appendChild(
+    maakKnop("chip" + (huidigFilter === "alle" ? " actief" : ""), "Alles", () => {
+      staat.filters[dag.categorie] = "alle";
       renderWeekmenu();
-    });
-    chipsEl.appendChild(chip);
+    })
+  );
+  for (const v of beschikbareVlezen) {
+    chipsEl.appendChild(
+      maakKnop("chip" + (huidigFilter === v ? " actief" : ""), VLEES_LABELS[v], () => {
+        staat.filters[dag.categorie] = v;
+        renderWeekmenu();
+      })
+    );
   }
   kaart.appendChild(chipsEl);
 
@@ -678,7 +813,14 @@ function bouwGerechtKaart(dag, index) {
     rij.appendChild(maakEl("span", "bolletje"));
     rij.appendChild(document.createTextNode(gerecht.naam));
     rij.onclick = () => {
-      staat.weekmenu[index] = { dag: dag.dag, naam: gerecht.naam, ingredienten: gerecht.ingredienten, categorie: dag.categorie, vlees: gerecht.vlees };
+      staat.weekmenu[index] = {
+        dag: dag.dag,
+        naam: gerecht.naam,
+        ingredienten: [...gerecht.ingredienten],
+        categorie: dag.categorie,
+        vlees: gerecht.vlees,
+      };
+      staat.ingredientenOpen.delete(index);
       ververs();
     };
     lijstEl.appendChild(rij);
@@ -692,12 +834,15 @@ function bouwGerechtKaart(dag, index) {
   acties.appendChild(
     maakKnop("secundair", "🔀 Verras me", () => {
       herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
+      staat.ingredientenOpen.delete(index);
       ververs();
     })
   );
   acties.appendChild(maakKnop("secundair", "Kies zelf recept", () => toonZoekveld(kaart, index)));
   acties.appendChild(maakKnop("secundair", "+ Nieuw gerecht", () => toonNieuwGerechtForm(kaart, index)));
   kaart.appendChild(acties);
+
+  bouwIngredientenSectie(kaart, dag, index);
 
   return kaart;
 }
@@ -719,7 +864,7 @@ const COMBI_CONFIG = {
     samenstellen: samenstellenVrijdagKlein,
   },
   zondag: {
-    groepen: [{ key: "snack", label: "Snack", opties: (d) => d.zondag_snack }],
+    groepen: [{ key: "snacks", label: "Snack (tik er 1 of meerdere aan)", opties: (d) => d.zondag_snack, meerkeuze: true }],
     samenstellen: samenstellenZondag,
     vast: "🍟 Patat (airfryer) — altijd erbij",
   },
@@ -744,9 +889,19 @@ function bouwCombiKaart(dag, index) {
     const opties = groep.opties(staat.dagOpties) || [];
     const huidig = dag.onderdelen ? dag.onderdelen[groep.key] : null;
     for (const optie of opties) {
-      const chip = maakKnop("chip" + (huidig && huidig.naam === optie.naam ? " actief" : ""), optie.naam, () => {
-        const nieuweOnderdelen = { ...dag.onderdelen, [groep.key]: optie };
+      const actief = groep.meerkeuze ? (huidig || []).some((h) => h.naam === optie.naam) : huidig && huidig.naam === optie.naam;
+      const chip = maakKnop("chip" + (actief ? " actief" : ""), optie.naam, () => {
+        let nieuweWaarde;
+        if (groep.meerkeuze) {
+          const huidigeLijst = dag.onderdelen[groep.key] || [];
+          const algeselecteerd = huidigeLijst.some((h) => h.naam === optie.naam);
+          nieuweWaarde = algeselecteerd ? huidigeLijst.filter((h) => h.naam !== optie.naam) : [...huidigeLijst, optie];
+        } else {
+          nieuweWaarde = optie;
+        }
+        const nieuweOnderdelen = { ...dag.onderdelen, [groep.key]: nieuweWaarde };
         staat.weekmenu[index] = config.samenstellen(nieuweOnderdelen);
+        staat.ingredientenOpen.delete(index);
         ververs();
       });
       chipsEl.appendChild(chip);
@@ -759,10 +914,13 @@ function bouwCombiKaart(dag, index) {
   acties.appendChild(
     maakKnop("secundair", "🔀 Verras me", () => {
       herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
+      staat.ingredientenOpen.delete(index);
       ververs();
     })
   );
   kaart.appendChild(acties);
+
+  bouwIngredientenSectie(kaart, dag, index);
 
   return kaart;
 }
@@ -785,7 +943,8 @@ function toonZoekveld(kaart, index) {
       const optieKnop = maakKnop("", match.naam, () => {
         const dagLabel = staat.weekmenu[index].dag;
         const categorie = staat.weekmenu[index].categorie;
-        staat.weekmenu[index] = { dag: dagLabel, naam: match.naam, ingredienten: match.ingredienten, categorie, vlees: match.vlees };
+        staat.weekmenu[index] = { dag: dagLabel, naam: match.naam, ingredienten: [...match.ingredienten], categorie, vlees: match.vlees };
+        staat.ingredientenOpen.delete(index);
         ververs();
       });
       resultatenEl.appendChild(optieKnop);
@@ -841,7 +1000,8 @@ function toonNieuwGerechtForm(kaart, index) {
     staat.pools = bepaalPools(staat.receptenboek);
 
     const dagLabel = staat.weekmenu[index].dag;
-    staat.weekmenu[index] = { dag: dagLabel, naam, ingredienten, categorie, vlees };
+    staat.weekmenu[index] = { dag: dagLabel, naam, ingredienten: [...ingredienten], categorie, vlees };
+    staat.ingredientenOpen.delete(index);
     ververs();
   });
 
@@ -909,8 +1069,7 @@ function renderKassabon() {
   const totaalRij = maakEl("div", "bon-totaal");
   const linkerKant = document.createElement("span");
   linkerKant.textContent = "Geschat totaal";
-  const letOp = maakEl("span", "let-op", "op basis van de vorige bestelling — kan afwijken");
-  linkerKant.appendChild(letOp);
+  linkerKant.appendChild(maakEl("span", "let-op", "op basis van de vorige bestelling — kan afwijken"));
 
   const rechterKant = document.createElement("span");
   const heeftPrijs = staat.laatsteBestelling && typeof staat.laatsteBestelling.totaal_prijs_cent === "number";
@@ -935,7 +1094,62 @@ function toonWaarschuwingenNaBestelling() {
   waarschuwingenEl.appendChild(waarschuwing);
 }
 
-// --- Laden en bestellen ---
+// --- Controle-scherm (productkeuzes na het zoeken) ---
+
+function renderControleScherm() {
+  controleLijstEl.innerHTML = "";
+  const items = staat.productVoorstellen || {};
+  const namen = Object.keys(items);
+
+  if (namen.length === 0) {
+    controleLijstEl.appendChild(maakEl("div", "std-footnote", "Geen producten om te controleren."));
+    return;
+  }
+
+  for (const naam of namen) {
+    const info = items[naam];
+    const kandidaten = info.kandidaten || [];
+    const idx = staat.productKeuzeIndex[naam] ?? 0;
+    const gekozen = kandidaten[idx];
+
+    const item = maakEl("div", "controle-item");
+    item.appendChild(maakEl("div", "controle-kop", `${info.aantal}× ${naam}`));
+
+    if (!gekozen) {
+      item.appendChild(maakEl("div", "controle-fout", "Niet gevonden bij Picnic — voeg dit later zelf toe in de app."));
+    } else {
+      const resultaat = maakEl("div", "controle-resultaat");
+      resultaat.appendChild(maakEl("span", "", gekozen.naam));
+      if (typeof gekozen.prijs_cent === "number") {
+        resultaat.appendChild(maakEl("span", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+      }
+      item.appendChild(resultaat);
+
+      if (kandidaten.length > 1) {
+        item.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
+      }
+    }
+
+    controleLijstEl.appendChild(item);
+  }
+}
+
+function toonAlternatieven(item, naam, kandidaten, huidigeIndex) {
+  if (item.querySelector(".alternatieven")) return;
+
+  const lijst = maakEl("div", "alternatieven");
+  kandidaten.forEach((k, i) => {
+    const prijsTekst = typeof k.prijs_cent === "number" ? ` — €${(k.prijs_cent / 100).toFixed(2)}` : "";
+    const optie = maakKnop("chip" + (i === huidigeIndex ? " actief" : ""), `${k.naam}${prijsTekst}`, () => {
+      staat.productKeuzeIndex[naam] = i;
+      renderControleScherm();
+    });
+    lijst.appendChild(optie);
+  });
+  item.appendChild(lijst);
+}
+
+// --- Laden, zoeken en bestellen ---
 
 async function laadWeekmenuScherm() {
   toonScherm(schermLaden);
@@ -960,6 +1174,9 @@ async function laadWeekmenuScherm() {
   staat.weekmenu = stelWeekmenuSamen(staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
   staat.losseProducten = [];
   staat.filters = {};
+  staat.ingredientenOpen = new Set();
+  staat.productVoorstellen = null;
+  staat.productKeuzeIndex = {};
   try {
     staat.laatsteBestelling = laatsteTekst ? JSON.parse(laatsteTekst) : null;
   } catch (e) {
@@ -969,34 +1186,77 @@ async function laadWeekmenuScherm() {
   waarschuwingenEl.innerHTML = "";
   ververs();
   renderLosseProducten();
+  gaNaarStap("kiezen");
   toonScherm(appEl);
 }
 
-async function bestelNu() {
+async function slaWeekmenuOp() {
+  if (staat.receptenboekGewijzigd) {
+    await githubPutFile("receptenboek.txt", staat.receptenboekRuweTekst, "Nieuw gerecht toegevoegd via de website");
+  }
+
+  const alleProducten = [...gekozenStandaardProducten(), ...staat.losseProducten];
+  const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten);
+  await githubPutFile("boodschappenlijst.txt", lijstTekst, "Weekmenu gekozen via de website");
+
+  const nieuweGeschiedenis = werkGeschiedenisBij(staat.geschiedenis, staat.weekmenu);
+  await githubPutFile("weekmenu_geschiedenis.txt", slaGeschiedenisOp(nieuweGeschiedenis), "Geschiedenis bijgewerkt via de website");
+}
+
+async function startZoeken() {
   const startTijd = new Date();
-  bestelKnop.disabled = true;
+  actieKnop.disabled = true;
   waarschuwingenEl.innerHTML = "";
-  statusEl.textContent = "Bezig met opslaan van je weekmenu...";
+  statusEl.textContent = "Weekmenu opslaan...";
 
   try {
-    if (staat.receptenboekGewijzigd) {
-      await githubPutFile("receptenboek.txt", staat.receptenboekRuweTekst, "Nieuw gerecht toegevoegd via de website");
+    await slaWeekmenuOp();
+
+    statusEl.textContent = "Producten opzoeken bij Picnic wordt gestart...";
+    await dispatchWorkflow(ZOEKEN_WORKFLOW, {});
+    const run = await volgWorkflow(ZOEKEN_WORKFLOW, startTijd, statusEl, "Producten worden opgezocht...");
+
+    if (!run || run.conclusion !== "success") {
+      statusEl.textContent = run
+        ? "Zoeken bij Picnic is mislukt — probeer het nog eens."
+        : "Kon de status niet vinden — probeer het nog eens.";
+      return;
     }
 
-    const alleProducten = [...gekozenStandaardProducten(), ...staat.losseProducten];
-    const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten);
-    await githubPutFile("boodschappenlijst.txt", lijstTekst, "Weekmenu gekozen via de website");
+    const tekst = await haalTekstBestandOp("product_voorstellen.json");
+    staat.productVoorstellen = tekst ? JSON.parse(tekst) : {};
+    staat.productKeuzeIndex = {};
+    statusEl.textContent = "";
+    gaNaarStap("controleren");
+  } catch (e) {
+    statusEl.textContent = "Er ging iets mis: " + e.message;
+  } finally {
+    actieKnop.disabled = false;
+  }
+}
 
-    const nieuweGeschiedenis = werkGeschiedenisBij(staat.geschiedenis, staat.weekmenu);
-    await githubPutFile("weekmenu_geschiedenis.txt", slaGeschiedenisOp(nieuweGeschiedenis), "Geschiedenis bijgewerkt via de website");
+async function bevestigBestelling() {
+  const startTijd = new Date();
+  actieKnop.disabled = true;
+  statusEl.textContent = "Bestelling wordt bevestigd...";
+
+  try {
+    const gekozenProducten = {};
+    for (const naam in staat.productVoorstellen) {
+      const kandidaten = staat.productVoorstellen[naam].kandidaten || [];
+      const idx = staat.productKeuzeIndex[naam] ?? 0;
+      const gekozen = kandidaten[idx];
+      if (gekozen) gekozenProducten[naam] = gekozen;
+    }
+    await githubPutFile("gekozen_producten.json", JSON.stringify(gekozenProducten, null, 2), "Productkeuzes bevestigd via de website");
 
     statusEl.textContent = "Bestelling wordt gestart...";
-    await dispatchWorkflow();
+    await dispatchWorkflow(BESTEL_WORKFLOW, { nieuw_weekmenu: "nee" });
     await volgBestelling(startTijd, statusEl);
   } catch (e) {
     statusEl.textContent = "Er ging iets mis: " + e.message;
   } finally {
-    bestelKnop.disabled = false;
+    actieKnop.disabled = false;
   }
 }
 
@@ -1059,8 +1319,6 @@ document.getElementById("token-knop").onclick = async () => {
     knop.disabled = false;
   }
 };
-
-bestelKnop.onclick = bestelNu;
 
 if (localStorage.getItem(UNLOCKED_KEY) === "1") {
   initApp();

@@ -106,6 +106,16 @@ LOG_BESTAND = Path(__file__).parent / "picnic_log.txt"
 # Picnic te hoeven inloggen.
 OVERZICHT_BESTAND = Path(__file__).parent / "laatste_bestelling.json"
 
+# Resultaat van een --voorbeeld-run: per gezocht product de gevonden
+# kandidaten (zonder dat er iets besteld wordt), zodat de website dit kan
+# tonen en je kan kiezen bij twijfel/meerdere varianten.
+VOORSTELLEN_BESTAND = Path(__file__).parent / "product_voorstellen.json"
+
+# Door de website geschreven keuzes (welk exact product-ID bij welke
+# gezochte naam hoort), opgeslagen na de controle-stap. Als dit bestaat
+# wordt er niet opnieuw gezocht maar precies dát product besteld.
+GEKOZEN_BESTAND = Path(__file__).parent / "gekozen_producten.json"
+
 # ---------------------------------------------------------------------------
 # De boodschappenlijst staat in een los tekstbestand, in dezelfde map als dit
 # script. Dat is fijn omdat je (of je vrouw) die lijst kan aanpassen met een
@@ -258,14 +268,15 @@ def log_in(automatisch: bool = False) -> PicnicAPI:
     return api
 
 
-def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bool = False) -> dict:
-    """Zoekt en voegt een product toe. Geeft een resultaat-dict terug zodat
-    main() een overzicht (prijs, niet-gevonden producten) kan bijhouden."""
+def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kandidaten: int = 4) -> list:
+    """Zoekt bij Picnic en geeft tot max_kandidaten resultaten terug
+    (id/naam/prijs), zonder iets te bestellen. Gedeeld door de
+    --voorbeeld-modus en de gewone bestel-modus."""
     try:
         resultaten = api.search(naam)
     except Exception as e:
         log(f"  ✗ Fout bij zoeken naar '{naam}': {e}", automatisch)
-        return {"status": "niet_gevonden", "gezocht_op": naam}
+        return []
 
     # search() geeft een lijst met groepen terug, elk met een 'items'-lijst
     # van daadwerkelijke producten.
@@ -276,38 +287,74 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
             gevonden_producten = items
             break
 
-    if not gevonden_producten:
+    kandidaten = []
+    for product in gevonden_producten[:max_kandidaten]:
+        if not product.get("id"):
+            continue
+        kandidaten.append({
+            "id": product["id"],
+            "naam": product.get("name", "onbekend product"),
+            # display_price staat in centen (bijv. 249 = €2,49); niet elk
+            # product heeft dit veld gevuld.
+            "prijs_cent": product.get("display_price"),
+        })
+    return kandidaten
+
+
+def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bool = False, gekozen: dict = None) -> dict:
+    """Voegt een product toe. Als 'gekozen' is meegegeven (uit de
+    controle-stap op de website) wordt dat exacte product besteld zonder
+    opnieuw te zoeken; anders wordt het eerste zoekresultaat gebruikt.
+    Geeft een resultaat-dict terug zodat main() een overzicht (prijs,
+    niet-gevonden producten) kan bijhouden."""
+    if gekozen and gekozen.get("id"):
+        try:
+            api.add_product(gekozen["id"], count=aantal)
+            log(f"  ✓ {aantal}x {gekozen.get('naam', naam)} toegevoegd (gekozen via website)", automatisch)
+            prijs_cent = gekozen.get("prijs_cent")
+            return {
+                "status": "toegevoegd",
+                "naam": gekozen.get("naam", naam),
+                "aantal": aantal,
+                "prijs_cent": prijs_cent * aantal if isinstance(prijs_cent, (int, float)) else None,
+            }
+        except Exception as e:
+            log(f"  ✗ Kon '{gekozen.get('naam', naam)}' niet toevoegen: {e}", automatisch)
+            return {"status": "fout", "gezocht_op": naam}
+
+    kandidaten = zoek_producten(api, naam, automatisch)
+    if not kandidaten:
         log(f"  ✗ Geen resultaat gevonden voor '{naam}'.", automatisch)
         return {"status": "niet_gevonden", "gezocht_op": naam}
 
-    product = gevonden_producten[0]
-    product_id = product.get("id")
-    product_naam = product.get("name", "onbekend product")
-    # display_price staat in centen (bijv. 249 = €2,49); niet elk product
-    # heeft dit veld gevuld.
-    prijs_cent = product.get("display_price")
-
-    if not product_id:
-        log(f"  ✗ Geen geldig product-ID gevonden voor '{naam}'.", automatisch)
-        return {"status": "niet_gevonden", "gezocht_op": naam}
-
+    product = kandidaten[0]
     try:
-        api.add_product(product_id, count=aantal)
-        log(f"  ✓ {aantal}x {product_naam} toegevoegd (gezocht op '{naam}')", automatisch)
+        api.add_product(product["id"], count=aantal)
+        log(f"  ✓ {aantal}x {product['naam']} toegevoegd (gezocht op '{naam}')", automatisch)
         # Toon 1-2 alternatieven ter controle, voor het geval het verkeerde
         # product gepakt is (bijv. ander merk of formaat).
-        alternatieven = [p.get("name") for p in gevonden_producten[1:3] if p.get("name")]
+        alternatieven = [k["naam"] for k in kandidaten[1:3]]
         if alternatieven:
             log(f"    (andere opties waren: {', '.join(alternatieven)})", automatisch)
+        prijs_cent = product.get("prijs_cent")
         return {
             "status": "toegevoegd",
-            "naam": product_naam,
+            "naam": product["naam"],
             "aantal": aantal,
             "prijs_cent": prijs_cent * aantal if isinstance(prijs_cent, (int, float)) else None,
         }
     except Exception as e:
-        log(f"  ✗ Kon '{product_naam}' niet toevoegen: {e}", automatisch)
+        log(f"  ✗ Kon '{product['naam']}' niet toevoegen: {e}", automatisch)
         return {"status": "fout", "gezocht_op": naam}
+
+
+def laad_gekozen_producten() -> dict:
+    if not GEKOZEN_BESTAND.exists():
+        return {}
+    try:
+        return json.loads(GEKOZEN_BESTAND.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
 def los_toevoegen(api: PicnicAPI):
@@ -328,15 +375,42 @@ def main():
         action="store_true",
         help="Draai zonder interactieve vragen (voor gebruik via een planner zoals launchd).",
     )
+    parser.add_argument(
+        "--voorbeeld",
+        action="store_true",
+        help="Zoek alleen producten op bij Picnic en schrijf de kandidaten weg "
+             "(product_voorstellen.json) zonder iets te bestellen — voor de controle-stap op de website.",
+    )
     args = parser.parse_args()
-    automatisch = args.automatisch
+    automatisch = args.automatisch or args.voorbeeld
 
     api = log_in(automatisch=automatisch)
     boodschappenlijst = laad_boodschappenlijst()
 
+    if args.voorbeeld:
+        log(f"Producten opzoeken bij Picnic (uit {LIJST_BESTAND.name}), nog niets bestellen:", automatisch)
+        voorstellen = {}
+        for item in boodschappenlijst:
+            kandidaten = zoek_producten(api, item["naam"], automatisch)
+            voorstellen[item["naam"]] = {"aantal": item.get("aantal", 1), "kandidaten": kandidaten}
+            if kandidaten:
+                log(f"  ✓ {item['naam']}: {len(kandidaten)} resultaat/resultaten", automatisch)
+            else:
+                log(f"  ✗ {item['naam']}: niets gevonden", automatisch)
+        VOORSTELLEN_BESTAND.write_text(json.dumps(voorstellen, ensure_ascii=False, indent=2), encoding="utf-8")
+        return
+
+    gekozen_producten = laad_gekozen_producten()
+
     log(f"Producten toevoegen aan mandje (uit {LIJST_BESTAND.name}):", automatisch)
     resultaten = [
-        voeg_product_toe(api, item["naam"], item.get("aantal", 1), automatisch=automatisch)
+        voeg_product_toe(
+            api,
+            item["naam"],
+            item.get("aantal", 1),
+            automatisch=automatisch,
+            gekozen=gekozen_producten.get(item["naam"]),
+        )
         for item in boodschappenlijst
     ]
 
@@ -349,6 +423,13 @@ def main():
         log(f"  - {item.get('name', '?')}", automatisch)
 
     schrijf_overzicht(resultaten)
+
+    # Eenmalig gebruiken: voorkomt dat een oude keuze een andere week's
+    # gelijknamige zoekopdracht overschrijft.
+    try:
+        GEKOZEN_BESTAND.unlink(missing_ok=True)
+    except Exception:
+        pass
 
     if automatisch:
         stuur_melding("Picnic boodschappen bijgewerkt", "De vaste lijst is toegevoegd aan je mandje.")

@@ -353,6 +353,166 @@ main#dagen-wrap {
   color: var(--muted);
 }
 
+/* --- Aantal-stappers (standaardlijst + ingrediënten) --- */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.stap-knop {
+  width: 26px;
+  height: 26px;
+  max-width: none;
+  padding: 0;
+  border-radius: 8px;
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.stepper .stepper-waarde {
+  min-width: 2.2em;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* --- Ingrediënten (per dag inzien/aanpassen) --- */
+.ingredienten-wrap {
+  margin-top: 10px;
+}
+
+.ingredienten-toggle {
+  width: auto;
+  max-width: none;
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 0;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.ingredienten-lijst {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ingredient-rij {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.ingredient-naam {
+  flex: 1;
+}
+
+.ingredient-verwijder {
+  width: auto;
+  max-width: none;
+  padding: 2px 8px;
+  background: transparent;
+  color: var(--accent);
+  border: none;
+  font-size: 0.9rem;
+}
+
+.ingredient-invoer {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ingredient-invoer input {
+  font-family: var(--font-body);
+  letter-spacing: normal;
+  text-align: left;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+}
+
+.ingredient-invoer .ing-naam {
+  flex: 3;
+}
+
+.ingredient-invoer .ing-aantal {
+  flex: 1;
+  min-width: 50px;
+}
+
+.ingredient-invoer button {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+/* --- Controle-scherm (productkeuzes na het zoeken) --- */
+.controle-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.controle-item:last-child {
+  border-bottom: none;
+}
+
+.controle-kop {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.controle-resultaat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+}
+
+.controle-prijs {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.controle-fout {
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+
+.controle-item button.secundair {
+  width: auto;
+  max-width: none;
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.alternatieven {
+  margin-top: 8px;
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
 /* --- Dagkaart --- */
 .dagkaart .dag,
 .dag-eyebrow {

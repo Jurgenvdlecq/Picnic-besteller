@@ -1,0 +1,41 @@
+name: Zoek producten op bij Picnic
+
+# Stap 1 van 2 bij bestellen via de website: zoekt voor elk product in
+# boodschappenlijst.txt wat Picnic aanbiedt (zonder iets te bestellen) en
+# schrijft dat weg naar product_voorstellen.json, zodat je op de website
+# kan controleren/kiezen vóórdat er echt besteld wordt. Wordt alleen door
+# de website zelf aangeroepen (via "Zoek producten op").
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  zoeken:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo ophalen
+        uses: actions/checkout@v4
+
+      - name: Python 3.13 installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Dependencies installeren
+        run: pip install -r requirements.txt
+
+      - name: Producten opzoeken bij Picnic
+        env:
+          PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
+        run: python3 picnic_boodschappen.py --voorbeeld
+
+      - name: Voorstellen terugzetten in de repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add product_voorstellen.json
+          git diff --staged --quiet || git commit -m "Productvoorstellen bijgewerkt"
+          git push

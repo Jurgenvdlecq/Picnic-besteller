@@ -254,7 +254,7 @@ elke telefoon of computer, ook die van je vrouw.
 4. Zet de website op het beginscherm zoals eerder beschreven (Delen-icoon →
    "Zet op beginscherm"), zodat het voortaan als een gewoon app-icoontje werkt.
 
-### Stap 16 — Weekmenu kiezen en bestellen
+### Stap 16 — Weekmenu kiezen
 
 De pagina toont bovenaan een menukaart en onderaan een kassabon-achtige
 samenvatting die live meetelt terwijl je kiest:
@@ -263,26 +263,48 @@ samenvatting die live meetelt terwijl je kiest:
    vrijdag wordt voorgesteld), en zie een briefje met wanneer er voor het
    laatst besteld is.
 2. **Vaste boodschappen**: vink een product uit als je het deze week niet
-   nodig hebt. Volgende week staat alles automatisch weer aan.
+   nodig hebt, en pas met de +/− het aantal aan voor deze week. Volgende
+   week staat alles weer op de standaardhoeveelheid.
 3. **Per dag**: gebruik de filterknopjes (Kip/Rund/Varken/Ei-vega/Alles) om
    te bladeren door gerechten uit het receptenboek, en tik op een gerecht om
-   het te kiezen. Woensdag staat vast. Dinsdag, vrijdag (bij 2 personen) en
-   zondag tonen in plaats daarvan de losse keuzelijstjes (aardappelvorm,
-   vlees, groente, snack) — tik gewoon aan wat je wilt.
-4. Ken je een gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
+   het te kiezen — dit geldt nu voor alle dagen, ook woensdag. Dinsdag en
+   vrijdag (bij 2 personen) tonen in plaats daarvan de losse keuzelijstjes
+   (aardappelvorm, vlees, groente) — tik gewoon aan wat je wilt. Bij zondag
+   kun je bij "Snack" meerdere dingen tegelijk aantikken (ze gaan allemaal
+   samen de airfryer in).
+4. Tik op **"Ingrediënten (n)"** onder een dag om te zien wat erin gaat —
+   je kan daar per ingrediënt het aantal aanpassen, iets weghalen, of een
+   extra ingrediënt toevoegen. Dit geldt alleen voor deze ene bestelling.
+5. Ken je een gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
    naam, kies een vleessoort en de ingrediënten (één per regel, bijv.
    "1 x kipfilet"). Het wordt meteen gekozen én permanent opgeslagen in
    `receptenboek.txt`, zodat het systeem 'm later ook automatisch voorstelt.
-5. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
+6. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
    fles wijn)? Vul dat in bij **"Extra producten"** en tik op **Toevoegen**.
-6. **Onderaan** zie je de volledige boodschappenlijst als kassabon, met een
+7. **Onderaan** zie je de volledige boodschappenlijst als kassabon, met een
    geschat totaalbedrag (gebaseerd op de vorige bestelling).
-7. Tevreden? Tik op **"Bestel nu bij Picnic"**. Na ongeveer een halve tot
-   hele minuut staan alle producten in je Picnic-mandje — was een product
-   niet vindbaar, dan zie je dat direct als waarschuwing onderaan. Open
-   daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
 
-### Stap 17 — Ook voor je vrouw
+### Stap 17 — Controleren en bestellen
+
+Picnic geeft niet altijd precies terug wat je bedoelt (bijv. een product met
+meerdere varianten, of eentje dat niet gevonden wordt) — daarom bestel je in
+twee stappen:
+
+1. Tik op **"Zoek producten op"**. Na ongeveer een halve tot hele minuut zie
+   je een lijst met wat Picnic per product heeft gevonden.
+2. Klopt er iets niet? Tik op **"Andere optie kiezen"** om tussen de
+   gevonden varianten te wisselen (bijv. bij "Kaastengels" met 2 soorten).
+   Staat er een waarschuwing dat iets niet gevonden is, dan voeg je dat
+   later zelf toe in de Picnic-app.
+3. Alles goed? Tik op **"Definitief bestellen bij Picnic"**. Na nog eens
+   een halve tot hele minuut staan de producten echt in je Picnic-mandje.
+4. Open daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
+
+> Wil je toch nog iets aanpassen aan het weekmenu? Tik op **"‹ Terug naar
+> weekmenu"** — let op: dan moet je daarna wel opnieuw op "Zoek producten
+> op" tikken.
+
+### Stap 18 — Ook voor je vrouw
 
 Herhaal Stap 15 op haar telefoon: dezelfde link, dezelfde pincode, en plak
 daarbij ofwel dezelfde sleutel (stuur die eenmalig via een privébericht),
