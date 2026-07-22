@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Picnic bestellen</title>
+  <title>Weekmenu</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -32,25 +32,49 @@
   </div>
 
   <div id="app" class="verborgen">
-    <h1>Voorgesteld weekmenu</h1>
-    <p class="top-info" id="week-info"></p>
-
-    <div id="dagen"></div>
-
-    <div class="dagkaart">
-      <div class="dag">Extra producten</div>
-      <p class="uitleg" style="margin: 4px 0 10px 0;">
-        Los van het weekmenu, bijv. iets wat je gewoon een keer nodig hebt.
-      </p>
-      <div id="losse-lijst"></div>
-      <div class="losse-invoer">
-        <input type="text" id="los-naam" placeholder="Productnaam" />
-        <input type="text" id="los-aantal" placeholder="Aantal" inputmode="numeric" value="1" />
-        <button id="los-toevoegen-knop" class="secundair">Toevoegen</button>
+    <header class="top">
+      <div class="eyebrow">Picnic · deze week</div>
+      <h1>Weekmenu</h1>
+      <p id="week-info"></p>
+      <div class="kop-rij">
+        <div class="personen-switch" id="personen-switch">
+          <div class="optie" data-personen="2">2 personen</div>
+          <div class="optie" data-personen="4">4 personen</div>
+        </div>
+        <div class="laatst-besteld" id="laatst-besteld"></div>
       </div>
-    </div>
+    </header>
+
+    <main id="dagen-wrap">
+      <div class="kaart">
+        <div class="kaart-titel">
+          <span class="naam">Vaste boodschappen</span>
+          <span class="tag">deze week</span>
+        </div>
+        <div id="standaard-lijst"></div>
+        <div class="std-footnote">Vink uit wat je deze week niet nodig hebt. Volgende week staat alles weer aan.</div>
+      </div>
+
+      <div id="dagen"></div>
+
+      <div class="kaart">
+        <div class="kaart-titel">
+          <span class="naam">Extra producten</span>
+          <span class="tag">los</span>
+        </div>
+        <div id="losse-lijst"></div>
+        <div class="losse-invoer">
+          <input type="text" id="los-naam" placeholder="Productnaam" />
+          <input type="text" id="los-aantal" placeholder="Aantal" inputmode="numeric" value="1" />
+          <button id="los-toevoegen-knop" class="secundair">Toevoegen</button>
+        </div>
+      </div>
+    </main>
+
+    <div id="kassabon-wrap"></div>
 
     <div id="bestel-knop-wrap">
+      <div id="waarschuwingen"></div>
       <div id="status"></div>
       <button id="bestel-knop">Bestel nu bij Picnic</button>
     </div>

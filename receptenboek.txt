@@ -2,6 +2,7 @@
 # =============
 # Jullie complete verzameling recepten. Elk recept:
 #   Gerecht: <naam>
+#   Vlees: <kip/rund/varken/ei-vega/overig>   (voor het filteren op de website)
 #   Label: <label>       (optioneel — zie labels hieronder)
 #   Actief: ja/nee        (optioneel — standaard "ja" als je niks invult)
 #   gevolgd door ingrediënten (aantal x product)
@@ -21,6 +22,7 @@
 # Woensdag gebruikt altijd het gerecht "Kip met rijst en paprika" hieronder.
 
 Gerecht: Kip met rijst en paprika
+Vlees: kip
 1 x kipfilet
 1 x rijst
 2 x paprika
@@ -29,6 +31,7 @@ Gerecht: Kip met rijst en paprika
 # --- Label: makkelijk (maandag) ---
 
 Gerecht: Kofta met pitabroodjes
+Vlees: rund
 Label: makkelijk
 1 x rundergehakt
 4 x pitabroodjes
@@ -36,6 +39,7 @@ Label: makkelijk
 1 x knoflooksaus
 
 Gerecht: Pasta bolognese uit een pot
+Vlees: rund
 Label: makkelijk
 1 x gehakt (500 gram)
 1 x pasta
@@ -43,12 +47,14 @@ Label: makkelijk
 1 x geraspte kaas
 
 Gerecht: Rijst met roerei en groente
+Vlees: ei-vega
 Label: makkelijk
 1 x rijst
 6 x eieren
 1 x wokgroente
 
 Gerecht: Kipsaté met rijst
+Vlees: kip
 Label: makkelijk
 1 x kipfilet
 1 x saté saus
@@ -56,6 +62,7 @@ Label: makkelijk
 1 x kroepoek
 
 Gerecht: Nasi met kipreepjes en ei
+Vlees: kip
 Label: makkelijk
 1 x rijst
 1 x kipfilet
@@ -64,6 +71,7 @@ Label: makkelijk
 1 x wokgroente
 
 Gerecht: Burrito bowl met gehakt en rijst
+Vlees: rund
 Label: makkelijk
 1 x rundergehakt
 1 x rijst
@@ -72,6 +80,7 @@ Label: makkelijk
 1 x geraspte kaas
 
 Gerecht: Griekse kip bowl met tzatziki
+Vlees: kip
 Label: makkelijk
 1 x kipfilet
 1 x rijst
@@ -82,12 +91,14 @@ Label: makkelijk
 # --- Label: vrijdag_veel (vrijdag bij 4 personen) ---
 
 Gerecht: Aardappelblokjes met hamburger en broccoli
+Vlees: rund
 Label: vrijdag_veel
 1 x aardappelblokjes
 4 x hamburger
 1 x broccoli
 
 Gerecht: Pannenkoeken
+Vlees: ei-vega
 Label: vrijdag_veel
 1 x pannenkoekenmix
 1 x melk
@@ -95,6 +106,7 @@ Label: vrijdag_veel
 1 x stroop
 
 Gerecht: Ovenschotel aardappel, gehakt en groente
+Vlees: rund
 Label: vrijdag_veel
 1 x aardappelblokjes
 1 x rundergehakt
@@ -102,6 +114,7 @@ Label: vrijdag_veel
 1 x geraspte kaas
 
 Gerecht: Loaded fries met kipreepjes
+Vlees: kip
 Label: vrijdag_veel
 1 x aviko friet
 1 x kipfilet
@@ -111,17 +124,20 @@ Label: vrijdag_veel
 # --- Geen label (algemene pool, donderdag) ---
 
 Gerecht: Rundergehaktballen met zoete aardappel
+Vlees: rund
 1 x rundergehakt
 2 x zoete aardappel
 1 x ui
 1 x knoflook
 
 Gerecht: Omelet met spinazie en kip
+Vlees: kip
 6 x eieren
 1 x spinazie
 1 x kipfilet
 
 Gerecht: Rundergehakt-curry
+Vlees: rund
 1 x rundergehakt
 1 x kokosmelk
 1 x paprika
@@ -129,17 +145,20 @@ Gerecht: Rundergehakt-curry
 1 x currypasta
 
 Gerecht: Eieren met spek en avocado
+Vlees: varken
 6 x eieren
 1 x spekreepjes
 2 x avocado
 
 Gerecht: Kip tikka masala met rijst
+Vlees: kip
 1 x kipfilet
 1 x tikka masala saus
 1 x rijst
 1 x ui
 
 Gerecht: Beef stroganoff met rijst
+Vlees: rund
 1 x runderreepjes
 1 x champignons
 1 x ui
@@ -147,36 +166,42 @@ Gerecht: Beef stroganoff met rijst
 1 x rijst
 
 Gerecht: Gehaktschotel met bloemkoolpuree
+Vlees: rund
 1 x rundergehakt
 1 x bloemkool
 1 x ui
 1 x geraspte kaas
 
 Gerecht: Kip fajita bowl
+Vlees: kip
 1 x kipfilet
 2 x paprika
 1 x ui
 1 x rijst
 
 Gerecht: Runderreepjes teriyaki met broccoli
+Vlees: rund
 1 x runderreepjes
 1 x teriyakisaus
 1 x broccoli
 1 x rijst
 
 Gerecht: Gevulde paprika met gehakt en rijst
+Vlees: rund
 1 x rundergehakt
 3 x paprika
 1 x rijst
 1 x geraspte kaas
 
 Gerecht: Kip cacciatore met aardappelpuree
+Vlees: kip
 1 x kipfilet
 1 x tomatensaus
 1 x champignons
 1 x aardappelpuree
 
 Gerecht: Chili con carne met rijst
+Vlees: rund
 1 x rundergehakt
 1 x kidneybonen
 1 x tomatenblokjes
@@ -186,6 +211,7 @@ Gerecht: Chili con carne met rijst
 # --- Actief: nee (naslag, niet in automatische rotatie) ---
 
 Gerecht: Kip cordon bleu zelfgemaakt
+Vlees: kip
 Actief: nee
 4 x kipfilet
 4 x ham
@@ -194,6 +220,7 @@ Actief: nee
 2 x eieren
 
 Gerecht: Beef Wellington
+Vlees: rund
 Actief: nee
 1 x runderhaas
 1 x bladerdeeg

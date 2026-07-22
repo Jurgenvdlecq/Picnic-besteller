@@ -256,21 +256,30 @@ elke telefoon of computer, ook die van je vrouw.
 
 ### Stap 16 — Weekmenu kiezen en bestellen
 
-1. Je ziet meteen een voorgesteld weekmenu, per dag.
-2. Tik op **"Ander voorstel"** voor een ander willekeurig gerecht die dag,
-   of (bij maandag/donderdag/vrijdag) op **"Kies zelf recept"** om te zoeken
-   in het hele receptenboek. Woensdag staat vast.
-3. Ken je dat gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
-   naam en de ingrediënten (één per regel, bijv. "1 x kipfilet") en tik op
-   toevoegen. Het gerecht wordt meteen voor die dag gekozen, én permanent
-   opgeslagen in `receptenboek.txt` — vanaf nu kan het systeem 'm ook in de
-   toekomst weer automatisch voorstellen.
-4. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
-   fles wijn)? Vul dat in bij **"Extra producten"** onderaan en tik op
-   **Toevoegen**. Je kan er zoveel toevoegen als je wilt, en weer
-   verwijderen met het kruisje.
-5. Tevreden? Tik onderaan op **"Bestel nu bij Picnic"**. Na ongeveer een
-   halve tot hele minuut staan alle producten in je Picnic-mandje — open
+De pagina toont bovenaan een menukaart en onderaan een kassabon-achtige
+samenvatting die live meetelt terwijl je kiest:
+
+1. **Bovenin**: kies "2 personen" of "4 personen" (bepaalt o.a. wat er
+   vrijdag wordt voorgesteld), en zie een briefje met wanneer er voor het
+   laatst besteld is.
+2. **Vaste boodschappen**: vink een product uit als je het deze week niet
+   nodig hebt. Volgende week staat alles automatisch weer aan.
+3. **Per dag**: gebruik de filterknopjes (Kip/Rund/Varken/Ei-vega/Alles) om
+   te bladeren door gerechten uit het receptenboek, en tik op een gerecht om
+   het te kiezen. Woensdag staat vast. Dinsdag, vrijdag (bij 2 personen) en
+   zondag tonen in plaats daarvan de losse keuzelijstjes (aardappelvorm,
+   vlees, groente, snack) — tik gewoon aan wat je wilt.
+4. Ken je een gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
+   naam, kies een vleessoort en de ingrediënten (één per regel, bijv.
+   "1 x kipfilet"). Het wordt meteen gekozen én permanent opgeslagen in
+   `receptenboek.txt`, zodat het systeem 'm later ook automatisch voorstelt.
+5. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
+   fles wijn)? Vul dat in bij **"Extra producten"** en tik op **Toevoegen**.
+6. **Onderaan** zie je de volledige boodschappenlijst als kassabon, met een
+   geschat totaalbedrag (gebaseerd op de vorige bestelling).
+7. Tevreden? Tik op **"Bestel nu bij Picnic"**. Na ongeveer een halve tot
+   hele minuut staan alle producten in je Picnic-mandje — was een product
+   niet vindbaar, dan zie je dat direct als waarschuwing onderaan. Open
    daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
 
 ### Stap 17 — Ook voor je vrouw
