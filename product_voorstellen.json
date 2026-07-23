@@ -1,0 +1,656 @@
+{
+  "rijst": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1016785",
+        "naam": "Picnic snelkook zilvervliesrijst",
+        "prijs_cent": 145
+      },
+      {
+        "id": "s1045322",
+        "naam": "Lassie kant & klare basmati minuutje",
+        "prijs_cent": 215
+      },
+      {
+        "id": "s1012433",
+        "naam": "Lassie basmatirijst duurzaam",
+        "prijs_cent": 229
+      },
+      {
+        "id": "s1178237",
+        "naam": "Lassie basmatirijst",
+        "prijs_cent": 359
+      }
+    ]
+  },
+  "kipfilet": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1017475",
+        "naam": "'t Slagershuys kipdijfiletreepjes",
+        "prijs_cent": 570
+      },
+      {
+        "id": "s1016142",
+        "naam": "'t Slagershuys kipfilets",
+        "prijs_cent": 829
+      },
+      {
+        "id": "s1015169",
+        "naam": "'t Slagershuys kipdijfilets",
+        "prijs_cent": 859
+      },
+      {
+        "id": "s1010671",
+        "naam": "Picnic kipfilet",
+        "prijs_cent": 335
+      }
+    ]
+  },
+  "eieren": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
+      },
+      {
+        "id": "s1141604",
+        "naam": "Picnic bio eieren",
+        "prijs_cent": 459
+      },
+      {
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
+      },
+      {
+        "id": "s1139960",
+        "naam": "Picnic witte vrije uitloop eieren",
+        "prijs_cent": 199
+      }
+    ]
+  },
+  "nasi kruidenmix": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1009788",
+        "naam": "Honig nasi speciaal mix",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1186994",
+        "naam": "The Spice Club nasi & bami",
+        "prijs_cent": 699
+      },
+      {
+        "id": "s1112257",
+        "naam": "Picnic nasi kruidenmix",
+        "prijs_cent": 115
+      },
+      {
+        "id": "s1012503",
+        "naam": "Conimex kruidenmix nasi",
+        "prijs_cent": 99
+      }
+    ]
+  },
+  "wokgroente": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1002987",
+        "naam": "Mexicaanse roerbakgroenten",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1151321",
+        "naam": "Macaroni & spaghettigroenten",
+        "prijs_cent": 189
+      },
+      {
+        "id": "s1000534",
+        "naam": "Italiaanse roerbakgroenten",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1000624",
+        "naam": "Picnic bami & nasi mix",
+        "prijs_cent": 169
+      }
+    ]
+  },
+  "Rostirondjes": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1009065",
+        "naam": "Aviko rösti rondjes",
+        "prijs_cent": 289
+      },
+      {
+        "id": "s1009065",
+        "naam": "Aviko rösti rondjes",
+        "prijs_cent": 289
+      },
+      {
+        "id": "s1008993",
+        "naam": "Aviko rösti original",
+        "prijs_cent": 229
+      },
+      {
+        "id": "s1185596",
+        "naam": "Aviko rösti rondjes bacon & ui",
+        "prijs_cent": 299
+      }
+    ]
+  },
+  "Hamburger": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1004024",
+        "naam": "'t Slagershuys runderburgers",
+        "prijs_cent": 489
+      },
+      {
+        "id": "s1003136",
+        "naam": "'t Slagershuys runderburgers",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1002500",
+        "naam": "Premium Black Angus burgers",
+        "prijs_cent": 469
+      },
+      {
+        "id": "s1060052",
+        "naam": "Pure Angus Black Angus burgers",
+        "prijs_cent": 699
+      }
+    ]
+  },
+  "Bloemkool": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1167116",
+        "naam": "Picnic bloemkool",
+        "prijs_cent": 255
+      },
+      {
+        "id": "s1015725",
+        "naam": "Bio bloemkool",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1001461",
+        "naam": "Bloemkool",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1187261",
+        "naam": "Kleine bloemkool",
+        "prijs_cent": 179
+      }
+    ]
+  },
+  "rundergehakt": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425
+      },
+      {
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555
+      },
+      {
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425
+      },
+      {
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555
+      }
+    ]
+  },
+  "zoete aardappel": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1016570",
+        "naam": "Zoete aardappelen",
+        "prijs_cent": 339
+      },
+      {
+        "id": "s1185937",
+        "naam": "Bio zoete aardappelen",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1009501",
+        "naam": "Zoete aardappel in blokjes",
+        "prijs_cent": 269
+      },
+      {
+        "id": "s1000482",
+        "naam": "Zoete aardappel ovenfriet",
+        "prijs_cent": 209
+      }
+    ]
+  },
+  "ui": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1115350",
+        "naam": "Rode uien",
+        "prijs_cent": 109
+      },
+      {
+        "id": "s1059821",
+        "naam": "Bosui",
+        "prijs_cent": 99
+      },
+      {
+        "id": "s1115349",
+        "naam": "Gele uien",
+        "prijs_cent": 109
+      },
+      {
+        "id": "s1115349",
+        "naam": "Gele uien",
+        "prijs_cent": 109
+      }
+    ]
+  },
+  "knoflook": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1018496",
+        "naam": "Calvé knoflooksaus",
+        "prijs_cent": 289
+      },
+      {
+        "id": "s1015456",
+        "naam": "Bio knoflook",
+        "prijs_cent": 145
+      },
+      {
+        "id": "s1001194",
+        "naam": "Knoflook",
+        "prijs_cent": 145
+      },
+      {
+        "id": "s1185003",
+        "naam": "Knoflook",
+        "prijs_cent": 275
+      }
+    ]
+  },
+  "paprika": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1001504",
+        "naam": "Rode paprika",
+        "prijs_cent": 99
+      },
+      {
+        "id": "s1049163",
+        "naam": "Zoete puntpaprikamix",
+        "prijs_cent": 329
+      },
+      {
+        "id": "s1014332",
+        "naam": "Bio puntpaprika's",
+        "prijs_cent": 299
+      },
+      {
+        "id": "s1001333",
+        "naam": "Paprika mix",
+        "prijs_cent": 199
+      }
+    ]
+  },
+  "Vleeslapje": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1003906",
+        "naam": "'t Slagershuys filetlapjes à la minute",
+        "prijs_cent": 359
+      },
+      {
+        "id": "s1002281",
+        "naam": "'t Slagershuys varkensschnitzels",
+        "prijs_cent": 326
+      },
+      {
+        "id": "s1018348",
+        "naam": "'t Slagershuys speklapjes à la minute",
+        "prijs_cent": 479
+      },
+      {
+        "id": "s1167531",
+        "naam": "'t Slagershuys filetlapjes hot & spicy",
+        "prijs_cent": 499
+      }
+    ]
+  },
+  "Snijbonen": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1010401",
+        "naam": "Snijbonen",
+        "prijs_cent": 259
+      },
+      {
+        "id": "s1000560",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 239
+      },
+      {
+        "id": "s1016546",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 379
+      },
+      {
+        "id": "s1017039",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 199
+      }
+    ]
+  },
+  "Patat (airfryer)": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1011212",
+        "naam": "Aviko SuperCrunch Franse frites",
+        "prijs_cent": 249
+      },
+      {
+        "id": "s1009802",
+        "naam": "Aviko SuperCrunch airfryer pommes frites",
+        "prijs_cent": 249
+      },
+      {
+        "id": "s1000081",
+        "naam": "Aviko oma's smulfrieten",
+        "prijs_cent": 289
+      },
+      {
+        "id": "s1006435",
+        "naam": "Aviko Franse frites",
+        "prijs_cent": 299
+      }
+    ]
+  },
+  "Mini kaassoufflé": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1160997",
+        "naam": "Picnic mini kaassoufflés",
+        "prijs_cent": 339
+      },
+      {
+        "id": "s1154314",
+        "naam": "Mora mini kaassoufflés",
+        "prijs_cent": 319
+      },
+      {
+        "id": "s1016658",
+        "naam": "Mora oven Goudse mini kaassoufflés",
+        "prijs_cent": 499
+      },
+      {
+        "id": "s1007758",
+        "naam": "Mora kaassoufflés",
+        "prijs_cent": 339
+      }
+    ]
+  },
+  "Alpro yoghurt mild & creamy natural": {
+    "aantal": 3,
+    "kandidaten": []
+  },
+  "Rijstwafels standaard": {
+    "aantal": 1,
+    "kandidaten": []
+  },
+  "Appelmoesjes (kleine bakjes) zonder toegevoegde suiker": {
+    "aantal": 1,
+    "kandidaten": []
+  },
+  "WC papier": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1063760",
+        "naam": "Picnic toiletpapier 4 laags",
+        "prijs_cent": 435
+      },
+      {
+        "id": "s1132256",
+        "naam": "Page kussenzacht toiletpapier 3-laags",
+        "prijs_cent": 466
+      },
+      {
+        "id": "s1000744",
+        "naam": "Page toiletpapier kussenzacht 3 laags",
+        "prijs_cent": 449
+      },
+      {
+        "id": "s1072622",
+        "naam": "Page toiletpapier puur",
+        "prijs_cent": 349
+      }
+    ]
+  },
+  "Keukenrol": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1063758",
+        "naam": "Picnic keukenpapier 3 laags",
+        "prijs_cent": 355
+      },
+      {
+        "id": "s1010945",
+        "naam": "Edet keukenpapier extra stevig",
+        "prijs_cent": 369
+      },
+      {
+        "id": "s1014862",
+        "naam": "Edet easypull keukenrol navul",
+        "prijs_cent": 449
+      },
+      {
+        "id": "s1149420",
+        "naam": "Nalys wish keukenpapier",
+        "prijs_cent": 499
+      }
+    ]
+  },
+  "Hagelslag XXL": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1184322",
+        "naam": "Picnic XXL hagelslag melk",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1143759",
+        "naam": "Picnic XXL hagelslag puur met autootjes",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1005537",
+        "naam": "Venz hagelslag melk xxl",
+        "prijs_cent": 499
+      },
+      {
+        "id": "s1014619",
+        "naam": "Venz hagelslag wit xxl",
+        "prijs_cent": 419
+      }
+    ]
+  },
+  "Drinkyoghurt framboos 0%": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1152659",
+        "naam": "Picnic drinkyoghurt framboos 0%",
+        "prijs_cent": 129
+      },
+      {
+        "id": "s1009462",
+        "naam": "Optimel drinkyoghurt framboos 0%",
+        "prijs_cent": 279
+      },
+      {
+        "id": "s1002110",
+        "naam": "Optimel drinkyoghurt framboos 0%",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1181045",
+        "naam": "Optimel drinkyoghurt vezels framboos blauwe bes 0%",
+        "prijs_cent": 219
+      }
+    ]
+  },
+  "Picnic Lungo Forte": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1012887",
+        "naam": "Picnic lungo forte",
+        "prijs_cent": 529
+      }
+    ]
+  },
+  "Scharreleieren": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
+      },
+      {
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
+      },
+      {
+        "id": "s1014236",
+        "naam": "Blije Kip witjes vrije uitloop eieren",
+        "prijs_cent": 379
+      }
+    ]
+  },
+  "Bananen": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1018231",
+        "naam": "Bananen",
+        "prijs_cent": 145
+      },
+      {
+        "id": "s1018276",
+        "naam": "Chiquita bananen",
+        "prijs_cent": 229
+      },
+      {
+        "id": "s1018231",
+        "naam": "Bananen",
+        "prijs_cent": 145
+      },
+      {
+        "id": "s1018276",
+        "naam": "Chiquita bananen",
+        "prijs_cent": 229
+      }
+    ]
+  },
+  "Kanzi appels klein": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1000094",
+        "naam": "Kanzi appels klein",
+        "prijs_cent": 339
+      }
+    ]
+  },
+  "Campina magere milde kwark vanille": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1006744",
+        "naam": "Campina magere milde kwark vanille",
+        "prijs_cent": 199
+      }
+    ]
+  },
+  "Coca cola zero 250 ml": {
+    "aantal": 8,
+    "kandidaten": []
+  },
+  "Komo trekbandzakken 60 liter": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1011805",
+        "naam": "Komo trekbandzakken 60 liter",
+        "prijs_cent": 199
+      }
+    ]
+  },
+  "Melkunie Proteine kwark aardbei 200 gram": {
+    "aantal": 4,
+    "kandidaten": []
+  },
+  "Picnic magere melk": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1010532",
+        "naam": "Picnic magere melk",
+        "prijs_cent": 119
+      },
+      {
+        "id": "s1139035",
+        "naam": "Picnic magere melk houdbaar",
+        "prijs_cent": 79
+      },
+      {
+        "id": "s1185830",
+        "naam": "Picnic bio magere melk",
+        "prijs_cent": 129
+      }
+    ]
+  },
+  "Aviko Super crunch franse friet": {
+    "aantal": 2,
+    "kandidaten": []
+  }
+}
