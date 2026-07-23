@@ -581,7 +581,9 @@ main#voorraad-wrap {
   text-decoration: line-through;
 }
 
-.std-naam {
+/* input[type="text"] (0,1,1) heeft anders voorrang op .std-naam (0,1,0) en
+   valt terug op de grote pincode-stijl — daarom hier expliciet input.std-naam. */
+input.std-naam {
   flex: 1;
   width: auto;
   max-width: none;
@@ -598,7 +600,7 @@ main#voorraad-wrap {
   margin: -3px -5px;
 }
 
-.std-naam:focus {
+input.std-naam:focus {
   background: var(--bg);
   border-color: var(--border);
   outline: none;
