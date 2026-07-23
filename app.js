@@ -1119,10 +1119,27 @@ function renderControleScherm() {
       item.appendChild(maakEl("div", "controle-fout", "Niet gevonden bij Picnic — voeg dit later zelf toe in de app."));
     } else {
       const resultaat = maakEl("div", "controle-resultaat");
-      resultaat.appendChild(maakEl("span", "", gekozen.naam));
-      if (typeof gekozen.prijs_cent === "number") {
-        resultaat.appendChild(maakEl("span", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+
+      // Afbeelding
+      if (gekozen.image_url) {
+        const img = document.createElement("img");
+        img.src = gekozen.image_url;
+        img.className = "controle-afbeelding";
+        img.alt = gekozen.naam;
+        resultaat.appendChild(img);
       }
+
+      // Naam en details
+      const info = maakEl("div", "controle-info");
+      info.appendChild(maakEl("div", "controle-naam", gekozen.naam));
+      if (gekozen.subtitle) {
+        info.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
+      }
+      if (typeof gekozen.prijs_cent === "number") {
+        info.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+      }
+      resultaat.appendChild(info);
+
       item.appendChild(resultaat);
 
       if (kandidaten.length > 1) {
@@ -1139,12 +1156,39 @@ function toonAlternatieven(item, naam, kandidaten, huidigeIndex) {
 
   const lijst = maakEl("div", "alternatieven");
   kandidaten.forEach((k, i) => {
-    const prijsTekst = typeof k.prijs_cent === "number" ? ` — €${(k.prijs_cent / 100).toFixed(2)}` : "";
-    const optie = maakKnop("chip" + (i === huidigeIndex ? " actief" : ""), `${k.naam}${prijsTekst}`, () => {
+    const wrapper = maakEl("div", "alternatieven-item");
+    if (i === huidigeIndex) wrapper.classList.add("actief");
+
+    if (k.image_url) {
+      const img = document.createElement("img");
+      img.src = k.image_url;
+      img.className = "alternatieven-img";
+      img.alt = k.naam;
+      wrapper.appendChild(img);
+    }
+
+    const text = maakEl("div", "alternatieven-text");
+    text.appendChild(maakEl("div", "", k.naam));
+    if (k.subtitle) {
+      text.appendChild(maakEl("div", "alternatieven-detail", k.subtitle));
+    }
+    if (typeof k.prijs_cent === "number") {
+      text.appendChild(maakEl("div", "alternatieven-prijs", `€${(k.prijs_cent / 100).toFixed(2)}`));
+    }
+    wrapper.appendChild(text);
+
+    const knop = maakKnop("", "", () => {
       staat.productKeuzeIndex[naam] = i;
       renderControleScherm();
     });
-    lijst.appendChild(optie);
+    knop.className = "";
+    knop.innerHTML = "";
+    knop.appendChild(wrapper);
+    knop.style.display = "block";
+    knop.style.width = "100%";
+    knop.style.marginBottom = "8px";
+    knop.style.textAlign = "left";
+    lijst.appendChild(knop);
   });
   item.appendChild(lijst);
 }

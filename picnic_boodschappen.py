@@ -294,9 +294,9 @@ def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kan
         kandidaten.append({
             "id": product["id"],
             "naam": product.get("name", "onbekend product"),
-            # display_price staat in centen (bijv. 249 = €2,49); niet elk
-            # product heeft dit veld gevuld.
             "prijs_cent": product.get("display_price"),
+            "image_url": product.get("image_url"),
+            "subtitle": product.get("subtitle"),  # bijv. "750 gram" of "1 stuk"
         })
     return kandidaten
 

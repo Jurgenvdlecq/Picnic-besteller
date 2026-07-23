@@ -863,3 +863,109 @@ main#dagen-wrap {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* --- Controle-scherm productdetails --- */
+.controle-resultaat {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-radius: 8px;
+  background: var(--card);
+  padding: 8px;
+}
+
+.controle-afbeelding {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.controle-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.controle-naam {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.controle-detail {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.controle-prijs {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+/* --- Alternatieven met afbeeldingen --- */
+.alternatieven {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.alternatieven button {
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.alternatieven-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.alternatieven-item.actief {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.alternatieven-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.alternatieven-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alternatieven-text > div:first-child {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.alternatieven-detail {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.alternatieven-prijs {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
