@@ -583,8 +583,25 @@ main#voorraad-wrap {
 
 .std-naam {
   flex: 1;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  font-family: var(--font-body);
   font-size: 0.94rem;
-  cursor: pointer;
+  letter-spacing: normal;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 3px 5px;
+  margin: -3px -5px;
+}
+
+.std-naam:focus {
+  background: var(--bg);
+  border-color: var(--border);
+  outline: none;
 }
 
 .std-aantal {

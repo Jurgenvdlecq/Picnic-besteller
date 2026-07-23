@@ -558,6 +558,27 @@ function herbouwReceptenboekTekst() {
   return header + blokken.join("\n\n") + "\n";
 }
 
+// Herbouwt standaardlijst.txt uit staat.standaardCategorieen (behoudt de
+// categorie-indeling). Gebruikt als een naam daar handmatig aangepast is
+// (bv. omdat Picnic het product niet vond onder de oude naam).
+function herbouwStandaardlijstTekst() {
+  const regels = [
+    "# Standaardlijst",
+    "# ================",
+    "# Deze producten worden ELKE week automatisch toegevoegd aan de",
+    "# boodschappenlijst, los van het gekozen weekmenu. Pas hoeveelheden of",
+    "# producten hier aan naar wens, of voeg een nieuwe regel toe onder de",
+    "# categorie waar het bij hoort.",
+    "",
+  ];
+  for (const categorie of staat.standaardCategorieen) {
+    regels.push(`== ${categorie.naam} ==`);
+    for (const item of categorie.items) regels.push(`${item.aantal} x ${item.naam}`);
+    regels.push("");
+  }
+  return regels.join("\n").trimEnd() + "\n";
+}
+
 function receptenboekHeaderUitRuweTekst(ruweTekst) {
   const match = ruweTekst.match(/^Gerecht:/m);
   return match ? ruweTekst.slice(0, match.index) : "";
@@ -734,6 +755,7 @@ let staat = {
   standaardlijst: null,
   standaardCategorieen: [],
   standaardUitgevinkt: new Set(),
+  standaardlijstGewijzigd: false,
   voorraadCategorieen: [],
   voorraadStatus: {},
   receptenboek: null,
@@ -839,9 +861,23 @@ function renderStandaardlijst() {
       const rij = maakEl("div", "std-item" + (uitgevinkt ? " uit" : ""));
       rij.appendChild(maakKnop("vinkje" + (uitgevinkt ? "" : " aan"), uitgevinkt ? "" : "✓", wissel));
 
-      const naamEl = maakEl("div", "std-naam", item.naam);
-      naamEl.onclick = wissel;
-      rij.appendChild(naamEl);
+      // Bewerkbaar veld i.p.v. platte tekst: als Picnic een product niet
+      // vindt, kun je de naam hier meteen corrigeren (bv. exact zoals
+      // Picnic het zelf noemt) — dat wordt permanent opgeslagen in
+      // standaardlijst.txt.
+      const naamVeld = document.createElement("input");
+      naamVeld.type = "text";
+      naamVeld.className = "std-naam";
+      naamVeld.value = item.naam;
+      naamVeld.onchange = () => {
+        const nieuweNaam = naamVeld.value.trim();
+        if (nieuweNaam && nieuweNaam !== item.naam) {
+          item.naam = nieuweNaam;
+          staat.standaardlijstGewijzigd = true;
+        }
+        ververs();
+      };
+      rij.appendChild(naamVeld);
 
       const stepper = maakEl("div", "stepper");
       stepper.appendChild(
@@ -1774,7 +1810,7 @@ function bouwControleItem(naam, info, compact) {
   } else {
     const resultaat = maakEl("div", "controle-resultaat");
 
-    if (!compact && gekozen.image_url) {
+    if (gekozen.image_url) {
       const img = document.createElement("img");
       img.src = gekozen.image_url;
       img.className = "controle-afbeelding";
@@ -1784,31 +1820,29 @@ function bouwControleItem(naam, info, compact) {
 
     const infoKolom = maakEl("div", "controle-info");
     infoKolom.appendChild(maakEl("div", "controle-naam", gekozen.naam));
-    if (!compact && gekozen.subtitle) {
+    if (gekozen.subtitle) {
       infoKolom.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
     }
     if (typeof gekozen.prijs_cent === "number") {
       infoKolom.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
     }
-    if (!compact && heeftVoorkeurMismatch(naam, gekozen)) {
+    if (heeftVoorkeurMismatch(naam, gekozen)) {
       infoKolom.appendChild(maakEl("div", "controle-mismatch", "⚠ niet je gebruikelijke keuze"));
     }
     resultaat.appendChild(infoKolom);
     item.appendChild(resultaat);
 
-    if (!compact) {
-      const acties = maakEl("div", "controle-acties");
-      if (kandidaten.length > 1) {
-        acties.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
-      }
-      acties.appendChild(maakKnop("secundair", "Vervangen", () => vervangProduct(naam, info)));
-      acties.appendChild(maakKnop("secundair", "Parkeren", () => {
-        info.geparkeerd = true;
-        renderControleScherm();
-      }));
-      acties.appendChild(maakKnop("secundair", "⭐ Voorkeur opslaan", () => slaProductVoorkeurOp(naam, gekozen)));
-      item.appendChild(acties);
+    const acties = maakEl("div", "controle-acties");
+    if (kandidaten.length > 1) {
+      acties.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
     }
+    acties.appendChild(maakKnop("secundair", "Vervangen", () => vervangProduct(naam, info)));
+    acties.appendChild(maakKnop("secundair", "Parkeren", () => {
+      info.geparkeerd = true;
+      renderControleScherm();
+    }));
+    acties.appendChild(maakKnop("secundair", "⭐ Voorkeur opslaan", () => slaProductVoorkeurOp(naam, gekozen)));
+    item.appendChild(acties);
   }
 
   return item;
@@ -1964,6 +1998,7 @@ async function laadWeekmenuScherm() {
   staat.standaardCategorieen = laadStandaardlijstPerCategorie(standaardTekst);
   staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
   staat.standaardUitgevinkt = new Set();
+  staat.standaardlijstGewijzigd = false;
   staat.voorraadCategorieen = laadVoorraadCategorieen(voorraadTekst);
   staat.voorraadStatus = {};
   staat.geschiedenis = laadGeschiedenis(geschiedenisTekst);
@@ -2089,6 +2124,10 @@ function renderLaatsteBestellingBanner() {
 async function slaWeekmenuOp() {
   if (staat.receptenboekGewijzigd) {
     await githubPutFile("receptenboek.txt", herbouwReceptenboekTekst(), "Receptenboek bijgewerkt via de website");
+  }
+  if (staat.standaardlijstGewijzigd) {
+    await githubPutFile("standaardlijst.txt", herbouwStandaardlijstTekst(), "Vaste boodschap aangepast via de website");
+    staat.standaardlijstGewijzigd = false;
   }
 
   const alleProducten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
