@@ -454,7 +454,13 @@ function ghHeaders(extra) {
 }
 
 async function githubGetFileSha(path) {
-  const res = await fetch(`${API}/contents/${encodeURIComponent(path)}?ref=main`, { headers: ghHeaders() });
+  // cache: "no-store" voorkomt dat een verouderde sha wordt hergebruikt, wat
+  // een 409-conflict zou geven zodra het bestand ondertussen elders (bv. een
+  // GitHub Action) is bijgewerkt.
+  const res = await fetch(`${API}/contents/${encodeURIComponent(path)}?ref=main`, {
+    headers: ghHeaders(),
+    cache: "no-store",
+  });
   if (!res.ok) return undefined; // bestand bestaat nog niet
   const data = await res.json();
   return data.sha;
@@ -480,7 +486,13 @@ async function dispatchWorkflow(workflowFile, inputs) {
 }
 
 async function vindLaatsteRun(workflowFile, naDatum) {
-  const res = await fetch(`${API}/actions/workflows/${workflowFile}/runs?per_page=5`, { headers: ghHeaders() });
+  // cache: "no-store" is essential hier — zonder dit kan Safari een oud
+  // ("nog bezig") antwoord op deze exacte URL blijven hergebruiken, waardoor
+  // het lijkt alsof de actie nooit klaar is terwijl hij allang is afgerond.
+  const res = await fetch(`${API}/actions/workflows/${workflowFile}/runs?per_page=5`, {
+    headers: ghHeaders(),
+    cache: "no-store",
+  });
   if (!res.ok) return null;
   const data = await res.json();
   return (data.workflow_runs || []).find((r) => new Date(r.created_at) >= naDatum) || null;
@@ -496,10 +508,17 @@ async function volgWorkflow(workflowFile, startTijd, statusEl, wachtBoodschap) {
 
   statusEl.innerHTML = `${wachtBoodschap} <a href="${run.html_url}" target="_blank" rel="noopener">bekijk voortgang</a>`;
 
-  while (run.status !== "completed") {
+  // Maximaal 10 minuten pollen; zonder deze grens zou een hapering in het
+  // netwerk (of herhaaldelijk falende verzoeken) de pagina voor onbepaalde
+  // tijd op "bezig" laten staan zonder enige terugkoppeling.
+  for (let poging = 0; poging < 150 && run.status !== "completed"; poging++) {
     await sleep(4000);
-    const res = await fetch(run.url, { headers: ghHeaders() });
+    const res = await fetch(run.url, { headers: ghHeaders(), cache: "no-store" });
     if (res.ok) run = await res.json();
+  }
+  if (run.status !== "completed") {
+    statusEl.innerHTML = `Dit duurt ongewoon lang. <a href="${run.html_url}" target="_blank" rel="noopener">Bekijk de status</a> — mogelijk is de pagina niet automatisch bijgewerkt.`;
+    return null;
   }
   return run;
 }
