@@ -101,15 +101,16 @@ Wat er nu gebeurt:
 2. Je krijgt een voorstel te zien met een vast dagpatroon:
 
 ```
-Week met 4 personen op vrijdag/weekend (even weeknummer).
+Week met vrijdag/zaterdag voor 4 personen (oneven weeknummer).
 
 Voorgesteld weekmenu:
-  1. Maandag: Kofta met pitabroodjes
-  2. Dinsdag: Kroketjes + Kipschnitzel + Broccoli
-  3. Woensdag: Kip met rijst en paprika
-  4. Donderdag: Rundergehaktballen met zoete aardappel
-  5. Vrijdag (4p): Pannenkoeken
-  6. Zondag: Patat + Mini kaassoufflé
+  1. Maandag: Kofta met pitabroodjes (4p)
+  2. Dinsdag: Kroketjes + Kipschnitzel + Broccoli (4p)
+  3. Woensdag: Kip met rijst en paprika (2p)
+  4. Donderdag: Rundergehaktballen met zoete aardappel (2p)
+  5. Vrijdag (4p): Pannenkoeken (4p)
+  6. Zaterdag (4p): Loaded fries met kipreepjes (4p)
+  7. Zondag: Patat + Mini kaassoufflé (4p)
 ```
 
 - **Druk Enter** om te accepteren.
@@ -254,55 +255,78 @@ elke telefoon of computer, ook die van je vrouw.
 4. Zet de website op het beginscherm zoals eerder beschreven (Delen-icoon →
    "Zet op beginscherm"), zodat het voortaan als een gewoon app-icoontje werkt.
 
-### Stap 16 — Weekmenu kiezen
+### Stap 16 — In drie stappen: Weekmenu → Voorraad → Controleren
 
-De pagina toont bovenaan een menukaart en onderaan een kassabon-achtige
-samenvatting die live meetelt terwijl je kiest:
+Bovenin de pagina zie je drie bolletjes (1-2-3) die aangeven waar je bent.
+Elke stap heeft een eigen knop onderaan om verder te gaan; met **"‹ Terug"**
+kun je altijd een stap terug.
 
-1. **Bovenin**: kies "2 personen" of "4 personen" (bepaalt o.a. wat er
-   vrijdag wordt voorgesteld), en zie een briefje met wanneer er voor het
-   laatst besteld is.
-2. **Vaste boodschappen**: vink een product uit als je het deze week niet
-   nodig hebt, en pas met de +/− het aantal aan voor deze week. Volgende
-   week staat alles weer op de standaardhoeveelheid.
-3. **Per dag**: gebruik de filterknopjes (Kip/Rund/Varken/Ei-vega/Alles) om
-   te bladeren door gerechten uit het receptenboek, en tik op een gerecht om
-   het te kiezen — dit geldt nu voor alle dagen, ook woensdag. Dinsdag en
-   vrijdag (bij 2 personen) tonen in plaats daarvan de losse keuzelijstjes
-   (aardappelvorm, vlees, groente) — tik gewoon aan wat je wilt. Bij zondag
-   kun je bij "Snack" meerdere dingen tegelijk aantikken (ze gaan allemaal
-   samen de airfryer in).
-4. Tik op **"Ingrediënten (n)"** onder een dag om te zien wat erin gaat —
-   je kan daar per ingrediënt het aantal aanpassen, iets weghalen, of een
-   extra ingrediënt toevoegen. Dit geldt alleen voor deze ene bestelling.
-5. Ken je een gerecht nog niet? Tik op **"Nieuw gerecht toevoegen"**, typ de
-   naam, kies een vleessoort en de ingrediënten (één per regel, bijv.
-   "1 x kipfilet"). Het wordt meteen gekozen én permanent opgeslagen in
-   `receptenboek.txt`, zodat het systeem 'm later ook automatisch voorstelt.
-6. Heb je nog iets los nodig, niet gekoppeld aan een dag (bijv. een extra
-   fles wijn)? Vul dat in bij **"Extra producten"** en tik op **Toevoegen**.
-7. **Onderaan** zie je de volledige boodschappenlijst als kassabon, met een
-   geschat totaalbedrag (gebaseerd op de vorige bestelling).
+**Stap 1 — Weekmenu.** Het weekrooster ligt grotendeels vast: maandag en
+dinsdag zijn altijd voor 4 personen, woensdag en donderdag altijd voor 2,
+vrijdag en zaterdag wisselen mee met het weeknummer (samen 2 of samen 4
+personen), en zondag is altijd de vaste airfryer-dag voor 4 personen.
+
+1. Elke dag toont een kaartje met het voorgestelde gerecht, een
+   personen-badge (met +/− als je voor deze ene week wilt afwijken van het
+   rooster — de hoeveelheden schalen automatisch mee) en tag-labels (bv.
+   "kip", "snel", "bowl", "✨ nieuw").
+2. Gebruik de filterknopjes (op vlees én op tags zoals "snel"/"pasta"/
+   "wraps") om te bladeren, en tik op een gerecht om het te kiezen. Tik
+   **"🔀 Verras me"** voor een willekeurig ander gerecht uit dezelfde pool,
+   of **"Kies zelf recept"** om op naam te zoeken.
+3. Tik op **"Ingrediënten (n)"** om per ingrediënt het aantal aan te passen,
+   iets weg te halen of iets toe te voegen (geldt alleen voor deze week).
+4. Ken je een gerecht nog niet? Tik op **"+ Nieuw gerecht"** bij een dag —
+   het wordt meteen gekozen én opgeslagen in `receptenboek.txt`, gemarkeerd
+   als "nieuw"/"probeersel".
+5. Onder de dag-kaarten staat **"Receptenboek beheren"** (inklapbaar): hier
+   kun je élk gerecht bewerken (naam, vlees, tags, basisaantal personen,
+   ingrediënten) of verwijderen.
+6. Was er vorige week een bestelling? Dan zie je bovenaan een **"Hoe was
+   het?"**-blokje: beoordeel elk gerecht met 👍 lekker / 🙂 oké / 👎 niet
+   meer. Een "niet meer" zorgt dat dat gerecht nooit meer automatisch wordt
+   voorgesteld.
+
+**Stap 2 — Voorraad.** Hier staan de vaste boodschappen (per categorie,
+zoals ontbijt/snacks/drinken/huishouden) — vink uit wat je niet nodig hebt
+of pas het aantal aan. Daaronder de **voorraadcheck**: voor veelgebruikte
+basisproducten (rijst, koffie, wc-papier, ...) geef je aan of de voorraad
+"Genoeg", "Bijna op" of "Op" is — alleen "Bijna op"/"Op" komt op de
+boodschappenlijst (de status wordt niet onthouden, elke week begin je
+schoon). Onderaan kun je bij **"Extra producten"** nog losse dingen
+toevoegen die nergens bij horen. De kassabon-samenvatting onderaan telt
+live mee.
 
 ### Stap 17 — Controleren en bestellen
 
-Picnic geeft niet altijd precies terug wat je bedoelt (bijv. een product met
-meerdere varianten, of eentje dat niet gevonden wordt) — daarom bestel je in
-twee stappen:
+Picnic geeft niet altijd precies terug wat je bedoelt — daarom is dit een
+losse, derde stap:
 
-1. Tik op **"Zoek producten op"**. Na ongeveer een halve tot hele minuut zie
-   je een lijst met wat Picnic per product heeft gevonden.
-2. Klopt er iets niet? Tik op **"Andere optie kiezen"** om tussen de
-   gevonden varianten te wisselen (bijv. bij "Kaastengels" met 2 soorten).
-   Staat er een waarschuwing dat iets niet gevonden is, dan voeg je dat
-   later zelf toe in de Picnic-app.
-3. Alles goed? Tik op **"Definitief bestellen bij Picnic"**. Na nog eens
+1. Tik in stap 2 op **"Zoek producten op"**. Na ongeveer een halve tot hele
+   minuut zie je een lijst met wat Picnic per product heeft gevonden.
+2. De lijst is ingedeeld: **"Nieuw / controleren"** bovenaan (producten die
+   nog niet eerder gekozen zijn, niet gevonden zijn, of afwijken van je
+   gebruikelijke keuze — met een ⚠-melding erbij) en **"Vertrouwd"**
+   daaronder compact (producten die overeenkomen met wat je meestal kiest).
+3. Per product kun je: het **aantal** aanpassen, **verwijderen**,
+   **parkeren** (haalt het uit déze bestelling maar blijft zichtbaar om
+   makkelijk terug te zetten), **"Andere optie kiezen"** (wisselen tussen
+   gevonden varianten), **"Vervangen"** (zet het klaar om onder een andere
+   naam opnieuw te zoeken) of **"⭐ Voorkeur opslaan"** (onthoudt dit
+   product voortaan als standaardkeuze voor dit ingrediënt).
+4. Onderaan kun je nog iets vergeten toevoegen — dat wordt bij het
+   bestellen automatisch opgezocht.
+5. Alles goed? Tik op **"Definitief bestellen bij Picnic"**. Na nog eens
    een halve tot hele minuut staan de producten echt in je Picnic-mandje.
-4. Open daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
+6. Open daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
 
-> Wil je toch nog iets aanpassen aan het weekmenu? Tik op **"‹ Terug naar
-> weekmenu"** — let op: dan moet je daarna wel opnieuw op "Zoek producten
-> op" tikken.
+> Wil je toch nog iets aanpassen aan het weekmenu of de voorraad? Tik op
+> **"‹ Terug"** — let op: vanaf stap 2 moet je daarna wel opnieuw op "Zoek
+> producten op" tikken.
+
+Elke zaterdagochtend maakt de repo automatisch een GitHub Issue aan als
+herinnering om de weekplanning te checken — krijg je al meldingen van de
+GitHub-app op je telefoon, dan zie je die vanzelf voorbij komen.
 
 ### Stap 18 — Ook voor je vrouw
 

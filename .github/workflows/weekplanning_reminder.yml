@@ -1,0 +1,42 @@
+name: Weekplanning-herinnering
+
+# Maakt elke zaterdagochtend een GitHub Issue aan als herinnering om de
+# weekplanning voor komende week te checken (weekmenu doorlopen, voorraad
+# bijwerken, controleren en bestellen). Gebruikt alleen de ingebouwde
+# GITHUB_TOKEN — geen nieuwe secrets of externe diensten nodig. Heb je op
+# je telefoon meldingen van de GitHub-app aan staan, dan krijg je hiervan
+# vanzelf een pushmelding/e-mail, zonder dat er een aparte mail/sms-dienst
+# bij hoeft.
+
+on:
+  schedule:
+    # 08:00 UTC ~ 09:00/10:00 Nederlandse tijd (afhankelijk van zomer/wintertijd).
+    - cron: "0 8 * * 6"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  herinnering:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Issue aanmaken
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const datum = new Date().toLocaleDateString("nl-NL", { day: "numeric", month: "long" });
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Weekplanning controleren — ${datum}`,
+              body: [
+                "Tijd om de weekplanning voor komende week te checken:",
+                "",
+                "- [ ] Weekmenu doorlopen (of gewoon laten staan)",
+                "- [ ] Voorraad bijwerken",
+                "- [ ] Controleren en naar het Picnic-mandje zetten",
+                "",
+                "_Automatisch aangemaakt door de zaterdag-herinnering. Sluit dit issue als je klaar bent._",
+              ].join("\n"),
+            });

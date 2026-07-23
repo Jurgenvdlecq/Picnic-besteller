@@ -1,0 +1,48 @@
+# Voorraadcheck
+# ================
+# Veelgebruikte basisproducten waarvan je op de website aangeeft hoe de
+# voorraad ervoor staat: genoeg / bijna op / op. Alleen "bijna op" en "op"
+# worden toegevoegd aan de boodschappenlijst (de vaste standaardlijst komt
+# er altijd bij, ongeacht deze status). De status wordt NIET onthouden
+# tussen weken — je begint elke week weer met een schone lei.
+#
+# Zelfde indeling als dag_opties.txt: "== categorienaam ==" gevolgd door
+# één product per regel. Pas gerust aan/vul aan — geen code nodig.
+
+== rijst/pasta/aardappels ==
+Rijst
+Pasta
+Aardappelen
+
+== eieren ==
+Eieren
+
+== melk/kwark/yoghurt ==
+Melk
+Kwark
+Yoghurt
+
+== fruit ==
+Bananen
+Appels
+
+== snacks ==
+Chips
+Koekjes
+
+== koffie ==
+Koffiecups
+Koffiebonen
+
+== cola/drinken ==
+Cola
+Sap
+
+== wc-papier/keukenrol/zakken ==
+WC papier
+Keukenrol
+Vuilniszakken
+
+== overige vaste boodschappen ==
+Afwasmiddel
+Vaatwastabletten

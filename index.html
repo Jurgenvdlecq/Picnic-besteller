@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Weekmenu</title>
+  <title>Weekplanner</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -28,25 +28,34 @@
   </div>
 
   <div id="scherm-laden" class="scherm verborgen">
-    <p class="uitleg">Weekmenu wordt opgehaald...</p>
+    <p class="uitleg">Weekplanning wordt opgehaald...</p>
   </div>
 
   <div id="app" class="verborgen">
     <header class="top">
       <div class="eyebrow">Picnic · deze week</div>
-      <h1>Weekmenu</h1>
+      <h1>Weekplanner</h1>
       <p id="week-info"></p>
       <div class="kop-rij">
-        <div class="personen-switch" id="personen-switch">
-          <div class="optie" data-personen="2">2 personen</div>
-          <div class="optie" data-personen="4">4 personen</div>
+        <div class="stappen-indicator" id="stappen-indicator">
+          <span class="stap-bolletje" data-stap="weekmenu">1</span>
+          <span class="stap-bolletje" data-stap="voorraad">2</span>
+          <span class="stap-bolletje" data-stap="controleren">3</span>
         </div>
         <div class="laatst-besteld" id="laatst-besteld"></div>
       </div>
     </header>
 
-    <div id="kies-scherm">
+    <div id="weekmenu-scherm">
       <main id="dagen-wrap">
+        <div id="beoordeling-blok"></div>
+        <div id="dagen"></div>
+        <div id="receptenbeheer"></div>
+      </main>
+    </div>
+
+    <div id="voorraad-scherm" class="verborgen">
+      <main id="voorraad-wrap">
         <div class="kaart">
           <div class="kaart-titel">
             <span class="naam">Vaste boodschappen</span>
@@ -56,7 +65,13 @@
           <div class="std-footnote">Vink uit wat je deze week niet nodig hebt, of pas het aantal aan. Volgende week staat alles weer op de standaardhoeveelheid.</div>
         </div>
 
-        <div id="dagen"></div>
+        <div class="kaart">
+          <div class="kaart-titel">
+            <span class="naam">Voorraadcheck</span>
+            <span class="tag">alleen bijna op / op wordt besteld</span>
+          </div>
+          <div id="voorraad-lijst"></div>
+        </div>
 
         <div class="kaart">
           <div class="kaart-titel">
@@ -82,9 +97,8 @@
           <span class="tag">bij Picnic gevonden</span>
         </div>
         <p class="uitleg" style="margin: 4px 0 12px 0; text-align: left;">
-          Klopt een product niet? Tik op "Andere optie kiezen" voor de
-          alternatieven die Picnic teruggaf. Aantal aanpassen of een product
-          laten vervallen kan direct hieronder.
+          Nieuwe of twijfelachtige producten staan bovenaan. Klopt iets niet?
+          Tik op "Andere optie kiezen", "Vervangen" of pas aantal/voorkeur aan.
         </p>
         <div id="controle-lijst"></div>
         <div class="losse-invoer">
@@ -103,8 +117,8 @@
     <div id="bestel-knop-wrap">
       <div id="waarschuwingen"></div>
       <div id="status"></div>
-      <button id="terug-knop" class="secundair verborgen">‹ Terug naar weekmenu</button>
-      <button id="actie-knop">Zoek producten op</button>
+      <button id="terug-knop" class="secundair verborgen">‹ Terug</button>
+      <button id="actie-knop">Volgende: voorraad</button>
     </div>
   </div>
 

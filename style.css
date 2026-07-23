@@ -230,37 +230,284 @@ header.top #week-info {
   padding: 5px 12px;
 }
 
-.personen-switch {
+.stappen-indicator {
   display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stap-bolletje {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  overflow: hidden;
-  font-size: 0.8rem;
-}
-
-.personen-switch .optie {
-  padding: 6px 13px;
   color: var(--header-muted);
-  cursor: pointer;
 }
 
-.personen-switch .optie.actief {
+.stap-bolletje.actief {
   background: var(--accent);
   color: var(--accent-text);
-  font-weight: 600;
+  border-color: var(--accent);
+}
+
+.stap-bolletje.voltooid {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--header-text);
 }
 
 main#dagen-wrap,
+main#voorraad-wrap,
 #dagen,
 #kassabon-wrap {
   padding: 0 14px;
 }
 
-main#dagen-wrap {
+main#dagen-wrap,
+main#voorraad-wrap {
   padding-top: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+/* --- Dagkop met personen-badge, tag-badges --- */
+.dag-kop-rij {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.personen-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.personen-knop {
+  width: 22px;
+  height: 22px;
+  max-width: none;
+  padding: 0;
+  border-radius: 7px;
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.personen-waarde {
+  min-width: 1.8em;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.tag-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.tag-badge {
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: var(--chip-bg);
+  border-radius: 999px;
+  padding: 2px 8px;
+  text-transform: lowercase;
+}
+
+/* --- Standaardlijst-/voorraad-categorieën --- */
+.std-categorie-kop {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 12px 0 4px;
+}
+
+.std-categorie-kop:first-child {
+  margin-top: 0;
+}
+
+/* --- Voorraadcheck --- */
+.voorraad-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.voorraad-item:last-child {
+  border-bottom: none;
+}
+
+.voorraad-naam {
+  flex: 1;
+  min-width: 40%;
+  font-size: 0.92rem;
+}
+
+.voorraad-knoppen {
+  display: flex;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.voorraad-knop {
+  width: auto;
+  max-width: none;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  background: var(--chip-bg);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.voorraad-knop.actief-genoeg {
+  background: var(--good-soft, var(--chip-bg));
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.voorraad-knop.actief-bijna-op {
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-color: var(--warn);
+  font-weight: 600;
+}
+
+.voorraad-knop.actief-op {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- Receptenboek beheren --- */
+.receptenbeheer-toggle {
+  width: 100%;
+  max-width: none;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  padding: 6px 2px;
+  font-size: 0.85rem;
+}
+
+.receptenbeheer-lijst {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.receptenbeheer-groep-kop {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 10px 0 2px;
+}
+
+.receptenbeheer-rij {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.receptenbeheer-info {
+  flex: 1;
+  min-width: 50%;
+}
+
+.receptenbeheer-naam {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.receptenbeheer-detail {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.receptenbeheer-knoppen {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.receptenbeheer-knoppen button {
+  width: auto;
+  max-width: none;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+}
+
+.recept-bewerk-form {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* --- Beoordeling ("hoe was het?") --- */
+.beoordeling-kaart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.beoordeling-rij {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.beoordeling-rij:last-child {
+  border-bottom: none;
+}
+
+.beoordeling-naam {
+  font-size: 0.9rem;
+  flex: 1;
+  min-width: 45%;
+}
+
+.beoordeling-knoppen {
+  display: flex;
+  gap: 6px;
+}
+
+.beoordeling-knop {
+  width: auto;
+  max-width: none;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 #dagen {
@@ -523,6 +770,58 @@ main#dagen-wrap {
   margin-top: 8px;
   padding: 6px 12px;
   font-size: 0.8rem;
+}
+
+.controle-sectie-kop {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 16px 0 4px;
+}
+
+.controle-sectie-kop:first-child {
+  margin-top: 0;
+}
+
+.controle-item.compact {
+  padding: 6px 0;
+}
+
+.controle-item.compact .controle-kop {
+  font-size: 0.76rem;
+  margin-bottom: 2px;
+}
+
+.controle-item.compact .stepper {
+  margin: 2px 0;
+}
+
+.controle-item.compact .controle-resultaat {
+  padding: 4px 8px;
+  gap: 8px;
+}
+
+.controle-item.compact .controle-naam {
+  font-size: 0.85rem;
+}
+
+.controle-mismatch {
+  color: var(--warn);
+  font-size: 0.76rem;
+  margin-top: 2px;
+}
+
+.controle-acties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.controle-acties button.secundair {
+  margin-top: 0;
 }
 
 .alternatieven {

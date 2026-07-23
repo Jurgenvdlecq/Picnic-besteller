@@ -3,78 +3,103 @@
 # Jullie complete verzameling recepten. Elk recept:
 #   Gerecht: <naam>
 #   Vlees: <kip/rund/varken/ei-vega/overig>   (voor het filteren op de website)
-#   Label: <label>       (optioneel — zie labels hieronder)
-#   Actief: ja/nee        (optioneel — standaard "ja" als je niks invult)
+#   Label: <label>            (optioneel — zie labels hieronder)
+#   Basispersonen: <2 of 4>   (optioneel, default 2 — het aantal personen
+#                              waar de hoeveelheden hieronder al voor
+#                              kloppen; bij een ander aantal personen
+#                              schaalt de website/het script dit automatisch)
+#   Tags: <tag, tag, ...>     (optioneel — vrije labels om op te filteren,
+#                              zie de lijst hieronder; kip/rund/varken/
+#                              ei-vega hoeven hier niet nog een keer bij,
+#                              dat gebeurt al via Vlees:)
+#   Actief: ja/nee            (optioneel — standaard "ja" als je niks invult)
 #   gevolgd door ingrediënten (aantal x product)
 # Lege regel = scheiding tussen recepten.
 #
-# LABELS die het systeem herkent:
-#   makkelijk     -> gebruikt voor maandag (snel wereldgerecht/pasta/rijst)
-#   vrijdag_veel  -> gebruikt voor vrijdag bij 4 personen (even week)
-#   (geen label)  -> vrije pool, gebruikt voor donderdag
+# LABELS die het systeem herkent (bepalen in welke pool een gerecht valt):
+#   makkelijk     -> maandag (altijd 4 personen, snel, max ~20-25 minuten)
+#   vrijdag_veel  -> vrijdag/zaterdag bij 4 personen (oneven weeknummer)
+#   (geen label)  -> vrije "algemeen"-pool, gebruikt voor woensdag/donderdag
+#                    (altijd 2 personen)
+#
+# TAGS die het systeem herkent (vrij te combineren):
+#   snel, maandag, airfryer, rijst, pasta, wraps, bowl,
+#   aardappel-vlees-groente, favoriet, nieuw, probeerrecept,
+#   niet-meer-tonen, geen-vis
+#   (kip/rund/varken/ei-vega zijn GEEN tags — die staan in Vlees:)
+#   "nieuw" en "probeerrecept" worden automatisch gezet als je een gerecht
+#   via de website toevoegt. "niet-meer-tonen" wordt automatisch gezet
+#   zodra je een gerecht na het eten met "niet meer" beoordeelt — zo'n
+#   gerecht wordt daarna nooit meer automatisch voorgesteld, ook niet als
+#   Actief: ja blijft staan.
 #
 # ACTIEF: JA/NEE
-#   Alleen recepten met Actief: ja doen mee in de automatische rotatie.
-#   Actief: nee betekent: staat in het boek om te raadplegen of handmatig
-#   te kiezen (via naam typen bij het aanpassen van een dag), maar wordt
-#   nooit automatisch voorgesteld.
-#
-# Woensdag gebruikt altijd het gerecht "Kip met rijst en paprika" hieronder.
+#   Alleen recepten met Actief: ja (of geen Actief-regel) doen mee in de
+#   automatische rotatie. Actief: nee betekent: staat in het boek om te
+#   raadplegen of handmatig te kiezen (via naam typen bij het aanpassen
+#   van een dag), maar wordt nooit automatisch voorgesteld.
 
-Gerecht: Kip met rijst en paprika
-Vlees: kip
-1 x kipfilet
-1 x rijst
-2 x paprika
-1 x ui
-
-# --- Label: makkelijk (maandag) ---
+# ============================================================
+# Label: makkelijk — maandag, altijd 4 personen, snel
+# ============================================================
 
 Gerecht: Kofta met pitabroodjes
 Vlees: rund
 Label: makkelijk
-1 x rundergehakt
-4 x pitabroodjes
-1 x komkommer
+Basispersonen: 4
+Tags: snel, maandag
+2 x rundergehakt (500 gram)
+8 x pitabroodjes
+2 x komkommer
 1 x knoflooksaus
 
 Gerecht: Pasta bolognese uit een pot
 Vlees: rund
 Label: makkelijk
-1 x gehakt (500 gram)
+Basispersonen: 4
+Tags: snel, maandag, pasta
+2 x gehakt (500 gram)
 1 x pasta
-1 x bolognesesaus pot
+2 x bolognesesaus pot
 1 x geraspte kaas
 
 Gerecht: Rijst met roerei en groente
 Vlees: ei-vega
 Label: makkelijk
-1 x rijst
-6 x eieren
-1 x wokgroente
+Basispersonen: 4
+Tags: snel, maandag, rijst, bowl
+2 x rijst
+10 x eieren
+2 x wokgroente
 
 Gerecht: Kipsaté met rijst
 Vlees: kip
 Label: makkelijk
-1 x kipfilet
+Basispersonen: 4
+Tags: snel, maandag, rijst
+4 x kipfilet
 1 x saté saus
-1 x rijst
+2 x rijst
 1 x kroepoek
 
 Gerecht: Nasi met kipreepjes en ei
 Vlees: kip
 Label: makkelijk
-1 x rijst
-1 x kipfilet
-2 x eieren
+Basispersonen: 4
+Tags: snel, maandag, rijst
+2 x rijst
+4 x kipfilet
+4 x eieren
 1 x nasi kruidenmix
 1 x wokgroente
 
 Gerecht: Burrito bowl met gehakt en rijst
 Vlees: rund
 Label: makkelijk
-1 x rundergehakt
-1 x rijst
+Basispersonen: 4
+Tags: snel, maandag, rijst, bowl
+2 x rundergehakt
+2 x rijst
 1 x zwarte bonen
 1 x maïs
 1 x geraspte kaas
@@ -82,17 +107,69 @@ Label: makkelijk
 Gerecht: Griekse kip bowl met tzatziki
 Vlees: kip
 Label: makkelijk
-1 x kipfilet
-1 x rijst
+Basispersonen: 4
+Tags: snel, maandag, rijst, bowl
+4 x kipfilet
+2 x rijst
 1 x tzatziki
 1 x komkommer
 1 x cherrytomaatjes
 
-# --- Label: vrijdag_veel (vrijdag bij 4 personen) ---
+Gerecht: Kip wraps met paprika en knoflooksaus
+Vlees: kip
+Label: makkelijk
+Basispersonen: 4
+Tags: snel, maandag, wraps
+4 x kipfilet
+8 x tortilla wraps
+2 x paprika
+1 x ijsbergsla
+1 x knoflooksaus
+1 x fajitakruiden
+
+Gerecht: Pasta pesto met kipreepjes en cherrytomaatjes
+Vlees: kip
+Label: makkelijk
+Basispersonen: 4
+Tags: snel, maandag, pasta
+4 x kipfilet
+1 x pasta
+1 x groene pesto
+1 x cherrytomaatjes
+1 x parmezaanse kaas
+
+Gerecht: Gehaktwraps met taco kruiden en salsa
+Vlees: rund
+Label: makkelijk
+Basispersonen: 4
+Tags: snel, maandag, wraps
+2 x rundergehakt (500 gram)
+8 x tortilla wraps
+1 x taco kruidenmix
+1 x salsa
+1 x geraspte kaas
+1 x ijsbergsla
+
+Gerecht: Teriyaki noedels met kip en groente
+Vlees: kip
+Label: makkelijk
+Basispersonen: 4
+Tags: snel, maandag, bowl
+4 x kipfilet
+1 x noedels
+1 x teriyakisaus
+1 x wokgroente
+1 x sesamzaad
+
+# ============================================================
+# Label: vrijdag_veel — vrijdag/zaterdag bij 4 personen (oneven week)
+# ============================================================
 
 Gerecht: Aardappelblokjes met hamburger en broccoli
 Vlees: rund
 Label: vrijdag_veel
+Basispersonen: 4
+Tags: aardappel-vlees-groente
 1 x aardappelblokjes
 4 x hamburger
 1 x broccoli
@@ -100,31 +177,106 @@ Label: vrijdag_veel
 Gerecht: Pannenkoeken
 Vlees: ei-vega
 Label: vrijdag_veel
+Basispersonen: 4
 1 x pannenkoekenmix
 1 x melk
-1 x eieren
+2 x eieren
 1 x stroop
 
 Gerecht: Ovenschotel aardappel, gehakt en groente
 Vlees: rund
 Label: vrijdag_veel
+Basispersonen: 4
+Tags: aardappel-vlees-groente
 1 x aardappelblokjes
-1 x rundergehakt
+2 x rundergehakt
 1 x wokgroente
 1 x geraspte kaas
 
 Gerecht: Loaded fries met kipreepjes
 Vlees: kip
 Label: vrijdag_veel
+Basispersonen: 4
+Tags: airfryer
 1 x aviko friet
-1 x kipfilet
+4 x kipfilet
 1 x geraspte kaas
 1 x knoflooksaus
 
-# --- Geen label (algemene pool, donderdag) ---
+Gerecht: Kip shoarma met patat en knoflooksaus
+Vlees: kip
+Label: vrijdag_veel
+Basispersonen: 4
+Tags: aardappel-vlees-groente, airfryer
+1 x kipshoarma
+1 x aviko friet
+1 x knoflooksaus
+1 x komkommer
+1 x tomaat
+
+Gerecht: Spareribs met aardappelpartjes
+Vlees: varken
+Label: vrijdag_veel
+Basispersonen: 4
+Tags: aardappel-vlees-groente
+1 x spareribs
+1 x aardappelpartjes
+1 x barbecuesaus
+1 x coleslaw
+
+Gerecht: Nacho's met gekruid gehakt
+Vlees: rund
+Label: vrijdag_veel
+Basispersonen: 4
+Tags: bowl
+2 x rundergehakt (500 gram)
+1 x nachochips
+1 x geraspte kaas
+1 x salsa
+1 x guacamole
+1 x zure room
+
+Gerecht: Kip curry met naanbrood
+Vlees: kip
+Label: vrijdag_veel
+Basispersonen: 4
+Tags: rijst
+4 x kipfilet
+1 x kerriesaus
+1 x kokosmelk
+1 x naanbrood
+2 x rijst
+
+Gerecht: Vegetarische chili sin carne met nacho's
+Vlees: ei-vega
+Label: vrijdag_veel
+Basispersonen: 4
+Tags: bowl
+1 x kidneybonen
+1 x zwarte bonen
+1 x maïs
+1 x tomatenblokjes
+1 x paprikapoeder komijn kruidenmix
+1 x geraspte kaas
+1 x nachochips
+
+# ============================================================
+# Geen label — algemene pool, woensdag/donderdag, altijd 2 personen
+# ============================================================
+
+Gerecht: Kip met rijst en paprika
+Vlees: kip
+Basispersonen: 2
+Tags: rijst
+1 x kipfilet
+1 x rijst
+2 x paprika
+1 x ui
 
 Gerecht: Rundergehaktballen met zoete aardappel
 Vlees: rund
+Basispersonen: 2
+Tags: aardappel-vlees-groente
 1 x rundergehakt
 2 x zoete aardappel
 1 x ui
@@ -132,12 +284,15 @@ Vlees: rund
 
 Gerecht: Omelet met spinazie en kip
 Vlees: kip
+Basispersonen: 2
+Tags: snel
 6 x eieren
 1 x spinazie
 1 x kipfilet
 
 Gerecht: Rundergehakt-curry
 Vlees: rund
+Basispersonen: 2
 1 x rundergehakt
 1 x kokosmelk
 1 x paprika
@@ -146,12 +301,16 @@ Vlees: rund
 
 Gerecht: Eieren met spek en avocado
 Vlees: varken
+Basispersonen: 2
+Tags: snel
 6 x eieren
 1 x spekreepjes
 2 x avocado
 
 Gerecht: Kip tikka masala met rijst
 Vlees: kip
+Basispersonen: 2
+Tags: rijst
 1 x kipfilet
 1 x tikka masala saus
 1 x rijst
@@ -159,6 +318,8 @@ Vlees: kip
 
 Gerecht: Beef stroganoff met rijst
 Vlees: rund
+Basispersonen: 2
+Tags: rijst
 1 x runderreepjes
 1 x champignons
 1 x ui
@@ -167,6 +328,7 @@ Vlees: rund
 
 Gerecht: Gehaktschotel met bloemkoolpuree
 Vlees: rund
+Basispersonen: 2
 1 x rundergehakt
 1 x bloemkool
 1 x ui
@@ -174,6 +336,8 @@ Vlees: rund
 
 Gerecht: Kip fajita bowl
 Vlees: kip
+Basispersonen: 2
+Tags: rijst, bowl
 1 x kipfilet
 2 x paprika
 1 x ui
@@ -181,6 +345,8 @@ Vlees: kip
 
 Gerecht: Runderreepjes teriyaki met broccoli
 Vlees: rund
+Basispersonen: 2
+Tags: rijst
 1 x runderreepjes
 1 x teriyakisaus
 1 x broccoli
@@ -188,6 +354,8 @@ Vlees: rund
 
 Gerecht: Gevulde paprika met gehakt en rijst
 Vlees: rund
+Basispersonen: 2
+Tags: rijst
 1 x rundergehakt
 3 x paprika
 1 x rijst
@@ -195,6 +363,8 @@ Vlees: rund
 
 Gerecht: Kip cacciatore met aardappelpuree
 Vlees: kip
+Basispersonen: 2
+Tags: aardappel-vlees-groente
 1 x kipfilet
 1 x tomatensaus
 1 x champignons
@@ -202,16 +372,108 @@ Vlees: kip
 
 Gerecht: Chili con carne met rijst
 Vlees: rund
+Basispersonen: 2
+Tags: rijst
 1 x rundergehakt
 1 x kidneybonen
 1 x tomatenblokjes
 1 x paprika
 1 x rijst
 
-# --- Actief: nee (naslag, niet in automatische rotatie) ---
+Gerecht: Varkenshaas met champignonsaus en aardappelpuree
+Vlees: varken
+Basispersonen: 2
+Tags: aardappel-vlees-groente
+1 x varkenshaas
+1 x champignons
+1 x champignonsaus
+1 x aardappelpuree
+
+Gerecht: Kip caesar bowl
+Vlees: kip
+Basispersonen: 2
+Tags: bowl
+1 x kipfilet
+1 x romeinse sla
+1 x caesardressing
+1 x croutons
+1 x parmezaanse kaas
+
+Gerecht: Groente wraps met halloumi
+Vlees: ei-vega
+Basispersonen: 2
+Tags: wraps
+1 x halloumi
+4 x tortilla wraps
+1 x paprika
+1 x courgette
+1 x knoflooksaus
+
+Gerecht: Runderburger met zoete aardappelfriet
+Vlees: rund
+Basispersonen: 2
+Tags: aardappel-vlees-groente, airfryer
+2 x runderburgers
+1 x zoete aardappelfriet
+1 x burgersaus
+1 x sla
+
+Gerecht: Pasta carbonara
+Vlees: varken
+Basispersonen: 2
+Tags: pasta, snel
+1 x pasta
+1 x spekreepjes
+1 x room
+2 x eieren
+1 x parmezaanse kaas
+
+Gerecht: Kip pad thai
+Vlees: kip
+Basispersonen: 2
+Tags: bowl
+1 x kipfilet
+1 x pad thai noedels
+1 x pad thai saus
+1 x taugé
+1 x pinda's
+
+Gerecht: Linzencurry met rijst
+Vlees: ei-vega
+Basispersonen: 2
+Tags: rijst
+1 x rode linzen
+1 x kokosmelk
+1 x currypasta
+1 x spinazie
+1 x rijst
+
+Gerecht: Varkensfilet met champignons en aardappelgratin
+Vlees: varken
+Basispersonen: 2
+Tags: aardappel-vlees-groente
+1 x varkensfilet
+1 x champignons
+1 x aardappelgratin
+1 x roomsaus
+
+Gerecht: Falafel wraps met tzatziki
+Vlees: ei-vega
+Basispersonen: 2
+Tags: wraps
+1 x falafel
+4 x tortilla wraps
+1 x tzatziki
+1 x komkommer
+1 x cherrytomaatjes
+
+# ============================================================
+# Actief: nee — naslag, niet in de automatische rotatie
+# ============================================================
 
 Gerecht: Kip cordon bleu zelfgemaakt
 Vlees: kip
+Basispersonen: 4
 Actief: nee
 4 x kipfilet
 4 x ham
@@ -221,6 +483,7 @@ Actief: nee
 
 Gerecht: Beef Wellington
 Vlees: rund
+Basispersonen: 4
 Actief: nee
 1 x runderhaas
 1 x bladerdeeg

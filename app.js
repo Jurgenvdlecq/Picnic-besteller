@@ -22,13 +22,54 @@ const VLEES_LABELS = { kip: "Kip", rund: "Rund", varken: "Varken", "ei-vega": "E
 
 // Bepaalt welk label een handmatig toegevoegd gerecht krijgt in
 // receptenboek.txt, per dag-categorie waarvoor dat mogelijk is.
-const LABEL_VOOR_CATEGORIE = { maandag: "makkelijk", woensdag: null, donderdag: null, vrijdag_veel: "vrijdag_veel" };
+const LABEL_VOOR_CATEGORIE = {
+  maandag: "makkelijk",
+  woensdag: null,
+  donderdag: null,
+  vrijdag_veel: "vrijdag_veel",
+  zaterdag_veel: "vrijdag_veel",
+};
 const POOL_VOOR_CATEGORIE = {
   maandag: (pools) => pools.makkelijk,
   woensdag: (pools) => pools.algemeen,
   donderdag: (pools) => pools.algemeen,
   vrijdag_veel: (pools) => pools.vrijdag_veel,
+  zaterdag_veel: (pools) => pools.vrijdag_veel,
 };
+
+// Vrije tag-vocabulaire (naast de vlees-afgeleide chips kip/rund/varken/
+// ei-vega, die al via Vlees: lopen). "nieuw"/"probeerrecept" worden
+// automatisch gezet bij het toevoegen van een gerecht via de website;
+// "niet-meer-tonen" automatisch bij een "niet meer"-beoordeling.
+const TAG_VOCABULAIRE = [
+  "snel", "maandag", "airfryer", "rijst", "pasta", "wraps", "bowl",
+  "aardappel-vlees-groente", "favoriet", "nieuw", "probeerrecept",
+];
+
+// Vast weekrooster: personen per dag-categorie. Vrijdag/zaterdag hangen af
+// van even/oneven weeknummer (spiegelt personen_voor() in weekmenu.py).
+const WEEKROOSTER_VAST = { maandag: 4, dinsdag: 4, woensdag: 2, donderdag: 2, zondag: 4 };
+
+function personenVoor(categorie, evenWeek) {
+  if (categorie in WEEKROOSTER_VAST) return WEEKROOSTER_VAST[categorie];
+  if (categorie === "vrijdag" || categorie === "zaterdag") return evenWeek ? 2 : 4;
+  return 2;
+}
+
+// Schaalt "N x product"-regels van basisPersonen naar doelPersonen. Rondt
+// naar boven af (liever iets te ruim dan te weinig); bij factor 1 (het
+// huidige geval voor bijna alle dagen onder het vaste weekrooster)
+// verandert er niets.
+function schaalIngredienten(ingredienten, basisPersonen, doelPersonen) {
+  const basis = basisPersonen && basisPersonen > 0 ? basisPersonen : 2;
+  const factor = doelPersonen / basis;
+  if (factor === 1) return [...ingredienten];
+  return ingredienten.map((regel) => {
+    const item = parseAantalNaam(regel);
+    const nieuwAantal = Math.max(1, Math.ceil(item.aantal * factor));
+    return `${nieuwAantal} x ${item.naam}`;
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Kleine hulpfuncties
@@ -93,11 +134,28 @@ function laadReceptenboek(tekst) {
 
     if (laag.startsWith("gerecht:")) {
       if (huidig) gerechten.push(huidig);
-      huidig = { naam: regel.slice(regel.indexOf(":") + 1).trim(), label: null, vlees: null, actief: true, ingredienten: [] };
+      huidig = {
+        naam: regel.slice(regel.indexOf(":") + 1).trim(),
+        label: null,
+        vlees: null,
+        basisPersonen: 2,
+        tags: [],
+        actief: true,
+        ingredienten: [],
+      };
     } else if (laag.startsWith("vlees:") && huidig) {
       huidig.vlees = regel.slice(regel.indexOf(":") + 1).trim().toLowerCase();
     } else if (laag.startsWith("label:") && huidig) {
       huidig.label = regel.slice(regel.indexOf(":") + 1).trim().toLowerCase();
+    } else if (laag.startsWith("basispersonen:") && huidig) {
+      const waarde = parseInt(regel.slice(regel.indexOf(":") + 1).trim(), 10);
+      if (!Number.isNaN(waarde)) huidig.basisPersonen = waarde;
+    } else if (laag.startsWith("tags:") && huidig) {
+      huidig.tags = regel
+        .slice(regel.indexOf(":") + 1)
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean);
     } else if (laag.startsWith("actief:") && huidig) {
       const waarde = regel.slice(regel.indexOf(":") + 1).trim().toLowerCase();
       huidig.actief = ["ja", "yes", "true", "1"].includes(waarde);
@@ -132,8 +190,55 @@ function laadStandaardlijst(tekst) {
   return tekst
     .split("\n")
     .map((r) => r.trim())
-    .filter((r) => r && !r.startsWith("#"))
+    .filter((r) => r && !r.startsWith("#") && !/^==\s*.+?\s*==$/.test(r))
     .map(parseAantalNaam);
+}
+
+// Zelfde bestand, maar dan met categorie-indeling bewaard (voor de
+// weergave op de website). Items vóór de eerste "== categorie =="-regel
+// vallen onder "overig", zodat een oud plat bestand ook prima werkt.
+function laadStandaardlijstPerCategorie(tekst) {
+  const categorieen = [];
+  let huidige = { naam: "overig", items: [] };
+  let heeftSecties = false;
+
+  for (let regel of tekst.split("\n")) {
+    regel = regel.trim();
+    if (!regel || regel.startsWith("#")) continue;
+
+    const match = regel.match(/^==\s*(.+?)\s*==$/);
+    if (match) {
+      if (huidige.items.length > 0 || heeftSecties) categorieen.push(huidige);
+      huidige = { naam: match[1].trim(), items: [] };
+      heeftSecties = true;
+      continue;
+    }
+    huidige.items.push(parseAantalNaam(regel));
+  }
+  if (huidige.items.length > 0) categorieen.push(huidige);
+  return categorieen;
+}
+
+// Zelfde sectie-syntax als dag_opties.txt/standaardlijst.txt — hergebruikt
+// voor de voorraadcheck (voorraad.txt).
+function laadVoorraadCategorieen(tekst) {
+  const categorieen = [];
+  let huidige = null;
+
+  for (let regel of tekst.split("\n")) {
+    regel = regel.trim();
+    if (!regel || regel.startsWith("#")) continue;
+
+    const match = regel.match(/^==\s*(.+?)\s*==$/);
+    if (match) {
+      if (huidige) categorieen.push(huidige);
+      huidige = { naam: match[1].trim(), items: [] };
+      continue;
+    }
+    if (huidige) huidige.items.push(regel);
+  }
+  if (huidige) categorieen.push(huidige);
+  return categorieen;
 }
 
 function laadGeschiedenis(tekst) {
@@ -207,9 +312,10 @@ function combineerIngredienten(...groepen) {
 }
 
 function bepaalPools(receptenboek) {
-  const actieveRecepten = receptenboek.filter((g) => g.actief);
+  const actieveRecepten = receptenboek.filter((g) => g.actief && !(g.tags || []).includes("niet-meer-tonen"));
   return {
     makkelijk: actieveRecepten.filter((g) => g.label === "makkelijk"),
+    // Vrijdag én zaterdag putten (bij 4 personen) allebei uit deze pool.
     vrijdag_veel: actieveRecepten.filter((g) => g.label === "vrijdag_veel"),
     // Woensdag en donderdag putten allebei uit deze pool (zie kiesUitPool's
     // uitgeslotenNaam: zo krijgen ze niet toevallig hetzelfde gerecht).
@@ -239,7 +345,7 @@ function kiesUitPool(pool, categorie, geschiedenis, uitgeslotenNaam) {
 function samenstellenDinsdag(onderdelen) {
   const { aardappel, vlees, groente } = onderdelen;
   const naam = [aardappel, vlees, groente].filter(Boolean).map((x) => x.naam).join(" + ");
-  return { dag: "Dinsdag", naam, ingredienten: combineerIngredienten(aardappel, vlees, groente), categorie: "dinsdag", onderdelen };
+  return { dag: "Dinsdag", naam, ingredienten: combineerIngredienten(aardappel, vlees, groente), categorie: "dinsdag", personen: 4, onderdelen };
 }
 
 function kiesDinsdag(dagOpties) {
@@ -250,17 +356,25 @@ function kiesDinsdag(dagOpties) {
   });
 }
 
-function samenstellenVrijdagKlein(onderdelen) {
+function samenstellenKlein(dagLabel, categorie, onderdelen) {
   const { vlees, groente } = onderdelen;
   const naam = [vlees, groente].filter(Boolean).map((x) => x.naam).join(" + ");
-  return { dag: "Vrijdag (2p)", naam, ingredienten: combineerIngredienten(vlees, groente), categorie: "vrijdag_klein", onderdelen };
+  return { dag: `${dagLabel} (2p)`, naam, ingredienten: combineerIngredienten(vlees, groente), categorie, personen: 2, onderdelen };
+}
+
+function samenstellenVrijdagKlein(onderdelen) {
+  return samenstellenKlein("Vrijdag", "vrijdag_klein", onderdelen);
+}
+
+function samenstellenZaterdagKlein(onderdelen) {
+  return samenstellenKlein("Zaterdag", "zaterdag_klein", onderdelen);
 }
 
 function samenstellenZondag(onderdelen) {
   const snacks = onderdelen.snacks || [];
   const patat = { naam: "Patat (airfryer)", aantal: 1 };
   const naam = snacks.length ? `Patat + ${snacks.map((s) => s.naam).join(" + ")}` : "Patat (airfryer)";
-  return { dag: "Zondag", naam, ingredienten: combineerIngredienten(patat, ...snacks), categorie: "zondag", onderdelen };
+  return { dag: "Zondag", naam, ingredienten: combineerIngredienten(patat, ...snacks), categorie: "zondag", personen: 4, onderdelen };
 }
 
 function kiesZondag(dagOpties) {
@@ -268,64 +382,73 @@ function kiesZondag(dagOpties) {
   return samenstellenZondag({ snacks: snack ? [snack] : [] });
 }
 
-function kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis) {
-  if (vierPersonen) {
-    const gerecht = kiesUitPool(pools.vrijdag_veel, "vrijdag_veel", geschiedenis);
+// Gedeeld door vrijdag en zaterdag: bij 4 personen een "vrijdag_veel"-
+// gerecht uit het receptenboek, bij 2 personen een vlees+groente-combi uit
+// dag_opties.txt. uitgeslotenNaam voorkomt dat vrijdag en zaterdag in
+// dezelfde (4p-)week toevallig hetzelfde kiezen.
+function kiesVrijdagOfZaterdag(dagLabel, veelCategorie, kleinCategorie, dagOpties, pools, personen, geschiedenis, uitgeslotenNaam) {
+  if (personen === 4) {
+    const gerecht = kiesUitPool(pools.vrijdag_veel, veelCategorie, geschiedenis, uitgeslotenNaam);
     return {
-      dag: "Vrijdag (4p)",
+      dag: `${dagLabel} (4p)`,
       naam: gerecht ? gerecht.naam : "(geen 'vrijdag_veel'-gerecht gevonden)",
-      ingredienten: gerecht ? [...gerecht.ingredienten] : [],
-      categorie: "vrijdag_veel",
+      ingredienten: gerecht ? schaalIngredienten(gerecht.ingredienten, gerecht.basisPersonen, 4) : [],
+      categorie: veelCategorie,
+      personen: 4,
       vlees: gerecht ? gerecht.vlees : null,
     };
   }
-  return samenstellenVrijdagKlein({
+  const onderdelen = {
     vlees: pickRandom(dagOpties.vrijdag_vlees_klein),
     groente: pickRandom(dagOpties.groente),
-  });
+  };
+  return samenstellenKlein(dagLabel, kleinCategorie, onderdelen);
 }
 
-function stelWeekmenuSamen(pools, dagOpties, vierPersonen, geschiedenis) {
+function gerechtDagEntry(dagLabel, categorie, gerecht, personen) {
+  return {
+    dag: dagLabel,
+    naam: gerecht ? gerecht.naam : "(pool leeg)",
+    ingredienten: gerecht ? schaalIngredienten(gerecht.ingredienten, gerecht.basisPersonen, personen) : [],
+    categorie,
+    personen,
+    vlees: gerecht ? gerecht.vlees : null,
+  };
+}
+
+function stelWeekmenuSamen(pools, dagOpties, evenWeek, geschiedenis) {
   const weekmenu = [];
 
+  const maPersonen = personenVoor("maandag", evenWeek);
   const ma = kiesUitPool(pools.makkelijk, "maandag", geschiedenis);
-  weekmenu.push({
-    dag: "Maandag",
-    naam: ma ? ma.naam : "(geen 'makkelijk'-gerecht gevonden)",
-    ingredienten: ma ? [...ma.ingredienten] : [],
-    categorie: "maandag",
-    vlees: ma ? ma.vlees : null,
-  });
+  weekmenu.push(gerechtDagEntry("Maandag", "maandag", ma, maPersonen));
 
   weekmenu.push(kiesDinsdag(dagOpties));
 
+  const woePersonen = personenVoor("woensdag", evenWeek);
+  const doPersonen = personenVoor("donderdag", evenWeek);
   const doo = kiesUitPool(pools.algemeen, "donderdag", geschiedenis);
   const woe = kiesUitPool(pools.algemeen, "woensdag", geschiedenis, doo ? doo.naam : null);
-  weekmenu.push({
-    dag: "Woensdag",
-    naam: woe ? woe.naam : "(pool leeg)",
-    ingredienten: woe ? [...woe.ingredienten] : [],
-    categorie: "woensdag",
-    vlees: woe ? woe.vlees : null,
-  });
+  weekmenu.push(gerechtDagEntry("Woensdag", "woensdag", woe, woePersonen));
+  weekmenu.push(gerechtDagEntry("Donderdag", "donderdag", doo, doPersonen));
 
-  weekmenu.push({
-    dag: "Donderdag",
-    naam: doo ? doo.naam : "(pool leeg)",
-    ingredienten: doo ? [...doo.ingredienten] : [],
-    categorie: "donderdag",
-    vlees: doo ? doo.vlees : null,
-  });
+  const vrijdagPersonen = personenVoor("vrijdag", evenWeek);
+  const vrijdag = kiesVrijdagOfZaterdag("Vrijdag", "vrijdag_veel", "vrijdag_klein", dagOpties, pools, vrijdagPersonen, geschiedenis);
+  weekmenu.push(vrijdag);
 
-  weekmenu.push(kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis));
+  const zaterdagPersonen = personenVoor("zaterdag", evenWeek);
+  const zaterdag = kiesVrijdagOfZaterdag("Zaterdag", "zaterdag_veel", "zaterdag_klein", dagOpties, pools, zaterdagPersonen, geschiedenis, vrijdag.naam);
+  weekmenu.push(zaterdag);
+
   weekmenu.push(kiesZondag(dagOpties));
 
   return weekmenu;
 }
 
-function herkiesDag(weekmenu, index, pools, dagOpties, vierPersonen, geschiedenis) {
+function herkiesDag(weekmenu, index, pools, dagOpties, evenWeek, geschiedenis) {
   const categorie = weekmenu[index].categorie;
   const vorigeNaam = weekmenu[index].naam;
+  const personen = weekmenu[index].personen || 2;
 
   function anderDagNaam(catNaam) {
     const d = weekmenu.find((d) => d.categorie === catNaam);
@@ -333,39 +456,22 @@ function herkiesDag(weekmenu, index, pools, dagOpties, vierPersonen, geschiedeni
   }
 
   const herkiesFuncties = {
-    maandag: () => {
-      const g = kiesUitPool(pools.makkelijk, "maandag", geschiedenis);
-      return {
-        dag: "Maandag",
-        naam: g ? g.naam : "(geen 'makkelijk'-gerecht gevonden)",
-        ingredienten: g ? [...g.ingredienten] : [],
-        categorie: "maandag",
-        vlees: g ? g.vlees : null,
-      };
-    },
+    maandag: () => gerechtDagEntry("Maandag", "maandag", kiesUitPool(pools.makkelijk, "maandag", geschiedenis), personen),
     dinsdag: () => kiesDinsdag(dagOpties),
-    woensdag: () => {
-      const g = kiesUitPool(pools.algemeen, "woensdag", geschiedenis, anderDagNaam("donderdag"));
-      return {
-        dag: "Woensdag",
-        naam: g ? g.naam : "(pool leeg)",
-        ingredienten: g ? [...g.ingredienten] : [],
-        categorie: "woensdag",
-        vlees: g ? g.vlees : null,
-      };
-    },
-    donderdag: () => {
-      const g = kiesUitPool(pools.algemeen, "donderdag", geschiedenis, anderDagNaam("woensdag"));
-      return {
-        dag: "Donderdag",
-        naam: g ? g.naam : "(pool leeg)",
-        ingredienten: g ? [...g.ingredienten] : [],
-        categorie: "donderdag",
-        vlees: g ? g.vlees : null,
-      };
-    },
-    vrijdag_veel: () => kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis),
-    vrijdag_klein: () => kiesVrijdag(dagOpties, pools, vierPersonen, geschiedenis),
+    woensdag: () => gerechtDagEntry(
+      "Woensdag", "woensdag",
+      kiesUitPool(pools.algemeen, "woensdag", geschiedenis, anderDagNaam("donderdag")),
+      personen
+    ),
+    donderdag: () => gerechtDagEntry(
+      "Donderdag", "donderdag",
+      kiesUitPool(pools.algemeen, "donderdag", geschiedenis, anderDagNaam("woensdag")),
+      personen
+    ),
+    vrijdag_veel: () => kiesVrijdagOfZaterdag("Vrijdag", "vrijdag_veel", "vrijdag_klein", dagOpties, pools, personen, geschiedenis, anderDagNaam("zaterdag_veel")),
+    vrijdag_klein: () => kiesVrijdagOfZaterdag("Vrijdag", "vrijdag_veel", "vrijdag_klein", dagOpties, pools, personen, geschiedenis),
+    zaterdag_veel: () => kiesVrijdagOfZaterdag("Zaterdag", "zaterdag_veel", "zaterdag_klein", dagOpties, pools, personen, geschiedenis, anderDagNaam("vrijdag_veel")),
+    zaterdag_klein: () => kiesVrijdagOfZaterdag("Zaterdag", "zaterdag_veel", "zaterdag_klein", dagOpties, pools, personen, geschiedenis),
     zondag: () => kiesZondag(dagOpties),
   };
 
@@ -379,6 +485,19 @@ function herkiesDag(weekmenu, index, pools, dagOpties, vierPersonen, geschiedeni
     }
   }
   return false;
+}
+
+// Past het aantal personen voor één dag aan (handmatige override) en
+// herschaalt de ingrediënten van het huidige gerecht naar het nieuwe
+// aantal — het gerecht zelf blijft hetzelfde, alleen de hoeveelheden
+// veranderen. Voor combi-dagen (dinsdag/klein-varianten/zondag) heeft dit
+// geen effect op de hoeveelheden (die zijn niet aan een receptenboek-
+// Basispersonen gekoppeld), maar de badge/weergave wordt wel bijgewerkt.
+function pasPersonenAan(dag, gerecht, nieuwePersonen) {
+  dag.personen = Math.max(1, nieuwePersonen);
+  if (gerecht && gerecht.basisPersonen) {
+    dag.ingredienten = schaalIngredienten(gerecht.ingredienten, gerecht.basisPersonen, dag.personen);
+  }
 }
 
 function zoekReceptenOpNaam(receptenboek, zoekterm) {
@@ -424,8 +543,24 @@ function bouwReceptenboekBlok(gerecht) {
   const regels = [`Gerecht: ${gerecht.naam}`];
   if (gerecht.vlees) regels.push(`Vlees: ${gerecht.vlees}`);
   if (gerecht.label) regels.push(`Label: ${gerecht.label}`);
+  if (gerecht.basisPersonen && gerecht.basisPersonen !== 2) regels.push(`Basispersonen: ${gerecht.basisPersonen}`);
+  if (gerecht.tags && gerecht.tags.length > 0) regels.push(`Tags: ${gerecht.tags.join(", ")}`);
+  if (gerecht.actief === false) regels.push(`Actief: nee`);
   for (const ingredient of gerecht.ingredienten) regels.push(ingredient);
   return regels.join("\n");
+}
+
+// Herbouwt het volledige receptenboek.txt-bestand uit staat.receptenboek
+// (behoudt de oorspronkelijke uitleg-comments bovenaan het bestand).
+function herbouwReceptenboekTekst() {
+  const blokken = staat.receptenboek.map(bouwReceptenboekBlok);
+  const header = staat.receptenboekHeader || "";
+  return header + blokken.join("\n\n") + "\n";
+}
+
+function receptenboekHeaderUitRuweTekst(ruweTekst) {
+  const match = ruweTekst.match(/^Gerecht:/m);
+  return match ? ruweTekst.slice(0, match.index) : "";
 }
 
 function relatieveTijd(iso) {
@@ -570,16 +705,20 @@ const schermLaden = document.getElementById("scherm-laden");
 const appEl = document.getElementById("app");
 const dagenEl = document.getElementById("dagen");
 const weekInfoEl = document.getElementById("week-info");
-const personenSwitchEl = document.getElementById("personen-switch");
+const stappenIndicatorEl = document.getElementById("stappen-indicator");
 const laatstBesteldEl = document.getElementById("laatst-besteld");
 const standaardLijstEl = document.getElementById("standaard-lijst");
+const voorraadLijstEl = document.getElementById("voorraad-lijst");
+const beoordelingBlokEl = document.getElementById("beoordeling-blok");
+const receptenbeheerEl = document.getElementById("receptenbeheer");
 const kassabonEl = document.getElementById("kassabon-wrap");
 const waarschuwingenEl = document.getElementById("waarschuwingen");
 const statusEl = document.getElementById("status");
 const losseLijstEl = document.getElementById("losse-lijst");
 const losNaamEl = document.getElementById("los-naam");
 const losAantalEl = document.getElementById("los-aantal");
-const kiesSchermEl = document.getElementById("kies-scherm");
+const weekmenuSchermEl = document.getElementById("weekmenu-scherm");
+const voorraadSchermEl = document.getElementById("voorraad-scherm");
 const controleSchermEl = document.getElementById("controle-scherm");
 const controleLijstEl = document.getElementById("controle-lijst");
 const controleLosNaamEl = document.getElementById("controle-los-naam");
@@ -587,22 +726,31 @@ const controleLosAantalEl = document.getElementById("controle-los-aantal");
 const terugKnop = document.getElementById("terug-knop");
 const actieKnop = document.getElementById("actie-knop");
 
+const STAP_VOLGORDE = ["weekmenu", "voorraad", "controleren"];
+
 let staat = {
   pools: null,
   dagOpties: null,
   standaardlijst: null,
+  standaardCategorieen: [],
   standaardUitgevinkt: new Set(),
+  voorraadCategorieen: [],
+  voorraadStatus: {},
   receptenboek: null,
-  receptenboekRuweTekst: "",
+  receptenboekHeader: "",
   receptenboekGewijzigd: false,
   geschiedenis: null,
-  vierPersonen: false,
+  evenWeek: false,
   weekmenu: [],
   losseProducten: [],
   filters: {},
   ingredientenOpen: new Set(),
+  receptenbeheerOpen: false,
   laatsteBestelling: null,
-  stap: "kiezen",
+  laatsteWeekmenu: null,
+  beoordelingen: {},
+  productVoorkeuren: { ingredient: {}, gerecht_ingredient: {} },
+  stap: "weekmenu",
   productVoorstellen: null,
   productKeuzeIndex: {},
 };
@@ -615,18 +763,32 @@ function toonScherm(scherm) {
 function ververs() {
   renderKopInfo();
   renderStandaardlijst();
+  renderVoorraad();
   renderWeekmenu();
+  renderBeoordelingBlok();
+  renderReceptenbeheer();
   renderKassabon();
 }
 
 function gaNaarStap(stap) {
   staat.stap = stap;
-  kiesSchermEl.classList.toggle("verborgen", stap !== "kiezen");
+  weekmenuSchermEl.classList.toggle("verborgen", stap !== "weekmenu");
+  voorraadSchermEl.classList.toggle("verborgen", stap !== "voorraad");
   controleSchermEl.classList.toggle("verborgen", stap !== "controleren");
-  terugKnop.classList.toggle("verborgen", stap !== "controleren");
+  terugKnop.classList.toggle("verborgen", stap === "weekmenu");
 
-  if (stap === "kiezen") {
-    statusEl.textContent = "";
+  stappenIndicatorEl.querySelectorAll(".stap-bolletje").forEach((el) => {
+    const idx = STAP_VOLGORDE.indexOf(el.dataset.stap);
+    const huidigeIdx = STAP_VOLGORDE.indexOf(stap);
+    el.classList.toggle("actief", el.dataset.stap === stap);
+    el.classList.toggle("voltooid", idx < huidigeIdx);
+  });
+
+  statusEl.textContent = "";
+  if (stap === "weekmenu") {
+    actieKnop.textContent = "Volgende: voorraad";
+    actieKnop.onclick = () => gaNaarStap("voorraad");
+  } else if (stap === "voorraad") {
     actieKnop.textContent = "Zoek producten op";
     actieKnop.onclick = startZoeken;
   } else if (stap === "controleren") {
@@ -637,18 +799,16 @@ function gaNaarStap(stap) {
 }
 
 terugKnop.onclick = () => {
-  wisControleStaat();
-  gaNaarStap("kiezen");
+  const huidigeIdx = STAP_VOLGORDE.indexOf(staat.stap);
+  if (huidigeIdx <= 0) return;
+  if (staat.stap === "controleren") wisControleStaat();
+  gaNaarStap(STAP_VOLGORDE[huidigeIdx - 1]);
 };
 
-// --- Kop: personen-schuifje + laatst besteld ---
+// --- Kop: week-info + laatst besteld ---
 
 function renderKopInfo() {
-  weekInfoEl.textContent = staat.vierPersonen ? "Vrijdag & weekend voor 4 personen" : "Vrijdag & weekend voor 2 personen";
-
-  personenSwitchEl.querySelectorAll(".optie").forEach((el) => {
-    el.classList.toggle("actief", (el.dataset.personen === "4") === staat.vierPersonen);
-  });
+  weekInfoEl.textContent = `Weekplan voor deze week · vrijdag & zaterdag voor ${staat.evenWeek ? "2" : "4"} personen`;
 
   if (staat.laatsteBestelling && staat.laatsteBestelling.datum) {
     laatstBesteldEl.textContent = `Laatst besteld: ${relatieveTijd(staat.laatsteBestelling.datum)}`;
@@ -657,58 +817,109 @@ function renderKopInfo() {
   }
 }
 
-personenSwitchEl.querySelectorAll(".optie").forEach((el) => {
-  el.onclick = () => {
-    const nieuweWaarde = el.dataset.personen === "4";
-    if (nieuweWaarde === staat.vierPersonen) return;
-    staat.vierPersonen = nieuweWaarde;
-    const vrijdagIndex = staat.weekmenu.findIndex((d) => d.categorie.startsWith("vrijdag"));
-    if (vrijdagIndex !== -1) {
-      staat.weekmenu[vrijdagIndex] = kiesVrijdag(staat.dagOpties, staat.pools, staat.vierPersonen, staat.geschiedenis);
-    }
-    ververs();
-  };
-});
-
 // --- Standaardlijst ---
 
 function renderStandaardlijst() {
   standaardLijstEl.innerHTML = "";
-  for (const item of staat.standaardlijst) {
-    const sleutel = item.naam.toLowerCase();
-    const uitgevinkt = staat.standaardUitgevinkt.has(sleutel);
+  for (const categorie of staat.standaardCategorieen) {
+    if (categorie.items.length === 0) continue;
+    if (staat.standaardCategorieen.length > 1) {
+      standaardLijstEl.appendChild(maakEl("div", "std-categorie-kop", categorie.naam));
+    }
+    for (const item of categorie.items) {
+      const sleutel = item.naam.toLowerCase();
+      const uitgevinkt = staat.standaardUitgevinkt.has(sleutel);
 
-    const wissel = () => {
-      if (staat.standaardUitgevinkt.has(sleutel)) staat.standaardUitgevinkt.delete(sleutel);
-      else staat.standaardUitgevinkt.add(sleutel);
-      ververs();
-    };
-
-    const rij = maakEl("div", "std-item" + (uitgevinkt ? " uit" : ""));
-    rij.appendChild(maakKnop("vinkje" + (uitgevinkt ? "" : " aan"), uitgevinkt ? "" : "✓", wissel));
-
-    const naamEl = maakEl("div", "std-naam", item.naam);
-    naamEl.onclick = wissel;
-    rij.appendChild(naamEl);
-
-    const stepper = maakEl("div", "stepper");
-    stepper.appendChild(
-      maakKnop("stap-knop", "–", () => {
-        item.aantal = Math.max(1, item.aantal - 1);
+      const wissel = () => {
+        if (staat.standaardUitgevinkt.has(sleutel)) staat.standaardUitgevinkt.delete(sleutel);
+        else staat.standaardUitgevinkt.add(sleutel);
         ververs();
-      })
-    );
-    stepper.appendChild(maakEl("span", "stepper-waarde", `${item.aantal}×`));
-    stepper.appendChild(
-      maakKnop("stap-knop", "+", () => {
-        item.aantal += 1;
-        ververs();
-      })
-    );
-    rij.appendChild(stepper);
+      };
 
-    standaardLijstEl.appendChild(rij);
+      const rij = maakEl("div", "std-item" + (uitgevinkt ? " uit" : ""));
+      rij.appendChild(maakKnop("vinkje" + (uitgevinkt ? "" : " aan"), uitgevinkt ? "" : "✓", wissel));
+
+      const naamEl = maakEl("div", "std-naam", item.naam);
+      naamEl.onclick = wissel;
+      rij.appendChild(naamEl);
+
+      const stepper = maakEl("div", "stepper");
+      stepper.appendChild(
+        maakKnop("stap-knop", "–", () => {
+          item.aantal = Math.max(1, item.aantal - 1);
+          ververs();
+        })
+      );
+      stepper.appendChild(maakEl("span", "stepper-waarde", `${item.aantal}×`));
+      stepper.appendChild(
+        maakKnop("stap-knop", "+", () => {
+          item.aantal += 1;
+          ververs();
+        })
+      );
+      rij.appendChild(stepper);
+
+      standaardLijstEl.appendChild(rij);
+    }
   }
+}
+
+// --- Voorraadcheck ---
+
+const VOORRAAD_STATUSSEN = ["genoeg", "bijna op", "op"];
+const VOORRAAD_LABELS = { genoeg: "Genoeg", "bijna op": "Bijna op", op: "Op" };
+
+function voorraadSleutel(categorieNaam, itemNaam) {
+  return `${categorieNaam}|${itemNaam}`.toLowerCase();
+}
+
+function renderVoorraad() {
+  voorraadLijstEl.innerHTML = "";
+  if (staat.voorraadCategorieen.length === 0) {
+    voorraadLijstEl.appendChild(maakEl("div", "std-footnote", "Geen voorraad.txt gevonden."));
+    return;
+  }
+
+  for (const categorie of staat.voorraadCategorieen) {
+    voorraadLijstEl.appendChild(maakEl("div", "std-categorie-kop", categorie.naam));
+    for (const itemNaam of categorie.items) {
+      const sleutel = voorraadSleutel(categorie.naam, itemNaam);
+      const huidigeStatus = staat.voorraadStatus[sleutel] || "genoeg";
+
+      const rij = maakEl("div", "voorraad-item");
+      rij.appendChild(maakEl("div", "voorraad-naam", itemNaam));
+
+      const knoppenRij = maakEl("div", "voorraad-knoppen");
+      for (const status of VOORRAAD_STATUSSEN) {
+        knoppenRij.appendChild(
+          maakKnop("voorraad-knop" + (huidigeStatus === status ? " actief-" + status.replace(" ", "-") : ""), VOORRAAD_LABELS[status], () => {
+            staat.voorraadStatus[sleutel] = status;
+            ververs();
+          })
+        );
+      }
+      rij.appendChild(knoppenRij);
+
+      voorraadLijstEl.appendChild(rij);
+    }
+  }
+}
+
+// Producten waarvan de voorraad "bijna op" of "op" is — dit zijn de items
+// die (naast de vaste standaardlijst) aan de boodschappenlijst worden
+// toegevoegd.
+function voorraadTeBestellen() {
+  const resultaat = [];
+  for (const categorie of staat.voorraadCategorieen) {
+    for (const itemNaam of categorie.items) {
+      const sleutel = voorraadSleutel(categorie.naam, itemNaam);
+      const status = staat.voorraadStatus[sleutel] || "genoeg";
+      if (status === "bijna op" || status === "op") {
+        resultaat.push({ naam: itemNaam, aantal: 1 });
+      }
+    }
+  }
+  return resultaat;
 }
 
 // --- Ingrediënten per dag: inzien/aanpassen ---
@@ -803,12 +1014,63 @@ function renderWeekmenu() {
   });
 }
 
+// Past het aantal personen voor deze dag aan (handmatige override op het
+// vaste weekrooster) en herschaalt de ingrediënten mee als het huidige
+// gerecht uit het receptenboek komt.
+function wijzigPersonenVoorDag(dag, delta) {
+  const nieuwePersonen = Math.max(1, (dag.personen || 2) + delta);
+  if (nieuwePersonen === dag.personen) return;
+  const gerecht = staat.receptenboek ? staat.receptenboek.find((g) => g.naam === dag.naam) : null;
+  pasPersonenAan(dag, gerecht, nieuwePersonen);
+  ververs();
+}
+
+function bouwDagKop(dag, index) {
+  const kop = maakEl("div", "dag-kop-rij");
+  kop.appendChild(maakEl("div", "dag-eyebrow", dag.dag));
+
+  const badge = maakEl("div", "personen-badge");
+  badge.appendChild(maakKnop("personen-knop", "–", () => wijzigPersonenVoorDag(dag, -1)));
+  badge.appendChild(maakEl("span", "personen-waarde", `${dag.personen || 2}p`));
+  badge.appendChild(maakKnop("personen-knop", "+", () => wijzigPersonenVoorDag(dag, 1)));
+  kop.appendChild(badge);
+
+  return kop;
+}
+
+function bouwTagBadges(gerecht) {
+  if (!gerecht) return null;
+  const badges = [gerecht.vlees ? VLEES_LABELS[gerecht.vlees] || gerecht.vlees : null, ...(gerecht.tags || [])].filter(
+    (t) => t && t !== "nieuw" && t !== "probeerrecept"
+  );
+  const extra = [];
+  if ((gerecht.tags || []).includes("nieuw")) extra.push("✨ nieuw");
+  if ((gerecht.tags || []).includes("probeerrecept")) extra.push("🧪 probeersel");
+  const alles = [...extra, ...badges];
+  if (alles.length === 0) return null;
+  const wrap = maakEl("div", "tag-badges");
+  for (const t of alles) wrap.appendChild(maakEl("span", "tag-badge", t));
+  return wrap;
+}
+
 function bouwGerechtKaart(dag, index) {
   const kaart = maakEl("section", "kaart");
-  kaart.appendChild(maakEl("div", "dag-eyebrow", dag.dag));
+  kaart.appendChild(bouwDagKop(dag, index));
+
+  const huidigGerecht = staat.receptenboek ? staat.receptenboek.find((g) => g.naam === dag.naam) : null;
+  const tagBadges = bouwTagBadges(huidigGerecht);
+  if (tagBadges) kaart.appendChild(tagBadges);
 
   const pool = POOL_VOOR_CATEGORIE[dag.categorie](staat.pools);
-  const beschikbareVlezen = VLEES_VOLGORDE.filter((v) => pool.some((g) => (g.vlees || "overig") === v));
+  const vleesOpties = VLEES_VOLGORDE.filter((v) => pool.some((g) => (g.vlees || "overig") === v)).map((v) => ({
+    sleutel: `vlees:${v}`,
+    label: VLEES_LABELS[v],
+  }));
+  const tagsInPool = new Set();
+  pool.forEach((g) => (g.tags || []).forEach((t) => tagsInPool.add(t)));
+  const tagOpties = TAG_VOCABULAIRE.filter((t) => tagsInPool.has(t)).map((t) => ({ sleutel: `tag:${t}`, label: t }));
+  const alleOpties = [...vleesOpties, ...tagOpties];
+
   if (staat.filters[dag.categorie] === undefined) staat.filters[dag.categorie] = "alle";
   const huidigFilter = staat.filters[dag.categorie];
 
@@ -819,10 +1081,10 @@ function bouwGerechtKaart(dag, index) {
       renderWeekmenu();
     })
   );
-  for (const v of beschikbareVlezen) {
+  for (const optie of alleOpties) {
     chipsEl.appendChild(
-      maakKnop("chip" + (huidigFilter === v ? " actief" : ""), VLEES_LABELS[v], () => {
-        staat.filters[dag.categorie] = v;
+      maakKnop("chip" + (huidigFilter === optie.sleutel ? " actief" : ""), optie.label, () => {
+        staat.filters[dag.categorie] = optie.sleutel;
         renderWeekmenu();
       })
     );
@@ -830,7 +1092,14 @@ function bouwGerechtKaart(dag, index) {
   kaart.appendChild(chipsEl);
 
   const lijstEl = maakEl("div", "gerecht-lijst");
-  const zichtbaar = huidigFilter === "alle" ? pool : pool.filter((g) => (g.vlees || "overig") === huidigFilter);
+  const zichtbaar =
+    huidigFilter === "alle"
+      ? pool
+      : pool.filter((g) => {
+          if (huidigFilter.startsWith("vlees:")) return (g.vlees || "overig") === huidigFilter.slice(6);
+          if (huidigFilter.startsWith("tag:")) return (g.tags || []).includes(huidigFilter.slice(4));
+          return true;
+        });
   for (const gerecht of zichtbaar) {
     const rij = document.createElement("button");
     rij.type = "button";
@@ -838,13 +1107,7 @@ function bouwGerechtKaart(dag, index) {
     rij.appendChild(maakEl("span", "bolletje"));
     rij.appendChild(document.createTextNode(gerecht.naam));
     rij.onclick = () => {
-      staat.weekmenu[index] = {
-        dag: dag.dag,
-        naam: gerecht.naam,
-        ingredienten: [...gerecht.ingredienten],
-        categorie: dag.categorie,
-        vlees: gerecht.vlees,
-      };
+      staat.weekmenu[index] = gerechtDagEntry(dag.dag, dag.categorie, gerecht, dag.personen || 2);
       staat.ingredientenOpen.delete(index);
       ververs();
     };
@@ -858,7 +1121,7 @@ function bouwGerechtKaart(dag, index) {
   const acties = maakEl("div", "kaart-acties");
   acties.appendChild(
     maakKnop("secundair", "🔀 Verras me", () => {
-      herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
+      herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
       staat.ingredientenOpen.delete(index);
       ververs();
     })
@@ -888,6 +1151,13 @@ const COMBI_CONFIG = {
     ],
     samenstellen: samenstellenVrijdagKlein,
   },
+  zaterdag_klein: {
+    groepen: [
+      { key: "vlees", label: "Vlees", opties: (d) => d.vrijdag_vlees_klein },
+      { key: "groente", label: "Groente", opties: (d) => d.groente },
+    ],
+    samenstellen: samenstellenZaterdagKlein,
+  },
   zondag: {
     groepen: [{ key: "snacks", label: "Snack (tik er 1 of meerdere aan)", opties: (d) => d.zondag_snack, meerkeuze: true }],
     samenstellen: samenstellenZondag,
@@ -898,7 +1168,7 @@ const COMBI_CONFIG = {
 function bouwCombiKaart(dag, index) {
   const config = COMBI_CONFIG[dag.categorie];
   const kaart = maakEl("section", "kaart");
-  kaart.appendChild(maakEl("div", "dag-eyebrow", dag.dag));
+  kaart.appendChild(bouwDagKop(dag, index));
 
   if (config.vast) {
     const groep = maakEl("div", "combi-groep");
@@ -938,7 +1208,7 @@ function bouwCombiKaart(dag, index) {
   const acties = maakEl("div", "kaart-acties");
   acties.appendChild(
     maakKnop("secundair", "🔀 Verras me", () => {
-      herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
+      herkiesDag(staat.weekmenu, index, staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
       staat.ingredientenOpen.delete(index);
       ververs();
     })
@@ -968,7 +1238,8 @@ function toonZoekveld(kaart, index) {
       const optieKnop = maakKnop("", match.naam, () => {
         const dagLabel = staat.weekmenu[index].dag;
         const categorie = staat.weekmenu[index].categorie;
-        staat.weekmenu[index] = { dag: dagLabel, naam: match.naam, ingredienten: [...match.ingredienten], categorie, vlees: match.vlees };
+        const personen = staat.weekmenu[index].personen || 2;
+        staat.weekmenu[index] = gerechtDagEntry(dagLabel, categorie, match, personen);
         staat.ingredientenOpen.delete(index);
         ververs();
       });
@@ -1017,15 +1288,23 @@ function toonNieuwGerechtForm(kaart, index) {
     }
 
     const categorie = staat.weekmenu[index].categorie;
-    const nieuwGerecht = { naam, label: LABEL_VOOR_CATEGORIE[categorie], vlees, actief: true, ingredienten };
+    const personen = staat.weekmenu[index].personen || 2;
+    const nieuwGerecht = {
+      naam,
+      label: LABEL_VOOR_CATEGORIE[categorie] ?? null,
+      vlees,
+      basisPersonen: personen,
+      tags: ["nieuw", "probeerrecept"],
+      actief: true,
+      ingredienten,
+    };
 
     staat.receptenboek.push(nieuwGerecht);
-    staat.receptenboekRuweTekst = staat.receptenboekRuweTekst.trimEnd() + "\n\n" + bouwReceptenboekBlok(nieuwGerecht) + "\n";
     staat.receptenboekGewijzigd = true;
     staat.pools = bepaalPools(staat.receptenboek);
 
     const dagLabel = staat.weekmenu[index].dag;
-    staat.weekmenu[index] = { dag: dagLabel, naam, ingredienten: [...ingredienten], categorie, vlees };
+    staat.weekmenu[index] = gerechtDagEntry(dagLabel, categorie, nieuwGerecht, personen);
     staat.ingredientenOpen.delete(index);
     ververs();
   });
@@ -1037,6 +1316,237 @@ function toonNieuwGerechtForm(kaart, index) {
   form.appendChild(foutEl);
   kaart.appendChild(form);
   naamVeld.focus();
+}
+
+// --- Receptenboek beheren (bewerken/verwijderen van bestaande gerechten) ---
+
+function verversWeekmenuEntriesVoorGerecht(oudeNaam, gerecht) {
+  staat.weekmenu.forEach((dag, i) => {
+    if (dag.naam === oudeNaam) {
+      staat.weekmenu[i] = gerechtDagEntry(dag.dag, dag.categorie, gerecht, dag.personen);
+    }
+  });
+}
+
+function verwijderRecept(gerecht) {
+  if (!confirm(`"${gerecht.naam}" verwijderen uit het receptenboek?`)) return;
+
+  staat.receptenboek = staat.receptenboek.filter((g) => g !== gerecht);
+  staat.receptenboekGewijzigd = true;
+  staat.pools = bepaalPools(staat.receptenboek);
+
+  staat.weekmenu.forEach((dag, i) => {
+    if (dag.naam === gerecht.naam) {
+      herkiesDag(staat.weekmenu, i, staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
+    }
+  });
+  ververs();
+}
+
+function toonReceptBewerkForm(container, gerecht) {
+  if (container.querySelector(".recept-bewerk-form")) return;
+
+  const beheerbareTags = ["nieuw", "probeerrecept", "niet-meer-tonen"];
+
+  const form = maakEl("div", "recept-bewerk-form nieuw-gerecht-form");
+
+  const naamVeld = document.createElement("input");
+  naamVeld.type = "text";
+  naamVeld.value = gerecht.naam;
+
+  const vleesVeld = document.createElement("select");
+  for (const v of VLEES_VOLGORDE) {
+    const optie = document.createElement("option");
+    optie.value = v;
+    optie.textContent = VLEES_LABELS[v];
+    if ((gerecht.vlees || "overig") === v) optie.selected = true;
+    vleesVeld.appendChild(optie);
+  }
+
+  const basisPersonenVeld = document.createElement("select");
+  for (const p of [2, 4]) {
+    const optie = document.createElement("option");
+    optie.value = String(p);
+    optie.textContent = `Basis: ${p} personen`;
+    if ((gerecht.basisPersonen || 2) === p) optie.selected = true;
+    basisPersonenVeld.appendChild(optie);
+  }
+
+  const tagsVeld = document.createElement("input");
+  tagsVeld.type = "text";
+  tagsVeld.placeholder = "Tags (komma-gescheiden), bv: snel, bowl";
+  tagsVeld.value = (gerecht.tags || []).filter((t) => !beheerbareTags.includes(t)).join(", ");
+
+  const ingredientenVeld = document.createElement("textarea");
+  ingredientenVeld.value = gerecht.ingredienten.join("\n");
+
+  const foutEl = maakEl("div", "foutmelding");
+
+  const opslaanKnop = maakKnop("", "Wijzigingen opslaan", () => {
+    const naam = naamVeld.value.trim();
+    const ingredienten = ingredientenVeld.value
+      .split("\n")
+      .map((r) => r.trim())
+      .filter(Boolean);
+
+    if (!naam || ingredienten.length === 0) {
+      foutEl.textContent = "Vul een naam en minstens 1 ingrediënt in.";
+      return;
+    }
+
+    const oudeNaam = gerecht.naam;
+    gerecht.naam = naam;
+    gerecht.vlees = vleesVeld.value;
+    gerecht.basisPersonen = parseInt(basisPersonenVeld.value, 10) || 2;
+    const nieuweTags = tagsVeld.value
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+    const behoudenTags = (gerecht.tags || []).filter((t) => beheerbareTags.includes(t));
+    gerecht.tags = [...new Set([...behoudenTags, ...nieuweTags])];
+    gerecht.ingredienten = ingredienten;
+
+    staat.receptenboekGewijzigd = true;
+    staat.pools = bepaalPools(staat.receptenboek);
+    verversWeekmenuEntriesVoorGerecht(oudeNaam, gerecht);
+    ververs();
+  });
+
+  const annuleerKnop = maakKnop("secundair", "Annuleren", () => ververs());
+
+  form.appendChild(naamVeld);
+  form.appendChild(vleesVeld);
+  form.appendChild(basisPersonenVeld);
+  form.appendChild(tagsVeld);
+  form.appendChild(ingredientenVeld);
+  form.appendChild(opslaanKnop);
+  form.appendChild(annuleerKnop);
+  form.appendChild(foutEl);
+  container.appendChild(form);
+}
+
+function renderReceptenbeheer() {
+  receptenbeheerEl.innerHTML = "";
+  if (!staat.receptenboek) return;
+
+  receptenbeheerEl.appendChild(
+    maakKnop(
+      "receptenbeheer-toggle",
+      `${staat.receptenbeheerOpen ? "▾" : "▸"} Receptenboek beheren (${staat.receptenboek.length})`,
+      () => {
+        staat.receptenbeheerOpen = !staat.receptenbeheerOpen;
+        ververs();
+      }
+    )
+  );
+
+  if (!staat.receptenbeheerOpen) return;
+
+  const groepen = [
+    { naam: "Maandag — snel/makkelijk", filter: (g) => g.label === "makkelijk" },
+    { naam: "Vrijdag/zaterdag — 4 personen", filter: (g) => g.label === "vrijdag_veel" },
+    { naam: "Woensdag/donderdag — algemeen", filter: (g) => g.label === null && g.actief },
+    { naam: "Inactief / naslag", filter: (g) => !g.actief },
+  ];
+
+  const lijst = maakEl("div", "receptenbeheer-lijst");
+  for (const groep of groepen) {
+    const gerechten = staat.receptenboek.filter(groep.filter);
+    if (gerechten.length === 0) continue;
+    lijst.appendChild(maakEl("div", "receptenbeheer-groep-kop", groep.naam));
+
+    for (const gerecht of gerechten) {
+      const rij = maakEl("div", "receptenbeheer-rij");
+
+      const infoKolom = maakEl("div", "receptenbeheer-info");
+      const naamRij = maakEl("div", "receptenbeheer-naam", gerecht.naam);
+      infoKolom.appendChild(naamRij);
+      const details = [gerecht.vlees ? VLEES_LABELS[gerecht.vlees] || gerecht.vlees : null, ...(gerecht.tags || [])]
+        .filter(Boolean)
+        .join(" · ");
+      if (details) infoKolom.appendChild(maakEl("div", "receptenbeheer-detail", details));
+      rij.appendChild(infoKolom);
+
+      const knoppen = maakEl("div", "receptenbeheer-knoppen");
+      knoppen.appendChild(maakKnop("secundair", "Bewerken", () => toonReceptBewerkForm(lijst, gerecht)));
+      knoppen.appendChild(maakKnop("secundair", "Verwijderen", () => verwijderRecept(gerecht)));
+      rij.appendChild(knoppen);
+
+      lijst.appendChild(rij);
+    }
+  }
+  receptenbeheerEl.appendChild(lijst);
+}
+
+// --- Gerecht-waardering (lekker / oké / niet meer) ---
+
+const RATEERBARE_CATEGORIEEN = ["maandag", "woensdag", "donderdag", "vrijdag_veel", "zaterdag_veel"];
+
+function rateerbareGerechten(weekmenu) {
+  const set = new Set();
+  for (const dag of weekmenu) {
+    if (RATEERBARE_CATEGORIEEN.includes(dag.categorie)) set.add(dag.naam);
+  }
+  return [...set];
+}
+
+function renderBeoordelingBlok() {
+  beoordelingBlokEl.innerHTML = "";
+  if (!staat.laatsteWeekmenu || !staat.laatsteWeekmenu.gerechten) return;
+
+  const openstaand = staat.laatsteWeekmenu.gerechten.filter((naam) => {
+    const b = staat.beoordelingen[naam];
+    if (!b || !b.laatst) return true;
+    return new Date(b.laatst) < new Date(staat.laatsteWeekmenu.datum);
+  });
+  if (openstaand.length === 0) return;
+
+  const kaart = maakEl("section", "kaart beoordeling-kaart");
+  kaart.appendChild(maakEl("div", "dag-eyebrow", "Hoe was het vorige week?"));
+  for (const naam of openstaand) {
+    const rij = maakEl("div", "beoordeling-rij");
+    rij.appendChild(maakEl("span", "beoordeling-naam", naam));
+    const knoppen = maakEl("div", "beoordeling-knoppen");
+    knoppen.appendChild(maakKnop("beoordeling-knop", "👍 Lekker", () => beoordeelGerecht(naam, "lekker")));
+    knoppen.appendChild(maakKnop("beoordeling-knop", "🙂 Oké", () => beoordeelGerecht(naam, "oke")));
+    knoppen.appendChild(maakKnop("beoordeling-knop", "👎 Niet meer", () => beoordeelGerecht(naam, "niet_meer")));
+    rij.appendChild(knoppen);
+    kaart.appendChild(rij);
+  }
+  beoordelingBlokEl.appendChild(kaart);
+}
+
+async function beoordeelGerecht(naam, waarde) {
+  const bestaand = staat.beoordelingen[naam] || { lekker: 0, oke: 0, niet_meer: 0 };
+  bestaand[waarde] = (bestaand[waarde] || 0) + 1;
+  bestaand.laatst = new Date().toISOString();
+  staat.beoordelingen[naam] = bestaand;
+
+  if (waarde === "niet_meer") {
+    const gerecht = staat.receptenboek.find((g) => g.naam === naam);
+    if (gerecht && !(gerecht.tags || []).includes("niet-meer-tonen")) {
+      gerecht.tags = [...(gerecht.tags || []), "niet-meer-tonen"];
+      staat.receptenboekGewijzigd = true;
+      staat.pools = bepaalPools(staat.receptenboek);
+    }
+  }
+
+  ververs();
+
+  try {
+    await githubPutFile(
+      "gerecht_beoordelingen.json",
+      JSON.stringify(staat.beoordelingen, null, 2),
+      `Beoordeling opgeslagen: ${naam} (${waarde})`
+    );
+    if (staat.receptenboekGewijzigd) {
+      await githubPutFile("receptenboek.txt", herbouwReceptenboekTekst(), "Gerecht gemarkeerd als 'niet meer' na beoordeling");
+      staat.receptenboekGewijzigd = false;
+    }
+  } catch (e) {
+    // Best-effort: de beoordeling blijft lokaal zichtbaar deze sessie, ook
+    // als het opslaan naar GitHub een keer mislukt.
+  }
 }
 
 // --- Extra producten ---
@@ -1098,7 +1608,7 @@ function gekozenStandaardProducten() {
 }
 
 function renderKassabon() {
-  const producten = [...gekozenStandaardProducten(), ...staat.losseProducten];
+  const producten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
   const totalen = berekenTotalen(staat.weekmenu, producten);
 
   kassabonEl.innerHTML = "";
@@ -1145,6 +1655,165 @@ function toonWaarschuwingenNaBestelling() {
 
 // --- Controle-scherm (productkeuzes na het zoeken) ---
 
+// --- Productvoorkeuren (client-kant): gerecht-specifieke default-selectie,
+// mismatch-detectie en het opslaan van een expliciete voorkeur. De
+// algemene voorkeur (tier 2/3) staat al vooraan in de kandidatenlijst
+// zelf — dat doet picnic_boodschappen.py bij het zoeken. ---
+
+function normaliseerIngredientNaam(naam) {
+  return naam.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+// Zet, waar van toepassing, de standaard-geselecteerde kandidaat op basis
+// van een gerecht-specifieke voorkeur (tier 1) — de enige tier die nog niet
+// al server-side is toegepast op de volgorde van de kandidatenlijst.
+function pasProductVoorkeurenToe() {
+  const voorkeuren = staat.productVoorkeuren || {};
+  const gerechtVoorkeuren = voorkeuren.gerecht_ingredient || {};
+  if (Object.keys(gerechtVoorkeuren).length === 0) return;
+
+  for (const naam in staat.productVoorstellen) {
+    const info = staat.productVoorstellen[naam];
+    const kandidaten = info.kandidaten || [];
+    if (kandidaten.length === 0) continue;
+
+    const naamNorm = normaliseerIngredientNaam(naam);
+    let voorkeurId = null;
+    for (const dag of staat.weekmenu) {
+      const sleutel = `${dag.naam}|${naamNorm}`;
+      if (gerechtVoorkeuren[sleutel]) {
+        voorkeurId = gerechtVoorkeuren[sleutel].id;
+        break;
+      }
+    }
+    if (!voorkeurId) continue;
+    const idx = kandidaten.findIndex((k) => k.id === voorkeurId);
+    if (idx !== -1) staat.productKeuzeIndex[naam] = idx;
+  }
+}
+
+function heeftVoorkeurMismatch(naam, gekozen) {
+  if (!gekozen) return false;
+  const voorkeur = (staat.productVoorkeuren?.ingredient || {})[normaliseerIngredientNaam(naam)];
+  return !!(voorkeur && voorkeur.id && voorkeur.id !== gekozen.id);
+}
+
+async function slaProductVoorkeurOp(naam, kandidaat) {
+  staat.productVoorkeuren = staat.productVoorkeuren || { ingredient: {}, gerecht_ingredient: {} };
+  staat.productVoorkeuren.ingredient = staat.productVoorkeuren.ingredient || {};
+  const sleutel = normaliseerIngredientNaam(naam);
+  const bestaand = staat.productVoorkeuren.ingredient[sleutel];
+  staat.productVoorkeuren.ingredient[sleutel] = {
+    id: kandidaat.id,
+    naam: kandidaat.naam,
+    bron: "expliciet",
+    bevestigd: (bestaand?.bevestigd || 0) + 1,
+    laatst: new Date().toISOString(),
+  };
+  renderControleScherm();
+  try {
+    await githubPutFile(
+      "product_voorkeuren.json",
+      JSON.stringify(staat.productVoorkeuren, null, 2),
+      `Voorkeur opgeslagen: ${naam} -> ${kandidaat.naam}`
+    );
+  } catch (e) {
+    // best-effort; de voorkeur blijft lokaal zichtbaar deze sessie
+  }
+}
+
+// --- Controle-scherm ---
+
+function vervangProduct(naam, info) {
+  info.verwijderd = true;
+  controleLosNaamEl.value = naam;
+  controleLosAantalEl.value = String(info.aantal || 1);
+  renderControleScherm();
+  controleLosNaamEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  controleLosNaamEl.focus();
+}
+
+function bouwControleItem(naam, info, compact) {
+  const kandidaten = info.kandidaten || [];
+  const idx = staat.productKeuzeIndex[naam] ?? 0;
+  const gekozen = kandidaten[idx];
+
+  const item = maakEl("div", "controle-item" + (compact ? " compact" : ""));
+
+  const kop = maakEl("div", "controle-kop");
+  kop.appendChild(maakEl("span", "", `${info.aantal}× ${naam}`));
+  kop.appendChild(
+    maakKnop("ingredient-verwijder", "✕", () => {
+      info.verwijderd = true;
+      renderControleScherm();
+    })
+  );
+  item.appendChild(kop);
+
+  const stepper = maakEl("div", "stepper");
+  stepper.appendChild(
+    maakKnop("stap-knop", "–", () => {
+      info.aantal = Math.max(1, info.aantal - 1);
+      renderControleScherm();
+    })
+  );
+  stepper.appendChild(maakEl("span", "stepper-waarde", `${info.aantal}×`));
+  stepper.appendChild(
+    maakKnop("stap-knop", "+", () => {
+      info.aantal += 1;
+      renderControleScherm();
+    })
+  );
+  item.appendChild(stepper);
+
+  if (!gekozen) {
+    const bericht = info.nieuw
+      ? "Nog niet opgezocht — wordt automatisch bij Picnic gezocht op het moment van bestellen."
+      : "Niet gevonden bij Picnic — voeg dit later zelf toe in de Picnic-app.";
+    item.appendChild(maakEl("div", "controle-fout" + (info.nieuw ? " nieuw" : ""), bericht));
+  } else {
+    const resultaat = maakEl("div", "controle-resultaat");
+
+    if (!compact && gekozen.image_url) {
+      const img = document.createElement("img");
+      img.src = gekozen.image_url;
+      img.className = "controle-afbeelding";
+      img.alt = gekozen.naam;
+      resultaat.appendChild(img);
+    }
+
+    const infoKolom = maakEl("div", "controle-info");
+    infoKolom.appendChild(maakEl("div", "controle-naam", gekozen.naam));
+    if (!compact && gekozen.subtitle) {
+      infoKolom.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
+    }
+    if (typeof gekozen.prijs_cent === "number") {
+      infoKolom.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+    }
+    if (!compact && heeftVoorkeurMismatch(naam, gekozen)) {
+      infoKolom.appendChild(maakEl("div", "controle-mismatch", "⚠ niet je gebruikelijke keuze"));
+    }
+    resultaat.appendChild(infoKolom);
+    item.appendChild(resultaat);
+
+    if (!compact) {
+      const acties = maakEl("div", "controle-acties");
+      if (kandidaten.length > 1) {
+        acties.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
+      }
+      acties.appendChild(maakKnop("secundair", "Vervangen", () => vervangProduct(naam, info)));
+      acties.appendChild(maakKnop("secundair", "Parkeren", () => {
+        info.geparkeerd = true;
+        renderControleScherm();
+      }));
+      acties.appendChild(maakKnop("secundair", "⭐ Voorkeur opslaan", () => slaProductVoorkeurOp(naam, gekozen)));
+      item.appendChild(acties);
+    }
+  }
+
+  return item;
+}
+
 function renderControleScherm() {
   controleLijstEl.innerHTML = "";
   const items = staat.productVoorstellen || {};
@@ -1155,89 +1824,65 @@ function renderControleScherm() {
     return;
   }
 
+  const actief = [];
+  const geparkeerdOfVerwijderd = [];
+  for (const naam of namen) {
+    const info = items[naam];
+    if (info.verwijderd || info.geparkeerd) {
+      geparkeerdOfVerwijderd.push(naam);
+    } else {
+      actief.push(naam);
+    }
+  }
+
+  const aandacht = [];
+  const vertrouwd = [];
   let totaalCent = 0;
   let onbekendePrijs = false;
 
-  for (const naam of namen) {
+  for (const naam of actief) {
     const info = items[naam];
     const kandidaten = info.kandidaten || [];
     const idx = staat.productKeuzeIndex[naam] ?? 0;
     const gekozen = kandidaten[idx];
 
-    const item = maakEl("div", "controle-item" + (info.verwijderd ? " verwijderd" : ""));
-
-    const kop = maakEl("div", "controle-kop");
-    kop.appendChild(maakEl("span", "", `${info.aantal}× ${naam}`));
-    kop.appendChild(
-      maakKnop("ingredient-verwijder", info.verwijderd ? "↺ Terugzetten" : "✕", () => {
-        info.verwijderd = !info.verwijderd;
-        renderControleScherm();
-      })
-    );
-    item.appendChild(kop);
-
-    if (info.verwijderd) {
-      item.appendChild(maakEl("div", "controle-detail", "Wordt niet besteld."));
-      controleLijstEl.appendChild(item);
-      continue;
-    }
-
-    const stepper = maakEl("div", "stepper");
-    stepper.appendChild(
-      maakKnop("stap-knop", "–", () => {
-        info.aantal = Math.max(1, info.aantal - 1);
-        renderControleScherm();
-      })
-    );
-    stepper.appendChild(maakEl("span", "stepper-waarde", `${info.aantal}×`));
-    stepper.appendChild(
-      maakKnop("stap-knop", "+", () => {
-        info.aantal += 1;
-        renderControleScherm();
-      })
-    );
-    item.appendChild(stepper);
-
-    if (!gekozen) {
-      const bericht = info.nieuw
-        ? "Nog niet opgezocht — wordt automatisch bij Picnic gezocht op het moment van bestellen."
-        : "Niet gevonden bij Picnic — voeg dit later zelf toe in de Picnic-app.";
-      item.appendChild(maakEl("div", "controle-fout" + (info.nieuw ? " nieuw" : ""), bericht));
-      onbekendePrijs = true;
+    if (gekozen && typeof gekozen.prijs_cent === "number") {
+      totaalCent += gekozen.prijs_cent * info.aantal;
     } else {
-      const resultaat = maakEl("div", "controle-resultaat");
-
-      // Afbeelding
-      if (gekozen.image_url) {
-        const img = document.createElement("img");
-        img.src = gekozen.image_url;
-        img.className = "controle-afbeelding";
-        img.alt = gekozen.naam;
-        resultaat.appendChild(img);
-      }
-
-      // Naam en details
-      const infoKolom = maakEl("div", "controle-info");
-      infoKolom.appendChild(maakEl("div", "controle-naam", gekozen.naam));
-      if (gekozen.subtitle) {
-        infoKolom.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
-      }
-      if (typeof gekozen.prijs_cent === "number") {
-        infoKolom.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
-        totaalCent += gekozen.prijs_cent * info.aantal;
-      } else {
-        onbekendePrijs = true;
-      }
-      resultaat.appendChild(infoKolom);
-
-      item.appendChild(resultaat);
-
-      if (kandidaten.length > 1) {
-        item.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
-      }
+      onbekendePrijs = true;
     }
 
-    controleLijstEl.appendChild(item);
+    const heeftAandachtNodig = !gekozen || info.nieuw || heeftVoorkeurMismatch(naam, gekozen);
+    (heeftAandachtNodig ? aandacht : vertrouwd).push(naam);
+  }
+
+  if (aandacht.length > 0) {
+    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", "Nieuw / controleren"));
+    for (const naam of aandacht) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], false));
+  }
+
+  if (vertrouwd.length > 0) {
+    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", `Vertrouwd (${vertrouwd.length})`));
+    for (const naam of vertrouwd) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], true));
+  }
+
+  if (geparkeerdOfVerwijderd.length > 0) {
+    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", "Niet in deze bestelling"));
+    for (const naam of geparkeerdOfVerwijderd) {
+      const info = items[naam];
+      const rij = maakEl("div", "controle-item verwijderd");
+      const kop = maakEl("div", "controle-kop");
+      kop.appendChild(maakEl("span", "", `${info.aantal}× ${naam}${info.geparkeerd ? " (geparkeerd)" : ""}`));
+      kop.appendChild(
+        maakKnop("ingredient-verwijder", "↺ Terugzetten", () => {
+          info.verwijderd = false;
+          info.geparkeerd = false;
+          renderControleScherm();
+        })
+      );
+      rij.appendChild(kop);
+      controleLijstEl.appendChild(rij);
+    }
   }
 
   const totaalRij = maakEl("div", "controle-totaal");
@@ -1297,33 +1942,59 @@ function toonAlternatieven(item, naam, kandidaten, huidigeIndex) {
 async function laadWeekmenuScherm() {
   toonScherm(schermLaden);
 
-  const [receptenTekst, dagOptiesTekst, standaardTekst, geschiedenisTekst, laatsteTekst] = await Promise.all([
+  const [
+    receptenTekst, dagOptiesTekst, standaardTekst, voorraadTekst, geschiedenisTekst, laatsteTekst,
+    beoordelingenTekst, voorkeurenTekst, laatsteWeekmenuTekst,
+  ] = await Promise.all([
     haalTekstBestandOp("receptenboek.txt"),
     haalTekstBestandOp("dag_opties.txt"),
     haalTekstBestandOp("standaardlijst.txt"),
+    haalTekstBestandOp("voorraad.txt"),
     haalTekstBestandOp("weekmenu_geschiedenis.txt"),
     haalTekstBestandOp("laatste_bestelling.json"),
+    haalTekstBestandOp("gerecht_beoordelingen.json"),
+    haalTekstBestandOp("product_voorkeuren.json"),
+    haalTekstBestandOp("laatste_weekmenu.json"),
   ]);
 
   staat.receptenboek = laadReceptenboek(receptenTekst);
-  staat.receptenboekRuweTekst = receptenTekst;
+  staat.receptenboekHeader = receptenboekHeaderUitRuweTekst(receptenTekst);
   staat.receptenboekGewijzigd = false;
   staat.dagOpties = laadDagOpties(dagOptiesTekst);
-  staat.standaardlijst = laadStandaardlijst(standaardTekst);
+  staat.standaardCategorieen = laadStandaardlijstPerCategorie(standaardTekst);
+  staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
   staat.standaardUitgevinkt = new Set();
+  staat.voorraadCategorieen = laadVoorraadCategorieen(voorraadTekst);
+  staat.voorraadStatus = {};
   staat.geschiedenis = laadGeschiedenis(geschiedenisTekst);
-  staat.vierPersonen = isEvenWeek();
+  staat.evenWeek = isEvenWeek();
   staat.pools = bepaalPools(staat.receptenboek);
-  staat.weekmenu = stelWeekmenuSamen(staat.pools, staat.dagOpties, staat.vierPersonen, staat.geschiedenis);
+  staat.weekmenu = stelWeekmenuSamen(staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
   staat.losseProducten = [];
   staat.filters = {};
   staat.ingredientenOpen = new Set();
+  staat.receptenbeheerOpen = false;
   staat.productVoorstellen = null;
   staat.productKeuzeIndex = {};
   try {
     staat.laatsteBestelling = laatsteTekst ? JSON.parse(laatsteTekst) : null;
   } catch (e) {
     staat.laatsteBestelling = null;
+  }
+  try {
+    staat.beoordelingen = beoordelingenTekst ? JSON.parse(beoordelingenTekst) : {};
+  } catch (e) {
+    staat.beoordelingen = {};
+  }
+  try {
+    staat.productVoorkeuren = voorkeurenTekst ? JSON.parse(voorkeurenTekst) : { ingredient: {}, gerecht_ingredient: {} };
+  } catch (e) {
+    staat.productVoorkeuren = { ingredient: {}, gerecht_ingredient: {} };
+  }
+  try {
+    staat.laatsteWeekmenu = laatsteWeekmenuTekst ? JSON.parse(laatsteWeekmenuTekst) : null;
+  } catch (e) {
+    staat.laatsteWeekmenu = null;
   }
 
   waarschuwingenEl.innerHTML = "";
@@ -1342,7 +2013,7 @@ async function laadWeekmenuScherm() {
     staat.productKeuzeIndex = bewaard.productKeuzeIndex;
     renderLosseProducten();
   }
-  gaNaarStap(bewaard ? "controleren" : "kiezen");
+  gaNaarStap(bewaard ? "controleren" : "weekmenu");
   toonScherm(appEl);
 }
 
@@ -1417,10 +2088,10 @@ function renderLaatsteBestellingBanner() {
 
 async function slaWeekmenuOp() {
   if (staat.receptenboekGewijzigd) {
-    await githubPutFile("receptenboek.txt", staat.receptenboekRuweTekst, "Nieuw gerecht toegevoegd via de website");
+    await githubPutFile("receptenboek.txt", herbouwReceptenboekTekst(), "Receptenboek bijgewerkt via de website");
   }
 
-  const alleProducten = [...gekozenStandaardProducten(), ...staat.losseProducten];
+  const alleProducten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
   const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten);
   await githubPutFile("boodschappenlijst.txt", lijstTekst, "Weekmenu gekozen via de website");
 
@@ -1451,6 +2122,7 @@ async function startZoeken() {
     const tekst = await haalTekstBestandOp("product_voorstellen.json");
     staat.productVoorstellen = tekst ? JSON.parse(tekst) : {};
     staat.productKeuzeIndex = {};
+    pasProductVoorkeurenToe();
     statusEl.textContent = "";
     gaNaarStap("controleren");
   } catch (e) {
@@ -1466,7 +2138,7 @@ function schrijfBoodschappenlijstVanControle() {
   regels.push("#");
   for (const naam in staat.productVoorstellen) {
     const info = staat.productVoorstellen[naam];
-    if (info.verwijderd) continue;
+    if (info.verwijderd || info.geparkeerd) continue;
     regels.push(`${info.aantal} x ${naam}`);
   }
   return regels.join("\n") + "\n";
@@ -1481,7 +2153,7 @@ async function bevestigBestelling() {
     const gekozenProducten = {};
     for (const naam in staat.productVoorstellen) {
       const info = staat.productVoorstellen[naam];
-      if (info.verwijderd) continue;
+      if (info.verwijderd || info.geparkeerd) continue;
       const kandidaten = info.kandidaten || [];
       const idx = staat.productKeuzeIndex[naam] ?? 0;
       const gekozen = kandidaten[idx];
@@ -1492,6 +2164,11 @@ async function bevestigBestelling() {
       "boodschappenlijst.txt",
       schrijfBoodschappenlijstVanControle(),
       "Aantallen aangepast in het controle-scherm"
+    );
+    await githubPutFile(
+      "laatste_weekmenu.json",
+      JSON.stringify({ datum: new Date().toISOString(), gerechten: rateerbareGerechten(staat.weekmenu) }, null, 2),
+      "Weekmenu van deze bestelling bewaard voor beoordeling"
     );
 
     statusEl.textContent = "Bestelling wordt gestart...";

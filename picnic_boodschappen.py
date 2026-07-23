@@ -117,6 +117,12 @@ VOORSTELLEN_BESTAND = Path(__file__).parent / "product_voorstellen.json"
 # wordt er niet opnieuw gezocht maar precies dát product besteld.
 GEKOZEN_BESTAND = Path(__file__).parent / "gekozen_producten.json"
 
+# Geleerde productvoorkeuren per ingrediënt: welk Picnic-product hoort hier
+# meestal bij. "expliciet" (via "Voorkeur opslaan" op de website) wint
+# altijd; "impliciet" wordt hier automatisch bijgehouden na elke geslaagde
+# bestelling (telt hoe vaak een product bevestigd is).
+PRODUCT_VOORKEUREN_BESTAND = Path(__file__).parent / "product_voorkeuren.json"
+
 # ---------------------------------------------------------------------------
 # De boodschappenlijst staat in een los tekstbestand, in dezelfde map als dit
 # script. Dat is fijn omdat je (of je vrouw) die lijst kan aanpassen met een
@@ -336,6 +342,73 @@ def _zoekterm_varianten(naam: str) -> list:
     return unieke
 
 
+_PRODUCT_VOORKEUREN_CACHE = None
+
+
+def _laad_product_voorkeuren() -> dict:
+    """Laadt (en cachet binnen dit proces) de geleerde productvoorkeuren."""
+    global _PRODUCT_VOORKEUREN_CACHE
+    if _PRODUCT_VOORKEUREN_CACHE is not None:
+        return _PRODUCT_VOORKEUREN_CACHE
+    data = {}
+    if PRODUCT_VOORKEUREN_BESTAND.exists():
+        try:
+            data = json.loads(PRODUCT_VOORKEUREN_BESTAND.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+    data.setdefault("ingredient", {})
+    data.setdefault("gerecht_ingredient", {})
+    _PRODUCT_VOORKEUREN_CACHE = data
+    return data
+
+
+def _sla_product_voorkeuren_op():
+    if _PRODUCT_VOORKEUREN_CACHE is None:
+        return
+    try:
+        PRODUCT_VOORKEUREN_BESTAND.write_text(
+            json.dumps(_PRODUCT_VOORKEUREN_CACHE, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+    except Exception:
+        pass  # niet kritiek als dit niet lukt
+
+
+def _pas_voorkeur_toe(kandidaten: list, naam: str) -> list:
+    """Zet een geleerd voorkeursproduct vooraan in de kandidatenlijst, als
+    het (nog) tussen de zoekresultaten zit. Een expliciete voorkeur (via
+    "Voorkeur opslaan" op de website) en een impliciete voorkeur (automatisch
+    geleerd van eerdere bestellingen) staan beide gewoon in dezelfde
+    "ingredient"-tabel — welke van de twee het is, bepaalt alleen of latere
+    impliciete bevestigingen 'm mogen overschrijven (zie _leer_voorkeur)."""
+    voorkeur = _laad_product_voorkeuren().get("ingredient", {}).get(_normalize(naam))
+    if not voorkeur or not voorkeur.get("id"):
+        return kandidaten
+    for i, k in enumerate(kandidaten):
+        if k["id"] == voorkeur["id"]:
+            return [kandidaten[i]] + kandidaten[:i] + kandidaten[i + 1:]
+    return kandidaten
+
+
+def _leer_voorkeur(naam: str, product: dict):
+    """Onthoudt (impliciet) welk product voor dit ingrediënt bevestigd is,
+    tenzij er al een expliciete voorkeur staat (die wint altijd)."""
+    if not product or not product.get("id"):
+        return
+    voorkeuren = _laad_product_voorkeuren()
+    sleutel = _normalize(naam)
+    bestaand = voorkeuren["ingredient"].get(sleutel)
+    if bestaand and bestaand.get("bron") == "expliciet":
+        return
+    zelfde_product = bool(bestaand and bestaand.get("id") == product.get("id"))
+    voorkeuren["ingredient"][sleutel] = {
+        "id": product["id"],
+        "naam": product.get("naam"),
+        "bron": "impliciet",
+        "bevestigd": (bestaand.get("bevestigd", 0) + 1) if zelfde_product else 1,
+        "laatst": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kandidaten: int = 4) -> list:
     """Zoekt bij Picnic en geeft tot max_kandidaten resultaten terug
     (id/naam/prijs), zonder iets te bestellen. Gedeeld door de
@@ -385,6 +458,7 @@ def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kan
     # Verwijder intern score-veld en geef top N terug
     for k in kandidaten:
         del k["_score"]
+    kandidaten = _pas_voorkeur_toe(kandidaten, naam)
     return kandidaten[:max_kandidaten]
 
 
@@ -398,6 +472,7 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
         try:
             api.add_product(gekozen["id"], count=aantal)
             log(f"  ✓ {aantal}x {gekozen.get('naam', naam)} toegevoegd (gekozen via website)", automatisch)
+            _leer_voorkeur(naam, gekozen)
             prijs_cent = gekozen.get("prijs_cent")
             return {
                 "status": "toegevoegd",
@@ -418,6 +493,7 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
     try:
         api.add_product(product["id"], count=aantal)
         log(f"  ✓ {aantal}x {product['naam']} toegevoegd (gezocht op '{naam}')", automatisch)
+        _leer_voorkeur(naam, product)
         # Toon 1-2 alternatieven ter controle, voor het geval het verkeerde
         # product gepakt is (bijv. ander merk of formaat).
         alternatieven = [k["naam"] for k in kandidaten[1:3]]
@@ -516,6 +592,7 @@ def _bestellen_uitvoeren(args, automatisch: bool):
         log(f"  - {item.get('name', '?')}", automatisch)
 
     schrijf_overzicht(resultaten, status="voltooid")
+    _sla_product_voorkeuren_op()
 
     # Eenmalig gebruiken: voorkomt dat een oude keuze een andere week's
     # gelijknamige zoekopdracht overschrijft.
