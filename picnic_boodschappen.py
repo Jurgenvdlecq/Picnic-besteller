@@ -54,6 +54,7 @@ AUTOMATISCH OP DE ACHTERGROND DRAAIEN (bv. elke week vanzelf):
 """
 
 import argparse
+import difflib
 import json
 import os
 import re
@@ -268,6 +269,32 @@ def log_in(automatisch: bool = False) -> PicnicAPI:
     return api
 
 
+def _normalize(tekst: str) -> str:
+    """Normaliseer tekst voor fuzzy matching: lowercase, geen special chars/spaties."""
+    return re.sub(r"[^a-z0-9]", "", tekst.lower())
+
+
+def _fuzzy_score(zoekterm: str, product_naam: str) -> float:
+    """Bereken gelijkenis tussen zoekterm en product, 0.0-1.0.
+    Werkt met genormaliseerde teksten en ook woord-voor-woord."""
+    norm_zoek = _normalize(zoekterm)
+    norm_prod = _normalize(product_naam)
+
+    # Direct match
+    ratio = difflib.SequenceMatcher(None, norm_zoek, norm_prod).ratio()
+
+    # Woord-match: hoe veel woorden van de zoekterm komen voor in het product?
+    zoek_woorden = set(norm_zoek.split()) if norm_zoek else set()
+    prod_woorden = set(norm_prod.split()) if norm_prod else set()
+    if zoek_woorden:
+        woord_match = len(zoek_woorden & prod_woorden) / len(zoek_woorden)
+    else:
+        woord_match = 0
+
+    # Combinatie: 70% sequence match, 30% word match
+    return ratio * 0.7 + woord_match * 0.3
+
+
 def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kandidaten: int = 4) -> list:
     """Zoekt bij Picnic en geeft tot max_kandidaten resultaten terug
     (id/naam/prijs), zonder iets te bestellen. Gedeeld door de
@@ -288,7 +315,7 @@ def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kan
             break
 
     kandidaten = []
-    for product in gevonden_producten[:max_kandidaten]:
+    for product in gevonden_producten[:max_kandidaten * 2]:  # pak meer, sorteer straks
         if not product.get("id"):
             continue
         kandidaten.append({
@@ -297,8 +324,16 @@ def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kan
             "prijs_cent": product.get("display_price"),
             "image_url": product.get("image_url"),
             "subtitle": product.get("subtitle"),  # bijv. "750 gram" of "1 stuk"
+            "_score": _fuzzy_score(naam, product.get("name", "")),
         })
-    return kandidaten
+
+    # Sorteer op fuzzy score zodat het best-passende product bovenaan staat
+    kandidaten.sort(key=lambda k: k["_score"], reverse=True)
+
+    # Verwijder intern score-veld en geef top N terug
+    for k in kandidaten:
+        del k["_score"]
+    return kandidaten[:max_kandidaten]
 
 
 def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bool = False, gekozen: dict = None) -> dict:
