@@ -895,9 +895,71 @@ function renderStandaardlijst() {
       );
       rij.appendChild(stepper);
 
+      rij.appendChild(
+        maakKnop("ingredient-verwijder", "✕", () => {
+          if (!confirm(`"${item.naam}" definitief van de vaste boodschappen verwijderen?`)) return;
+          const idx = categorie.items.indexOf(item);
+          if (idx !== -1) categorie.items.splice(idx, 1);
+          staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
+          staat.standaardUitgevinkt.delete(sleutel);
+          staat.standaardlijstGewijzigd = true;
+          ververs();
+        })
+      );
+
       standaardLijstEl.appendChild(rij);
     }
   }
+
+  standaardLijstEl.appendChild(bouwStandaardToevoegRij());
+}
+
+function bouwStandaardToevoegRij() {
+  const rij = maakEl("div", "std-toevoeg-rij");
+
+  const naamVeld = document.createElement("input");
+  naamVeld.type = "text";
+  naamVeld.placeholder = "Nieuw product";
+  naamVeld.className = "std-toevoeg-naam";
+
+  const aantalVeld = document.createElement("input");
+  aantalVeld.type = "text";
+  aantalVeld.inputMode = "numeric";
+  aantalVeld.value = "1";
+  aantalVeld.className = "std-toevoeg-aantal";
+
+  const categorieVeld = document.createElement("select");
+  categorieVeld.className = "std-toevoeg-categorie";
+  const categorieNamen = staat.standaardCategorieen.length > 0 ? staat.standaardCategorieen.map((c) => c.naam) : ["overig"];
+  for (const naam of categorieNamen) {
+    const optie = document.createElement("option");
+    optie.value = naam;
+    optie.textContent = naam;
+    categorieVeld.appendChild(optie);
+  }
+
+  const toevoegKnop = maakKnop("secundair", "+ Toevoegen", () => {
+    const naam = naamVeld.value.trim();
+    if (!naam) return;
+    const aantal = parseInt(aantalVeld.value, 10) || 1;
+    let categorie = staat.standaardCategorieen.find((c) => c.naam === categorieVeld.value);
+    if (!categorie) {
+      categorie = { naam: categorieVeld.value, items: [] };
+      staat.standaardCategorieen.push(categorie);
+    }
+    categorie.items.push({ naam, aantal });
+    staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
+    staat.standaardlijstGewijzigd = true;
+    naamVeld.value = "";
+    aantalVeld.value = "1";
+    ververs();
+  });
+
+  rij.appendChild(naamVeld);
+  rij.appendChild(aantalVeld);
+  rij.appendChild(categorieVeld);
+  rij.appendChild(toevoegKnop);
+  return rij;
 }
 
 // --- Voorraadcheck ---

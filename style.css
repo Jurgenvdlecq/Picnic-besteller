@@ -606,6 +606,52 @@ input.std-naam:focus {
   outline: none;
 }
 
+.std-toevoeg-rij {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.std-toevoeg-rij input.std-toevoeg-naam {
+  flex: 2;
+  min-width: 120px;
+  letter-spacing: normal;
+  text-align: left;
+  font-size: 0.9rem;
+  padding: 9px 11px;
+}
+
+.std-toevoeg-rij input.std-toevoeg-aantal {
+  flex: 0 0 54px;
+  letter-spacing: normal;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 9px 6px;
+}
+
+.std-toevoeg-rij select.std-toevoeg-categorie {
+  flex: 1;
+  min-width: 100px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 9px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+
+.std-toevoeg-rij button {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  font-size: 0.85rem;
+}
+
 .std-aantal {
   color: var(--muted);
   font-size: 0.85rem;
