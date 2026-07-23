@@ -1,30 +1,28 @@
 # Weekmenu:
-#   Maandag: Nasi met kipreepjes en ei
-#   Dinsdag: Aardappelblokjes + Kipburger + Snijbonen
+#   Maandag: Burrito bowl met gehakt en rijst
+#   Dinsdag: Aardappelblokjes + Hamburger + Broccoli
 #   Woensdag: Kip cacciatore met aardappelpuree
-#   Donderdag: Rundergehaktballen met zoete aardappel
-#   Vrijdag (2p): Biefstuk + Sperziebonen
-#   Zondag: Patat + Oude kaas stengels
+#   Donderdag: Kip fajita bowl
+#   Vrijdag (2p): Vleeslapje + Broccoli
+#   Zondag: Patat + Mini kaassoufflé
 #
-1 x rijst
-2 x kipfilet
-2 x eieren
-1 x nasi kruidenmix
-1 x wokgroente
+1 x rundergehakt
+2 x rijst
+1 x zwarte bonen
+1 x maïs
+1 x geraspte kaas
 1 x Aardappelblokjes
-1 x Kipburger
-1 x Snijbonen
+1 x Hamburger
+2 x Broccoli
+2 x kipfilet
 1 x tomatensaus
 1 x champignons
 1 x aardappelpuree
-1 x rundergehakt
-2 x zoete aardappel
+2 x paprika
 1 x ui
-1 x knoflook
-1 x Biefstuk
-1 x Sperziebonen
+1 x Vleeslapje
 1 x Patat (airfryer)
-1 x Oude kaas stengels
+1 x Mini kaassoufflé
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels standaard
 1 x Appelmoesjes (kleine bakjes) zonder toegevoegde suiker
