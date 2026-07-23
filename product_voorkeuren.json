@@ -27,6 +27,20 @@
       "bron": "expliciet",
       "bevestigd": 1,
       "laatst": "2026-07-23T12:38:02.673Z"
+    },
+    "minikaassouffl": {
+      "id": "s1160997",
+      "naam": "Picnic mini kaassoufflés",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-23T12:38:04.811Z"
+    },
+    "komotrekbandzakken60liter": {
+      "id": "s1011805",
+      "naam": "Komo trekbandzakken 60 liter",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-23T12:38:59.263Z"
     }
   },
   "gerecht_ingredient": {}
