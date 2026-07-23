@@ -936,5 +936,38 @@
         "subtitle": "750 gram"
       }
     ]
+  },
+  "Rijstwafels": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1010629",
+        "naam": "Picnic rijstwafels",
+        "prijs_cent": 65,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/198ca3c96c98daa9001dc3de6d008ec6f5ccf1ea42d58d748fabedcc5cdbf119/small.png",
+        "subtitle": "130 gram"
+      },
+      {
+        "id": "s1010629",
+        "naam": "Picnic rijstwafels",
+        "prijs_cent": 65,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/198ca3c96c98daa9001dc3de6d008ec6f5ccf1ea42d58d748fabedcc5cdbf119/small.png",
+        "subtitle": "130 gram"
+      },
+      {
+        "id": "s1005234",
+        "naam": "Zonnatura bio rijstwafels",
+        "prijs_cent": 129,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f9f22f536d65caac9f4d38565ac91c896a33efbbd383b2e480067544ab9d7816/small.png",
+        "subtitle": "130 gram"
+      },
+      {
+        "id": "s1010652",
+        "naam": "Picnic bio rijstwafels met zeezout",
+        "prijs_cent": 75,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ab7fdce54a4d5228babc52d3f61d10af1ef3c0b0a416ff009f5d729b67bec87c/small.png",
+        "subtitle": "100 gram"
+      }
+    ]
   }
 }
