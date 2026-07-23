@@ -1,26 +1,26 @@
 # Weekmenu:
-#   Maandag: Nasi met kipreepjes en ei
-#   Dinsdag: Rostirondjes + Hamburger + Snijbonen
-#   Woensdag: Kip met rijst en paprika
-#   Donderdag: Chili con carne met rijst
-#   Vrijdag (2p): Vleeslapje + Broccoli
+#   Maandag: Griekse kip bowl met tzatziki
+#   Dinsdag: Rostirondjes + Hamburger + Sperziebonen
+#   Woensdag: Runderreepjes teriyaki met broccoli
+#   Donderdag: Kip met rijst en paprika
+#   Vrijdag (2p): Vleeslapje + Bloemkool
 #   Zondag: Patat + Carrero
 #
-3 x rijst
 2 x kipfilet
-2 x eieren
-1 x nasi kruidenmix
-1 x wokgroente
+3 x rijst
+1 x tzatziki
+1 x komkommer
+1 x cherrytomaatjes
 1 x Rostirondjes
 1 x Hamburger
-1 x Snijbonen
-3 x paprika
+1 x Sperziebonen
+1 x runderreepjes
+1 x teriyakisaus
+1 x broccoli
+2 x paprika
 1 x ui
-1 x rundergehakt
-1 x kidneybonen
-1 x tomatenblokjes
 1 x Vleeslapje
-1 x Broccoli
+1 x Bloemkool
 1 x Patat (airfryer)
 1 x Carrero
 3 x Alpro yoghurt mild & creamy natural
