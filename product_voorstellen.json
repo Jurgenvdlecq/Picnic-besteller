@@ -1,181 +1,131 @@
 {
-  "rundergehakt": {
-    "aantal": 3,
-    "kandidaten": [
-      {
-        "id": "s1001363",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 425
-      },
-      {
-        "id": "s1001382",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 555
-      },
-      {
-        "id": "s1001363",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 425
-      },
-      {
-        "id": "s1001382",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 555
-      }
-    ]
-  },
-  "pitabroodjes": {
-    "aantal": 4,
-    "kandidaten": [
-      {
-        "id": "s1016084",
-        "naam": "Picnic pitabroodjes groot",
-        "prijs_cent": 89
-      },
-      {
-        "id": "s1016039",
-        "naam": "Picnic pitabroodjes klein",
-        "prijs_cent": 79
-      },
-      {
-        "id": "s1017742",
-        "naam": "Pita Original pitabroodjes volkoren",
-        "prijs_cent": 89
-      },
-      {
-        "id": "s1066401",
-        "naam": "Souq pitabrood volkoren",
-        "prijs_cent": 249
-      }
-    ]
-  },
-  "komkommer": {
+  "rijst": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1004423",
-        "naam": "Komkommer",
-        "prijs_cent": 99
+        "id": "s1016785",
+        "naam": "Picnic snelkook zilvervliesrijst",
+        "prijs_cent": 145
       },
       {
-        "id": "s1004423",
-        "naam": "Komkommer",
-        "prijs_cent": 99
+        "id": "s1045322",
+        "naam": "Lassie kant & klare basmati minuutje",
+        "prijs_cent": 215
       },
       {
-        "id": "s1015473",
-        "naam": "Bio komkommer",
-        "prijs_cent": 165
+        "id": "s1012433",
+        "naam": "Lassie basmatirijst duurzaam",
+        "prijs_cent": 229
       },
       {
-        "id": "s1016044",
-        "naam": "Snackkomkommers",
-        "prijs_cent": 339
+        "id": "s1178237",
+        "naam": "Lassie basmatirijst",
+        "prijs_cent": 359
       }
     ]
   },
-  "knoflooksaus": {
+  "eieren": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1018496",
-        "naam": "Calvé knoflooksaus",
-        "prijs_cent": 289
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
       },
       {
-        "id": "s1179434",
-        "naam": "Picnic knoflooksaus",
-        "prijs_cent": 125
+        "id": "s1141604",
+        "naam": "Picnic bio eieren",
+        "prijs_cent": 459
       },
       {
-        "id": "s1013879",
-        "naam": "Yildriz Turkse knoflooksaus",
-        "prijs_cent": 249
+        "id": "s1140596",
+        "naam": "Picnic scharreleieren",
+        "prijs_cent": 313
       },
       {
-        "id": "s1123007",
-        "naam": "Yildriz Turkse knoflooksaus",
-        "prijs_cent": 409
+        "id": "s1139960",
+        "naam": "Picnic witte vrije uitloop eieren",
+        "prijs_cent": 199
       }
     ]
   },
-  "Kroketjes": {
+  "wokgroente": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1017690",
-        "naam": "Aviko airfryer mini aardappelkroketjes",
+        "id": "s1002987",
+        "naam": "Mexicaanse roerbakgroenten",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1151321",
+        "naam": "Macaroni & spaghettigroenten",
+        "prijs_cent": 189
+      },
+      {
+        "id": "s1000534",
+        "naam": "Italiaanse roerbakgroenten",
+        "prijs_cent": 199
+      },
+      {
+        "id": "s1000624",
+        "naam": "Picnic bami & nasi mix",
+        "prijs_cent": 169
+      }
+    ]
+  },
+  "Aardappelblokjes": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1010301",
+        "naam": "Aviko aardappeldobbelsteentjes",
+        "prijs_cent": 269
+      },
+      {
+        "id": "s1001981",
+        "naam": "Kruimige aardappelen",
+        "prijs_cent": 139
+      },
+      {
+        "id": "s1010301",
+        "naam": "Aviko aardappeldobbelsteentjes",
+        "prijs_cent": 269
+      },
+      {
+        "id": "s1012275",
+        "naam": "Aviko pommes duchesse",
         "prijs_cent": 299
-      },
-      {
-        "id": "s1131194",
-        "naam": "Picnic aardappelkroketjes",
-        "prijs_cent": 125
-      },
-      {
-        "id": "s1013214",
-        "naam": "Aviko aardappelkroketjes bistro",
-        "prijs_cent": 289
-      },
-      {
-        "id": "s1179859",
-        "naam": "Crunchi kroketjes zoete aardappel",
-        "prijs_cent": 469
       }
     ]
   },
-  "Kipschnitzel": {
+  "Hamburger": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1011869",
-        "naam": "'t Slagershuys kipsatéschnitzels",
-        "prijs_cent": 329
+        "id": "s1004024",
+        "naam": "'t Slagershuys runderburgers",
+        "prijs_cent": 489
       },
       {
-        "id": "s1011811",
-        "naam": "'t Slagershuys kipschnitzels krokant",
-        "prijs_cent": 319
-      },
-      {
-        "id": "s1011811",
-        "naam": "'t Slagershuys kipschnitzels krokant",
-        "prijs_cent": 319
-      },
-      {
-        "id": "s1011869",
-        "naam": "'t Slagershuys kipsatéschnitzels",
-        "prijs_cent": 329
-      }
-    ]
-  },
-  "Sperziebonen": {
-    "aantal": 1,
-    "kandidaten": [
-      {
-        "id": "s1015446",
-        "naam": "Bonduelle Franse sperzieboontjes zeer fijn",
-        "prijs_cent": 239
-      },
-      {
-        "id": "s1016083",
-        "naam": "Picnic sperziebonen gebroken",
+        "id": "s1003136",
+        "naam": "'t Slagershuys runderburgers",
         "prijs_cent": 349
       },
       {
-        "id": "s1018112",
-        "naam": "Haricots verts",
-        "prijs_cent": 279
+        "id": "s1002500",
+        "naam": "Premium Black Angus burgers",
+        "prijs_cent": 469
       },
       {
-        "id": "s1051840",
-        "naam": "Picnic bio sperziebonen",
-        "prijs_cent": 135
+        "id": "s1060052",
+        "naam": "Pure Angus Black Angus burgers",
+        "prijs_cent": 699
       }
     ]
   },
-  "bloemkool": {
-    "aantal": 1,
+  "Bloemkool": {
+    "aantal": 2,
     "kandidaten": [
       {
         "id": "s1167116",
@@ -199,53 +149,28 @@
       }
     ]
   },
-  "ui": {
+  "rundergehakt": {
     "aantal": 2,
     "kandidaten": [
       {
-        "id": "s1115350",
-        "naam": "Rode uien",
-        "prijs_cent": 109
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425
       },
       {
-        "id": "s1059821",
-        "naam": "Bosui",
-        "prijs_cent": 99
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555
       },
       {
-        "id": "s1115349",
-        "naam": "Gele uien",
-        "prijs_cent": 109
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425
       },
       {
-        "id": "s1115349",
-        "naam": "Gele uien",
-        "prijs_cent": 109
-      }
-    ]
-  },
-  "geraspte kaas": {
-    "aantal": 1,
-    "kandidaten": [
-      {
-        "id": "s1150348",
-        "naam": "Picnic geraspte jong belegen kaas 30+",
-        "prijs_cent": 299
-      },
-      {
-        "id": "s1016220",
-        "naam": "Solo Italia Parmigiano Reggiano poeder 32+",
-        "prijs_cent": 239
-      },
-      {
-        "id": "s1013573",
-        "naam": "Picnic geraspte belegen kaas 48+",
-        "prijs_cent": 389
-      },
-      {
-        "id": "s1151622",
-        "naam": "Picnic tex mex geraspte kaas",
-        "prijs_cent": 279
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555
       }
     ]
   },
@@ -299,6 +224,31 @@
       }
     ]
   },
+  "ui": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1115350",
+        "naam": "Rode uien",
+        "prijs_cent": 109
+      },
+      {
+        "id": "s1059821",
+        "naam": "Bosui",
+        "prijs_cent": 99
+      },
+      {
+        "id": "s1115349",
+        "naam": "Gele uien",
+        "prijs_cent": 109
+      },
+      {
+        "id": "s1115349",
+        "naam": "Gele uien",
+        "prijs_cent": 109
+      }
+    ]
+  },
   "currypasta": {
     "aantal": 1,
     "kandidaten": [
@@ -324,53 +274,78 @@
       }
     ]
   },
-  "Vleeslapje": {
+  "geraspte kaas": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1003906",
-        "naam": "'t Slagershuys filetlapjes à la minute",
-        "prijs_cent": 359
+        "id": "s1150348",
+        "naam": "Picnic geraspte jong belegen kaas 30+",
+        "prijs_cent": 299
       },
       {
-        "id": "s1002281",
-        "naam": "'t Slagershuys varkensschnitzels",
-        "prijs_cent": 326
-      },
-      {
-        "id": "s1018348",
-        "naam": "'t Slagershuys speklapjes à la minute",
-        "prijs_cent": 479
-      },
-      {
-        "id": "s1167531",
-        "naam": "'t Slagershuys filetlapjes hot & spicy",
-        "prijs_cent": 499
-      }
-    ]
-  },
-  "Snijbonen": {
-    "aantal": 1,
-    "kandidaten": [
-      {
-        "id": "s1010401",
-        "naam": "Snijbonen",
-        "prijs_cent": 259
-      },
-      {
-        "id": "s1000560",
-        "naam": "Picnic snijbonen gesneden",
+        "id": "s1016220",
+        "naam": "Solo Italia Parmigiano Reggiano poeder 32+",
         "prijs_cent": 239
       },
       {
-        "id": "s1016546",
-        "naam": "Picnic snijbonen gesneden",
-        "prijs_cent": 379
+        "id": "s1013573",
+        "naam": "Picnic geraspte belegen kaas 48+",
+        "prijs_cent": 389
       },
       {
-        "id": "s1017039",
-        "naam": "Picnic snijbonen gesneden",
-        "prijs_cent": 199
+        "id": "s1151622",
+        "naam": "Picnic tex mex geraspte kaas",
+        "prijs_cent": 279
+      }
+    ]
+  },
+  "Biefstuk": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1002243",
+        "naam": "'t Slagershuys kogelbiefstuk",
+        "prijs_cent": 806
+      },
+      {
+        "id": "s1171516",
+        "naam": "'t Slagershuys kogelbiefstuk culinair",
+        "prijs_cent": 764
+      },
+      {
+        "id": "s1185341",
+        "naam": "'t Slagershuys biefstukpuntjes rode ui",
+        "prijs_cent": 749
+      },
+      {
+        "id": "s1002264",
+        "naam": "'t Slagershuys biefstuk",
+        "prijs_cent": 789
+      }
+    ]
+  },
+  "Sperziebonen": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1015446",
+        "naam": "Bonduelle Franse sperzieboontjes zeer fijn",
+        "prijs_cent": 239
+      },
+      {
+        "id": "s1016083",
+        "naam": "Picnic sperziebonen gebroken",
+        "prijs_cent": 349
+      },
+      {
+        "id": "s1018112",
+        "naam": "Haricots verts",
+        "prijs_cent": 279
+      },
+      {
+        "id": "s1051840",
+        "naam": "Picnic bio sperziebonen",
+        "prijs_cent": 135
       }
     ]
   },
@@ -399,13 +374,28 @@
       }
     ]
   },
-  "Carrero": {
+  "Frikandel": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1012566",
-        "naam": "Mora carrero",
-        "prijs_cent": 429
+        "id": "s1011889",
+        "naam": "Mora oven frikandellen",
+        "prijs_cent": 249
+      },
+      {
+        "id": "s1011889",
+        "naam": "Mora oven frikandellen",
+        "prijs_cent": 249
+      },
+      {
+        "id": "s1161003",
+        "naam": "Picnic oven frikandellen",
+        "prijs_cent": 185
+      },
+      {
+        "id": "s1007058",
+        "naam": "Frikandellen",
+        "prijs_cent": 385
       }
     ]
   },
