@@ -447,7 +447,7 @@ function relatieveTijd(iso) {
 
 function ghHeaders(extra) {
   return {
-    Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
+    Authorization: `token ${localStorage.getItem(TOKEN_KEY)}`,
     Accept: "application/vnd.github+json",
     ...extra,
   };
