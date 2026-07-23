@@ -1,27 +1,30 @@
 # Weekmenu:
-#   Maandag: Rijst met roerei en groente
-#   Dinsdag: Aardappelblokjes + Hamburger + Bloemkool
-#   Woensdag: Rundergehakt-curry
-#   Donderdag: Gehaktschotel met bloemkoolpuree
+#   Maandag: Nasi met kipreepjes en ei
+#   Dinsdag: Aardappelblokjes + Kipburger + Snijbonen
+#   Woensdag: Kip cacciatore met aardappelpuree
+#   Donderdag: Rundergehaktballen met zoete aardappel
 #   Vrijdag (2p): Biefstuk + Sperziebonen
-#   Zondag: Patat + Frikandel
+#   Zondag: Patat + Oude kaas stengels
 #
 1 x rijst
-1 x eieren
+2 x kipfilet
+2 x eieren
+1 x nasi kruidenmix
 1 x wokgroente
 1 x Aardappelblokjes
-1 x Hamburger
-2 x Bloemkool
-2 x rundergehakt
-1 x kokosmelk
-1 x paprika
-2 x ui
-1 x currypasta
-1 x geraspte kaas
+1 x Kipburger
+1 x Snijbonen
+1 x tomatensaus
+1 x champignons
+1 x aardappelpuree
+1 x rundergehakt
+2 x zoete aardappel
+1 x ui
+1 x knoflook
 1 x Biefstuk
 1 x Sperziebonen
 1 x Patat (airfryer)
-1 x Frikandel
+1 x Oude kaas stengels
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels standaard
 1 x Appelmoesjes (kleine bakjes) zonder toegevoegde suiker
