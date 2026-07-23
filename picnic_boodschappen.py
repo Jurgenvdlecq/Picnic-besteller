@@ -295,6 +295,12 @@ def _fuzzy_score(zoekterm: str, product_naam: str) -> float:
     return ratio * 0.7 + woord_match * 0.3
 
 
+# Picnic geeft in zoekresultaten alleen een image_id terug, geen kant-en-klare
+# URL. De echte afbeelding staat op dit vaste basispad (zelfde patroon als de
+# get_image()-helper in python_picnic_api2, die niet publiek geëxporteerd wordt).
+PICNIC_IMAGE_BASE_URL = "https://storefront-prod.nl.picnicinternational.com/static/images"
+
+
 def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kandidaten: int = 4) -> list:
     """Zoekt bij Picnic en geeft tot max_kandidaten resultaten terug
     (id/naam/prijs), zonder iets te bestellen. Gedeeld door de
@@ -318,12 +324,13 @@ def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kan
     for product in gevonden_producten[:max_kandidaten * 2]:  # pak meer, sorteer straks
         if not product.get("id"):
             continue
+        image_id = product.get("image_id")
         kandidaten.append({
             "id": product["id"],
             "naam": product.get("name", "onbekend product"),
             "prijs_cent": product.get("display_price"),
-            "image_url": product.get("image_url"),
-            "subtitle": product.get("subtitle"),  # bijv. "750 gram" of "1 stuk"
+            "image_url": f"{PICNIC_IMAGE_BASE_URL}/{image_id}/small.png" if image_id else None,
+            "subtitle": product.get("unit_quantity"),  # bijv. "750 gram" of "1 stuk"
             "_score": _fuzzy_score(naam, product.get("name", "")),
         })
 
