@@ -1,8 +1,11 @@
 {
-  "datum": "2026-07-23T08:50:40.384627+00:00",
+  "datum": "2026-07-23T12:40:50.263821+00:00",
   "iso_week": "2026-W30",
   "status": "voltooid",
-  "aantal_producten": 31,
-  "totaal_prijs_cent": 12781,
-  "niet_gevonden": []
+  "aantal_producten": 39,
+  "totaal_prijs_cent": 19598,
+  "niet_gevonden": [
+    "Rijstwafels standaard",
+    "Appelmoesjes (kleine bakjes) zonder toegevoegde suiker"
+  ]
 }
