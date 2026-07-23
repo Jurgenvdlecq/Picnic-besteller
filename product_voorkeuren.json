@@ -1,0 +1,12 @@
+{
+  "ingredient": {
+    "picnicmageremelk": {
+      "id": "s1010532",
+      "naam": "Picnic magere melk",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-23T12:37:44.703Z"
+    }
+  },
+  "gerecht_ingredient": {}
+}
