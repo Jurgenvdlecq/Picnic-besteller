@@ -1,22 +1,26 @@
 # Weekmenu:
-#   Maandag: Kipsaté met rijst
-#   Dinsdag: Aardappelblokjes + Kipschnitzel + Snijbonen
-#   Woensdag: Kip met rijst en paprika
-#   Donderdag: Kip tikka masala met rijst
-#   Vrijdag (2p): Biefstuk + Snijbonen
+#   Maandag: Nasi met kipreepjes en ei
+#   Dinsdag: Rostirondjes + Hamburger + Bloemkool
+#   Woensdag: Rundergehaktballen met zoete aardappel
+#   Donderdag: Kip met rijst en paprika
+#   Vrijdag (2p): Vleeslapje + Snijbonen
 #   Zondag: Patat + Mini kaassoufflé
 #
-3 x kipfilet
-1 x saté saus
-3 x rijst
-1 x kroepoek
-1 x Aardappelblokjes
-1 x Kipschnitzel
-2 x Snijbonen
-2 x paprika
+2 x rijst
+2 x kipfilet
+2 x eieren
+1 x nasi kruidenmix
+1 x wokgroente
+1 x Rostirondjes
+1 x Hamburger
+1 x Bloemkool
+1 x rundergehakt
+2 x zoete aardappel
 2 x ui
-1 x tikka masala saus
-1 x Biefstuk
+1 x knoflook
+2 x paprika
+1 x Vleeslapje
+1 x Snijbonen
 1 x Patat (airfryer)
 1 x Mini kaassoufflé
 3 x Alpro yoghurt mild & creamy natural
