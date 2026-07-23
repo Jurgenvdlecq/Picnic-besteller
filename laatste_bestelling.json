@@ -1,13 +1,8 @@
 {
-  "datum": "2026-07-22T22:46:32.555362+00:00",
-  "aantal_producten": 24,
-  "totaal_prijs_cent": 9607,
-  "niet_gevonden": [
-    "Alpro yoghurt mild & creamy natural",
-    "Rijstwafels standaard",
-    "Appelmoesjes (kleine bakjes) zonder toegevoegde suiker",
-    "Coca cola zero 250 ml",
-    "Melkunie Proteine kwark aardbei 200 gram",
-    "Aviko Super crunch franse friet"
-  ]
+  "datum": "2026-07-23T08:50:40.384627+00:00",
+  "iso_week": "2026-W30",
+  "status": "voltooid",
+  "aantal_producten": 31,
+  "totaal_prijs_cent": 12781,
+  "niet_gevonden": []
 }
