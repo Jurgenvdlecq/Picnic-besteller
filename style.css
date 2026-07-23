@@ -498,6 +498,11 @@ main#dagen-wrap {
   font-size: 0.85rem;
 }
 
+.controle-fout.nieuw {
+  color: var(--muted);
+  background: var(--chip-bg);
+}
+
 .controle-totaal {
   display: flex;
   justify-content: space-between;

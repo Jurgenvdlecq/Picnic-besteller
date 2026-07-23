@@ -582,6 +582,8 @@ const losAantalEl = document.getElementById("los-aantal");
 const kiesSchermEl = document.getElementById("kies-scherm");
 const controleSchermEl = document.getElementById("controle-scherm");
 const controleLijstEl = document.getElementById("controle-lijst");
+const controleLosNaamEl = document.getElementById("controle-los-naam");
+const controleLosAantalEl = document.getElementById("controle-los-aantal");
 const terugKnop = document.getElementById("terug-knop");
 const actieKnop = document.getElementById("actie-knop");
 
@@ -1065,6 +1067,30 @@ document.getElementById("los-toevoegen-knop").onclick = () => {
   losNaamEl.focus();
 };
 
+document.getElementById("controle-los-toevoegen-knop").onclick = () => {
+  const naam = controleLosNaamEl.value.trim();
+  const aantal = parseInt(controleLosAantalEl.value, 10) || 1;
+  if (!naam || !staat.productVoorstellen) return;
+
+  // Al in de lijst (evt. eerder verwijderd)? Dan gewoon het aantal bijwerken
+  // en terugzetten, i.p.v. een dubbele regel te maken.
+  const bestaandeSleutel = Object.keys(staat.productVoorstellen).find(
+    (k) => k.toLowerCase() === naam.toLowerCase()
+  );
+  if (bestaandeSleutel) {
+    const info = staat.productVoorstellen[bestaandeSleutel];
+    info.aantal = aantal;
+    info.verwijderd = false;
+  } else {
+    staat.productVoorstellen[naam] = { aantal, kandidaten: [], nieuw: true };
+  }
+
+  controleLosNaamEl.value = "";
+  controleLosAantalEl.value = "1";
+  renderControleScherm();
+  controleLosNaamEl.focus();
+};
+
 // --- Kassabon (voorvertoning) ---
 
 function gekozenStandaardProducten() {
@@ -1173,7 +1199,10 @@ function renderControleScherm() {
     item.appendChild(stepper);
 
     if (!gekozen) {
-      item.appendChild(maakEl("div", "controle-fout", "Niet gevonden bij Picnic — voeg dit later zelf toe in de app."));
+      const bericht = info.nieuw
+        ? "Nog niet opgezocht — wordt automatisch bij Picnic gezocht op het moment van bestellen."
+        : "Niet gevonden bij Picnic — voeg dit later zelf toe in de Picnic-app.";
+      item.appendChild(maakEl("div", "controle-fout" + (info.nieuw ? " nieuw" : ""), bericht));
       onbekendePrijs = true;
     } else {
       const resultaat = maakEl("div", "controle-resultaat");
@@ -1319,17 +1348,22 @@ async function laadWeekmenuScherm() {
 
 // --- Voortgang van het controle-scherm bewaren, zodat een herladen tabblad
 // (of dat iOS de pagina op de achtergrond opschoont) niet betekent dat er
-// helemaal opnieuw gezocht moet worden bij Picnic. ---
+// helemaal opnieuw gezocht moet worden bij Picnic.
+//
+// Bewust sessionStorage i.p.v. localStorage: dat bewaart alleen binnen
+// hetzelfde tabblad/dezelfde sessie (overleeft een herlaad, maar niet het
+// sluiten van het tabblad). Met localStorage sprong de app bij elke nieuwe
+// opening — soms uren later — meteen terug naar het controle-scherm, zodat
+// de vaste boodschappenlijst (die alleen op het kies-scherm staat) leek te
+// zijn verdwenen.
 
 const CONTROLE_STAAT_KEY = "picnic_controle_staat";
-const CONTROLE_STAAT_MAX_UUR = 12;
 
 function bewaarControleStaat() {
   try {
-    localStorage.setItem(
+    sessionStorage.setItem(
       CONTROLE_STAAT_KEY,
       JSON.stringify({
-        tijdstip: Date.now(),
         weekmenu: staat.weekmenu,
         losseProducten: staat.losseProducten,
         productVoorstellen: staat.productVoorstellen,
@@ -1337,13 +1371,13 @@ function bewaarControleStaat() {
       })
     );
   } catch (e) {
-    // localStorage kan vol/geblokkeerd zijn; niet kritiek als dit niet lukt
+    // sessionStorage kan vol/geblokkeerd zijn; niet kritiek als dit niet lukt
   }
 }
 
 function wisControleStaat() {
   try {
-    localStorage.removeItem(CONTROLE_STAAT_KEY);
+    sessionStorage.removeItem(CONTROLE_STAAT_KEY);
   } catch (e) {
     // niet kritiek
   }
@@ -1351,11 +1385,10 @@ function wisControleStaat() {
 
 function laadBewaardeControleStaat() {
   try {
-    const ruw = localStorage.getItem(CONTROLE_STAAT_KEY);
+    const ruw = sessionStorage.getItem(CONTROLE_STAAT_KEY);
     if (!ruw) return null;
     const data = JSON.parse(ruw);
-    const uurGeleden = (Date.now() - data.tijdstip) / 1000 / 60 / 60;
-    if (!data.productVoorstellen || uurGeleden > CONTROLE_STAAT_MAX_UUR) {
+    if (!data.productVoorstellen) {
       wisControleStaat();
       return null;
     }
