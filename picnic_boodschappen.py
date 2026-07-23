@@ -301,23 +301,68 @@ def _fuzzy_score(zoekterm: str, product_naam: str) -> float:
 PICNIC_IMAGE_BASE_URL = "https://storefront-prod.nl.picnicinternational.com/static/images"
 
 
+def _vereenvoudig_zoekterm(naam: str) -> str:
+    """Verwijdert haakjes-toevoegingen ("(kleine bakjes)", "(500 gram)") en
+    overtollige spaties uit een zoekterm."""
+    zonder_haakjes = re.sub(r"\([^)]*\)", "", naam)
+    return re.sub(r"\s+", " ", zonder_haakjes).strip()
+
+
+def _zoekterm_varianten(naam: str) -> list:
+    """Bouwt een lijst zoekopdrachten van specifiek naar generiek. Picnic's
+    eigen zoekmachine (niet onze fuzzy-matching) geeft vaak nul resultaten
+    bij lange, samengestelde termen (merk + variant + gewicht + haakjes) —
+    deze varianten dienen als fallback zodra de volledige naam niets
+    oplevert."""
+    varianten = [naam]
+
+    vereenvoudigd = _vereenvoudig_zoekterm(naam)
+    if vereenvoudigd and vereenvoudigd != naam:
+        varianten.append(vereenvoudigd)
+
+    woorden = vereenvoudigd.split()
+    if len(woorden) > 3:
+        varianten.append(" ".join(woorden[:3]))
+    if len(woorden) > 2:
+        varianten.append(" ".join(woorden[:2]))
+
+    # Dedupliceren met behoud van volgorde (specifiek -> generiek)
+    gezien = set()
+    unieke = []
+    for v in varianten:
+        if v and v not in gezien:
+            gezien.add(v)
+            unieke.append(v)
+    return unieke
+
+
 def zoek_producten(api: PicnicAPI, naam: str, automatisch: bool = False, max_kandidaten: int = 4) -> list:
     """Zoekt bij Picnic en geeft tot max_kandidaten resultaten terug
     (id/naam/prijs), zonder iets te bestellen. Gedeeld door de
-    --voorbeeld-modus en de gewone bestel-modus."""
-    try:
-        resultaten = api.search(naam)
-    except Exception as e:
-        log(f"  ✗ Fout bij zoeken naar '{naam}': {e}", automatisch)
-        return []
+    --voorbeeld-modus en de gewone bestel-modus.
 
-    # search() geeft een lijst met groepen terug, elk met een 'items'-lijst
-    # van daadwerkelijke producten.
+    Probeert bij nul resultaten automatisch een paar eenvoudigere varianten
+    van de zoekterm (haakjes weg, minder woorden) — Picnic's eigen zoek-API
+    geeft vaak niets terug bij lange, samengestelde productnamen."""
     gevonden_producten = []
-    for groep in (resultaten or []):
-        items = groep.get("items") if isinstance(groep, dict) else None
-        if items:
-            gevonden_producten = items
+    for term in _zoekterm_varianten(naam):
+        try:
+            resultaten = api.search(term)
+        except Exception as e:
+            log(f"  ✗ Fout bij zoeken naar '{term}': {e}", automatisch)
+            continue
+
+        # search() geeft een lijst met groepen terug, elk met een
+        # 'items'-lijst van daadwerkelijke producten.
+        for groep in (resultaten or []):
+            items = groep.get("items") if isinstance(groep, dict) else None
+            if items:
+                gevonden_producten = items
+                break
+
+        if gevonden_producten:
+            if term != naam:
+                log(f"  (niets gevonden voor '{naam}', wel voor vereenvoudigde term '{term}')", automatisch)
             break
 
     kandidaten = []
@@ -410,22 +455,28 @@ def los_toevoegen(api: PicnicAPI):
         voeg_product_toe(api, naam, aantal)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Picnic boodschappenlijst-tool")
-    parser.add_argument(
-        "--automatisch",
-        action="store_true",
-        help="Draai zonder interactieve vragen (voor gebruik via een planner zoals launchd).",
-    )
-    parser.add_argument(
-        "--voorbeeld",
-        action="store_true",
-        help="Zoek alleen producten op bij Picnic en schrijf de kandidaten weg "
-             "(product_voorstellen.json) zonder iets te bestellen — voor de controle-stap op de website.",
-    )
-    args = parser.parse_args()
-    automatisch = args.automatisch or args.voorbeeld
+def _iso_week_sleutel() -> str:
+    """Geeft het huidige ISO-jaar+weeknummer terug (bv. '2026-W30'), zodat
+    bepaald kan worden of er deze week al besteld is."""
+    jaar, week, _ = datetime.now(timezone.utc).isocalendar()
+    return f"{jaar}-W{week:02d}"
 
+
+def _al_besteld_deze_week():
+    """Geeft de opslagdatum terug als er deze ISO-week al een geslaagde
+    bestelling geregistreerd staat in laatste_bestelling.json, anders None."""
+    if not OVERZICHT_BESTAND.exists():
+        return None
+    try:
+        data = json.loads(OVERZICHT_BESTAND.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if data.get("status") == "voltooid" and data.get("iso_week") == _iso_week_sleutel():
+        return data.get("datum")
+    return None
+
+
+def _bestellen_uitvoeren(args, automatisch: bool):
     api = log_in(automatisch=automatisch)
     boodschappenlijst = laad_boodschappenlijst()
 
@@ -464,7 +515,7 @@ def main():
     for item in cart.get("items", []):
         log(f"  - {item.get('name', '?')}", automatisch)
 
-    schrijf_overzicht(resultaten)
+    schrijf_overzicht(resultaten, status="voltooid")
 
     # Eenmalig gebruiken: voorkomt dat een oude keuze een andere week's
     # gelijknamige zoekopdracht overschrijft.
@@ -477,19 +528,80 @@ def main():
         stuur_melding("Picnic boodschappen bijgewerkt", "De vaste lijst is toegevoegd aan je mandje.")
 
 
-def schrijf_overzicht(resultaten: list):
-    """Schrijft een klein overzicht (datum, geschatte prijs, niet-gevonden
-    producten) weg, zodat de website dit kan tonen zonder zelf in te loggen."""
-    toegevoegd = [r for r in resultaten if r.get("status") == "toegevoegd"]
-    niet_gevonden = [r["gezocht_op"] for r in resultaten if r.get("status") in ("niet_gevonden", "fout")]
-    prijzen = [r["prijs_cent"] for r in toegevoegd if r.get("prijs_cent") is not None]
+def main():
+    parser = argparse.ArgumentParser(description="Picnic boodschappenlijst-tool")
+    parser.add_argument(
+        "--automatisch",
+        action="store_true",
+        help="Draai zonder interactieve vragen (voor gebruik via een planner zoals launchd).",
+    )
+    parser.add_argument(
+        "--voorbeeld",
+        action="store_true",
+        help="Zoek alleen producten op bij Picnic en schrijf de kandidaten weg "
+             "(product_voorstellen.json) zonder iets te bestellen — voor de controle-stap op de website.",
+    )
+    parser.add_argument(
+        "--alleen-nieuwe-week",
+        action="store_true",
+        help="Sla het bestellen over als er deze ISO-week al een geslaagde bestelling geregistreerd "
+             "staat. Gebruikt door de automatische zondag-cron, zodat een bestelling die je eerder "
+             "in de week al zelf via de website plaatste niet nog een keer wordt geplaatst.",
+    )
+    args = parser.parse_args()
+    automatisch = args.automatisch or args.voorbeeld
 
+    if args.alleen_nieuwe_week and not args.voorbeeld:
+        al_besteld_op = _al_besteld_deze_week()
+        if al_besteld_op:
+            log(
+                f"Deze week ({_iso_week_sleutel()}) is al besteld (op {al_besteld_op}) — "
+                "automatische zondagbestelling wordt overgeslagen.",
+                True,
+            )
+            return
+
+    # In automatische modus (de cron of een website-bestelling) willen we een
+    # mislukking altijd zichtbaar maken: de workflow-stap moet falen (zodat
+    # GitHub een mislukte run toont/meldt) én laatste_bestelling.json moet
+    # een duidelijke foutstatus krijgen (zodat de website het ook toont),
+    # in plaats van dat er stilletjes niets gebeurt.
+    if automatisch and not args.voorbeeld:
+        try:
+            _bestellen_uitvoeren(args, automatisch)
+        except SystemExit as e:
+            code = e.code if isinstance(e.code, int) else (1 if e.code else 0)
+            if code != 0:
+                log(f"✗ Automatische bestelling gestopt (afsluitcode {code}).", True)
+                schrijf_overzicht(status="mislukt", foutmelding=f"Script stopte onverwacht (afsluitcode {code}).")
+            raise
+        except Exception as e:
+            log(f"✗ Onverwachte fout tijdens automatische bestelling: {e}", True)
+            schrijf_overzicht(status="mislukt", foutmelding=str(e))
+            sys.exit(1)
+    else:
+        _bestellen_uitvoeren(args, automatisch)
+
+
+def schrijf_overzicht(resultaten: list = None, status: str = "voltooid", foutmelding: str = None):
+    """Schrijft een klein overzicht (datum, week, status, geschatte prijs,
+    niet-gevonden producten) weg, zodat de website dit kan tonen zonder zelf
+    in te loggen — ook bij een mislukte poging, zodat die niet onopgemerkt
+    blijft."""
     overzicht = {
         "datum": datetime.now(timezone.utc).isoformat(),
-        "aantal_producten": len(toegevoegd),
-        "totaal_prijs_cent": sum(prijzen) if prijzen else None,
-        "niet_gevonden": niet_gevonden,
+        "iso_week": _iso_week_sleutel(),
+        "status": status,
     }
+    if foutmelding:
+        overzicht["foutmelding"] = foutmelding
+    if resultaten is not None:
+        toegevoegd = [r for r in resultaten if r.get("status") == "toegevoegd"]
+        niet_gevonden = [r["gezocht_op"] for r in resultaten if r.get("status") in ("niet_gevonden", "fout")]
+        prijzen = [r["prijs_cent"] for r in toegevoegd if r.get("prijs_cent") is not None]
+        overzicht["aantal_producten"] = len(toegevoegd)
+        overzicht["totaal_prijs_cent"] = sum(prijzen) if prijzen else None
+        overzicht["niet_gevonden"] = niet_gevonden
     try:
         OVERZICHT_BESTAND.write_text(json.dumps(overzicht, ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:

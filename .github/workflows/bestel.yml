@@ -55,7 +55,17 @@ jobs:
       - name: Bestellen bij Picnic
         env:
           PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
-        run: python3 picnic_boodschappen.py --automatisch
+        # --alleen-nieuwe-week alleen bij de automatische zondag-cron: als je
+        # deze week al zelf via de website hebt besteld, slaat het script de
+        # bestelling dan over in plaats van dezelfde lijst nog een keer te
+        # plaatsen. Een handmatige "Definitief bestellen" via de website
+        # (workflow_dispatch) bestelt altijd, ongeacht deze vlag.
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python3 picnic_boodschappen.py --automatisch --alleen-nieuwe-week
+          else
+            python3 picnic_boodschappen.py --automatisch
+          fi
 
       - name: Wijzigingen terugzetten in de repo
         run: |

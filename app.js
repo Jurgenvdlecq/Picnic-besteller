@@ -1106,17 +1106,52 @@ function renderControleScherm() {
     return;
   }
 
+  let totaalCent = 0;
+  let onbekendePrijs = false;
+
   for (const naam of namen) {
     const info = items[naam];
     const kandidaten = info.kandidaten || [];
     const idx = staat.productKeuzeIndex[naam] ?? 0;
     const gekozen = kandidaten[idx];
 
-    const item = maakEl("div", "controle-item");
-    item.appendChild(maakEl("div", "controle-kop", `${info.aantal}× ${naam}`));
+    const item = maakEl("div", "controle-item" + (info.verwijderd ? " verwijderd" : ""));
+
+    const kop = maakEl("div", "controle-kop");
+    kop.appendChild(maakEl("span", "", `${info.aantal}× ${naam}`));
+    kop.appendChild(
+      maakKnop("ingredient-verwijder", info.verwijderd ? "↺ Terugzetten" : "✕", () => {
+        info.verwijderd = !info.verwijderd;
+        renderControleScherm();
+      })
+    );
+    item.appendChild(kop);
+
+    if (info.verwijderd) {
+      item.appendChild(maakEl("div", "controle-detail", "Wordt niet besteld."));
+      controleLijstEl.appendChild(item);
+      continue;
+    }
+
+    const stepper = maakEl("div", "stepper");
+    stepper.appendChild(
+      maakKnop("stap-knop", "–", () => {
+        info.aantal = Math.max(1, info.aantal - 1);
+        renderControleScherm();
+      })
+    );
+    stepper.appendChild(maakEl("span", "stepper-waarde", `${info.aantal}×`));
+    stepper.appendChild(
+      maakKnop("stap-knop", "+", () => {
+        info.aantal += 1;
+        renderControleScherm();
+      })
+    );
+    item.appendChild(stepper);
 
     if (!gekozen) {
       item.appendChild(maakEl("div", "controle-fout", "Niet gevonden bij Picnic — voeg dit later zelf toe in de app."));
+      onbekendePrijs = true;
     } else {
       const resultaat = maakEl("div", "controle-resultaat");
 
@@ -1130,15 +1165,18 @@ function renderControleScherm() {
       }
 
       // Naam en details
-      const info = maakEl("div", "controle-info");
-      info.appendChild(maakEl("div", "controle-naam", gekozen.naam));
+      const infoKolom = maakEl("div", "controle-info");
+      infoKolom.appendChild(maakEl("div", "controle-naam", gekozen.naam));
       if (gekozen.subtitle) {
-        info.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
+        infoKolom.appendChild(maakEl("div", "controle-detail", gekozen.subtitle));
       }
       if (typeof gekozen.prijs_cent === "number") {
-        info.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+        infoKolom.appendChild(maakEl("div", "controle-prijs", `€${(gekozen.prijs_cent / 100).toFixed(2)}`));
+        totaalCent += gekozen.prijs_cent * info.aantal;
+      } else {
+        onbekendePrijs = true;
       }
-      resultaat.appendChild(info);
+      resultaat.appendChild(infoKolom);
 
       item.appendChild(resultaat);
 
@@ -1149,6 +1187,13 @@ function renderControleScherm() {
 
     controleLijstEl.appendChild(item);
   }
+
+  const totaalRij = maakEl("div", "controle-totaal");
+  totaalRij.appendChild(maakEl("span", "", "Geschat totaal"));
+  totaalRij.appendChild(
+    maakEl("span", "controle-totaal-bedrag", `€${(totaalCent / 100).toFixed(2)}${onbekendePrijs ? "+" : ""}`)
+  );
+  controleLijstEl.appendChild(totaalRij);
 }
 
 function toonAlternatieven(item, naam, kandidaten, huidigeIndex) {
@@ -1279,6 +1324,18 @@ async function startZoeken() {
   }
 }
 
+function schrijfBoodschappenlijstVanControle() {
+  const regels = ["# Weekmenu:"];
+  for (const dag of staat.weekmenu) regels.push(`#   ${dag.dag}: ${dag.naam}`);
+  regels.push("#");
+  for (const naam in staat.productVoorstellen) {
+    const info = staat.productVoorstellen[naam];
+    if (info.verwijderd) continue;
+    regels.push(`${info.aantal} x ${naam}`);
+  }
+  return regels.join("\n") + "\n";
+}
+
 async function bevestigBestelling() {
   const startTijd = new Date();
   actieKnop.disabled = true;
@@ -1287,12 +1344,19 @@ async function bevestigBestelling() {
   try {
     const gekozenProducten = {};
     for (const naam in staat.productVoorstellen) {
-      const kandidaten = staat.productVoorstellen[naam].kandidaten || [];
+      const info = staat.productVoorstellen[naam];
+      if (info.verwijderd) continue;
+      const kandidaten = info.kandidaten || [];
       const idx = staat.productKeuzeIndex[naam] ?? 0;
       const gekozen = kandidaten[idx];
       if (gekozen) gekozenProducten[naam] = gekozen;
     }
     await githubPutFile("gekozen_producten.json", JSON.stringify(gekozenProducten, null, 2), "Productkeuzes bevestigd via de website");
+    await githubPutFile(
+      "boodschappenlijst.txt",
+      schrijfBoodschappenlijstVanControle(),
+      "Aantallen aangepast in het controle-scherm"
+    );
 
     statusEl.textContent = "Bestelling wordt gestart...";
     await dispatchWorkflow(BESTEL_WORKFLOW, { nieuw_weekmenu: "nee" });

@@ -469,25 +469,25 @@ main#dagen-wrap {
 }
 
 .controle-kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   font-size: 0.82rem;
   color: var(--muted);
   margin-bottom: 4px;
 }
 
-.controle-resultaat {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-size: 1.02rem;
+.controle-kop .stepper {
+  margin: 6px 0 2px;
 }
 
-.controle-prijs {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--muted);
-  white-space: nowrap;
+.controle-item.verwijderd {
+  opacity: 0.6;
+}
+
+.controle-item.verwijderd .controle-detail {
+  font-style: italic;
 }
 
 .controle-fout {
@@ -496,6 +496,20 @@ main#dagen-wrap {
   border-radius: 8px;
   padding: 8px 10px;
   font-size: 0.85rem;
+}
+
+.controle-totaal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.96rem;
+  font-weight: 700;
+  padding: 12px 0 2px;
+}
+
+.controle-totaal-bedrag {
+  font-family: var(--font-mono);
+  color: var(--accent);
 }
 
 .controle-item button.secundair {
