@@ -5,6 +5,7 @@ maandag|Nasi met kipreepjes en ei
 maandag|Pasta bolognese uit een pot
 maandag|Griekse kip bowl met tzatziki
 maandag|Kofta met pitabroodjes
+maandag|Rijst met roerei en groente
 dinsdag|Aardappelblokjes + Kipburger + Snijbonen
 dinsdag|Kroketjes + Kipburger + Bloemkool
 dinsdag|Aardappelblokjes + Kipschnitzel + Snijbonen
@@ -12,6 +13,7 @@ dinsdag|Rostirondjes + Hamburger + Bloemkool
 dinsdag|Kroketjes + Kipschnitzel + Broccoli
 dinsdag|Aardappelblokjes + Hamburger + Bloemkool
 dinsdag|Kroketjes + Kipschnitzel + Sperziebonen
+dinsdag|Aardappelblokjes + Hamburger + Bloemkool
 woensdag|Kip met rijst en paprika
 woensdag|Kip met rijst en paprika
 woensdag|Kip met rijst en paprika
@@ -19,6 +21,7 @@ woensdag|Rundergehaktballen met zoete aardappel
 woensdag|Eieren met spek en avocado
 woensdag|Kip fajita bowl
 woensdag|Gehaktschotel met bloemkoolpuree
+woensdag|Rundergehakt-curry
 donderdag|Eieren met spek en avocado
 donderdag|Beef stroganoff met rijst
 donderdag|Kip tikka masala met rijst
@@ -26,6 +29,7 @@ donderdag|Kip met rijst en paprika
 donderdag|Runderreepjes teriyaki met broccoli
 donderdag|Omelet met spinazie en kip
 donderdag|Rundergehakt-curry
+donderdag|Gehaktschotel met bloemkoolpuree
 vrijdag_klein|Biefstuk + Bloemkool
 vrijdag_klein|Biefstuk + Broccoli
 vrijdag_klein|Biefstuk + Snijbonen
@@ -33,6 +37,7 @@ vrijdag_klein|Vleeslapje + Snijbonen
 vrijdag_klein|Vleeslapje + Snijbonen
 vrijdag_klein|Vleeslapje + Bloemkool
 vrijdag_klein|Vleeslapje + Snijbonen
+vrijdag_klein|Biefstuk + Sperziebonen
 zondag|Patat + Kipnuggets
 zondag|Patat + Kipnuggets
 zondag|Patat + Mini kaassoufflé
@@ -40,3 +45,4 @@ zondag|Patat + Mini kaassoufflé
 zondag|Patat + Kipnuggets
 zondag|Patat + Oude kaas stengels
 zondag|Patat + Carrero
+zondag|Patat + Frikandel
