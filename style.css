@@ -865,6 +865,11 @@ main#dagen-wrap {
   text-align: left;
 }
 
+.waarschuwing.mislukt {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 #status {
   text-align: center;
   color: var(--muted);

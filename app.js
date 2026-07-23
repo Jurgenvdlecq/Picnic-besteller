@@ -513,6 +513,7 @@ async function volgBestelling(startTijd, statusEl) {
 
   if (run.conclusion === "success") {
     statusEl.textContent = "Klaar! De producten staan in je Picnic-mandje. Open de Picnic-app om af te ronden.";
+    wisControleStaat();
     await verversLaatsteBestelling();
     renderKopInfo();
     toonWaarschuwingenNaBestelling();
@@ -614,7 +615,10 @@ function gaNaarStap(stap) {
   }
 }
 
-terugKnop.onclick = () => gaNaarStap("kiezen");
+terugKnop.onclick = () => {
+  wisControleStaat();
+  gaNaarStap("kiezen");
+};
 
 // --- Kop: personen-schuifje + laatst besteld ---
 
@@ -1194,6 +1198,8 @@ function renderControleScherm() {
     maakEl("span", "controle-totaal-bedrag", `€${(totaalCent / 100).toFixed(2)}${onbekendePrijs ? "+" : ""}`)
   );
   controleLijstEl.appendChild(totaalRij);
+
+  bewaarControleStaat();
 }
 
 function toonAlternatieven(item, naam, kandidaten, huidigeIndex) {
@@ -1273,10 +1279,88 @@ async function laadWeekmenuScherm() {
   }
 
   waarschuwingenEl.innerHTML = "";
+  renderLaatsteBestellingBanner();
   ververs();
   renderLosseProducten();
-  gaNaarStap("kiezen");
+
+  // Was er een controle-scherm in uitvoering (bv. tab herladen terwijl je nog
+  // aan het controleren was)? Dan die herstellen i.p.v. gewoon weer bij het
+  // weekmenu te beginnen — anders moet er onnodig opnieuw gezocht worden.
+  const bewaard = laadBewaardeControleStaat();
+  if (bewaard) {
+    staat.weekmenu = bewaard.weekmenu;
+    staat.losseProducten = bewaard.losseProducten || [];
+    staat.productVoorstellen = bewaard.productVoorstellen;
+    staat.productKeuzeIndex = bewaard.productKeuzeIndex;
+    renderLosseProducten();
+  }
+  gaNaarStap(bewaard ? "controleren" : "kiezen");
   toonScherm(appEl);
+}
+
+// --- Voortgang van het controle-scherm bewaren, zodat een herladen tabblad
+// (of dat iOS de pagina op de achtergrond opschoont) niet betekent dat er
+// helemaal opnieuw gezocht moet worden bij Picnic. ---
+
+const CONTROLE_STAAT_KEY = "picnic_controle_staat";
+const CONTROLE_STAAT_MAX_UUR = 12;
+
+function bewaarControleStaat() {
+  try {
+    localStorage.setItem(
+      CONTROLE_STAAT_KEY,
+      JSON.stringify({
+        tijdstip: Date.now(),
+        weekmenu: staat.weekmenu,
+        losseProducten: staat.losseProducten,
+        productVoorstellen: staat.productVoorstellen,
+        productKeuzeIndex: staat.productKeuzeIndex,
+      })
+    );
+  } catch (e) {
+    // localStorage kan vol/geblokkeerd zijn; niet kritiek als dit niet lukt
+  }
+}
+
+function wisControleStaat() {
+  try {
+    localStorage.removeItem(CONTROLE_STAAT_KEY);
+  } catch (e) {
+    // niet kritiek
+  }
+}
+
+function laadBewaardeControleStaat() {
+  try {
+    const ruw = localStorage.getItem(CONTROLE_STAAT_KEY);
+    if (!ruw) return null;
+    const data = JSON.parse(ruw);
+    const uurGeleden = (Date.now() - data.tijdstip) / 1000 / 60 / 60;
+    if (!data.productVoorstellen || uurGeleden > CONTROLE_STAAT_MAX_UUR) {
+      wisControleStaat();
+      return null;
+    }
+    return data;
+  } catch (e) {
+    return null;
+  }
+}
+
+function renderLaatsteBestellingBanner() {
+  const bestaande = waarschuwingenEl.querySelector(".waarschuwing.mislukt");
+  if (bestaande) bestaande.remove();
+
+  if (!staat.laatsteBestelling || staat.laatsteBestelling.status !== "mislukt") return;
+
+  const reden = staat.laatsteBestelling.foutmelding
+    ? escapeHtml(staat.laatsteBestelling.foutmelding)
+    : "onbekende fout";
+  const waarschuwing = maakEl("div", "waarschuwing mislukt");
+  waarschuwing.innerHTML =
+    `⚠️ <span><strong>De laatste automatische bestelpoging is mislukt</strong> ` +
+    `(${relatieveTijd(staat.laatsteBestelling.datum)}): ${reden}. ` +
+    `Check het Picnic-token of bestel deze week handmatig.</span>`;
+  waarschuwingenEl.appendChild(waarschuwing);
 }
 
 async function slaWeekmenuOp() {
