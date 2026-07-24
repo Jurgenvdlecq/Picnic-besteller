@@ -806,8 +806,15 @@ async function volgBestelling(startTijd, statusEl) {
   if (run.conclusion === "success") {
     statusEl.textContent = "Klaar! De producten staan in je Picnic-mandje. Open de Picnic-app om af te ronden.";
     wisControleStaat();
+    // De net bestelde producten horen niet meer als "nog te controleren"
+    // mee te tellen — zonder dit bleef de badge/statuskaart op Overzicht
+    // het oude aantal tonen, ook al was de bestelling al geplaatst.
+    staat.productVoorstellen = null;
+    staat.productKeuzeIndex = {};
     await verversLaatsteBestelling();
     renderKopInfo();
+    renderOverzicht();
+    if (staat.tab === "controle") renderControleScherm();
     toonWaarschuwingenNaBestelling();
   } else {
     statusEl.innerHTML = `Er ging iets mis. <a href="${run.html_url}" target="_blank" rel="noopener">Bekijk het logboek</a>.`;
