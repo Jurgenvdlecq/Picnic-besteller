@@ -726,6 +726,29 @@ async function haalTekstBestandOp(pad) {
   return res.text();
 }
 
+function base64DecodeUnicode(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\n/g, ""))));
+}
+
+// Leest een bestand direct via de GitHub Contents API i.p.v. de gehoste
+// website (GitHub Pages). Belangrijk verschil: de website wordt pas na een
+// aparte, soms trage build/deploy bijgewerkt (kan tientallen seconden tot
+// een paar minuten duren) — de Contents API geeft altijd exact wat er nu in
+// de repo staat, zónder die vertraging. Voor bestanden die een zojuist
+// afgeronde actie heeft weggeschreven (product_voorstellen.json na "Zoek
+// producten op", losse_zoekresultaten.json na "Ander product zoeken") is dit
+// het verschil tussen verse en (soms een paar zoekopdrachten oude!) data.
+async function haalTekstBestandViaApi(pad) {
+  const res = await fetch(`${API}/contents/${encodeURIComponent(pad)}?ref=main`, {
+    headers: ghHeaders(),
+    cache: "no-store",
+  });
+  if (!res.ok) return "";
+  const data = await res.json();
+  if (!data.content) return "";
+  return base64DecodeUnicode(data.content);
+}
+
 async function verversLaatsteBestelling() {
   const tekst = await haalTekstBestandOp("laatste_bestelling.json");
   try {
@@ -2028,8 +2051,12 @@ async function zoekAndereOptie(naam, info, zoekterm, statusEl, resultatenEl) {
         : "Kon de status niet vinden — probeer het nog eens.";
       return;
     }
-    const tekst = await haalTekstBestandOp("losse_zoekresultaten.json");
+    const tekst = await haalTekstBestandViaApi("losse_zoekresultaten.json");
     const resultaat = tekst ? JSON.parse(tekst) : {};
+    if (resultaat.zoekterm && resultaat.zoekterm !== zoekterm) {
+      statusEl.textContent = "Kreeg resultaten van een andere zoekopdracht terug — probeer nog eens.";
+      return;
+    }
     statusEl.textContent = "";
     toonZoekResultaten(resultatenEl, naam, info, resultaat.kandidaten || []);
   } catch (e) {
@@ -2455,7 +2482,7 @@ async function startZoeken() {
       return;
     }
 
-    const tekst = await haalTekstBestandOp("product_voorstellen.json");
+    const tekst = await haalTekstBestandViaApi("product_voorstellen.json");
     staat.productVoorstellen = tekst ? JSON.parse(tekst) : {};
     staat.productKeuzeIndex = {};
     pasProductVoorkeurenToe();
