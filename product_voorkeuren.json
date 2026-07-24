@@ -233,9 +233,12 @@
     "carrero": {
       "id": "s1012566",
       "naam": "Mora carrero",
-      "bron": "impliciet",
-      "bevestigd": 2,
-      "laatst": "2026-07-23T12:42:23.180639+00:00"
+      "prijs_cent": 429,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5b9911890090da474e267c563a6bf5acb142374324332a04e99b589eb6beebd0/small.png",
+      "subtitle": "4 stuks",
+      "bron": "expliciet",
+      "bevestigd": 3,
+      "laatst": "2026-07-24T07:53:43.609Z"
     },
     "scharreleieren": {
       "id": "s1140596",
