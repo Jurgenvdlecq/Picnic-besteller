@@ -1,32 +1,29 @@
 # Weekmenu:
-#   Maandag: Burrito bowl met gehakt en rijst
+#   Maandag: Kipsaté met rijst en boontjes
 #   Dinsdag: Aardappelblokjes + Kipburger + Bloemkool
-#   Woensdag: Kip fajita bowl
+#   Woensdag: Kip met rijst en paprika
 #   Donderdag: Pasta carbonara
-#   Vrijdag (4p): Kip shoarma met patat en knoflooksaus
-#   Zaterdag (4p): Aardappelblokjes met hamburger en broccoli
+#   Vrijdag (4p): Aardappelblokjes met hamburger en broccoli
+#   Zaterdag (4p): Pannenkoeken
 #   Zondag: Patat + Mini kaassoufflé + Carrero
 #
-2 x rundergehakt
-1 x zwarte bonen
-1 x maïs
-1 x geraspte kaas
+2 x kipfilet
+1 x saté saus
+1 x kroepoek
+1 x sperziebonen
 2 x Aardappelblokjes
 1 x Kipburger
 1 x Bloemkool
-1 x kipfilet
-1 x paprika
+2 x paprika
 1 x ui
-1 x spekreepjes
-1 x room
+1 x spaghetti
+1 x guancale
+2 x pecorino
 1 x parmezaanse kaas
-1 x kipshoarma
-1 x aviko friet
-1 x knoflooksaus
-1 x komkommer
-1 x tomaat
-1 x hamburger
+4 x hamburger
 1 x broccoli
+1 x pannenkoekenmix
+1 x stroop
 1 x Patat (airfryer)
 1 x Mini kaassoufflé
 1 x Carrero
