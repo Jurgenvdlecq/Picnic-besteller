@@ -1410,9 +1410,39 @@ const mandjeStatusProxyEl = {
   },
 };
 
+// Wordt alleen aangeroepen ná een aantoonbaar geleegd Picnic-mandje: de
+// gebruiker gaf aan dat "Winkelwagentje legen" ook echt bij nul moet
+// beginnen (weekplan + boodschappenkeuzes), niet alleen het externe
+// Picnic-mandje — anders bleven "7 gerechten"/"37 producten" op Overzicht
+// gewoon het oude weekplan tonen terwijl het mandje al leeg was. Blijft
+// bewust client-side (net als de rest van de keuzes vóór een expliciete
+// opslaan/zoeken/bevestig-actie) — pas bij de eerstvolgende "Zoek
+// Picnic-producten" of "Wijzigingen opslaan" wordt dit naar de repo
+// weggeschreven.
+function resetWeekplanNaMandjeLegen() {
+  staat.weekmenu = [];
+  staat.productVoorstellen = null;
+  staat.productKeuzeIndex = {};
+  staat.standaardUitgevinkt = new Set(staat.standaardlijst.map((item) => item.naam.toLowerCase()));
+  staat.voorraadStatus = {};
+  staat.losseProducten = [];
+  staat.ingredientenOpen = new Set();
+  staat.filters = {};
+  staat.standaardOpen = false;
+  staat.voorraadOpen = false;
+  wisControleStaat();
+  ververs();
+  gaNaarTab("overzicht");
+}
+
 async function leegWinkelwagentje() {
   if (staat.mandjeLegenBezig) return;
-  if (!confirm("Alles uit je huidige Picnic-mandje verwijderen? Dit kan niet ongedaan gemaakt worden.")) return;
+  if (
+    !confirm(
+      "Dit maakt het Picnic-mandje leeg én reset je hele weekplan (gekozen gerechten, boodschappenkeuzes, voorraad, losse producten). Dit kan niet ongedaan gemaakt worden. Doorgaan?"
+    )
+  )
+    return;
 
   staat.mandjeLegenBezig = true;
   const startTijd = new Date();
@@ -1442,8 +1472,9 @@ async function leegWinkelwagentje() {
     }
 
     if (run.conclusion === "success" && resultaat && resultaat.status === "leeg") {
+      resetWeekplanNaMandjeLegen();
       zetMandjeStatusTekst("✓ Winkelwagentje geleegd", "succes");
-      toonToast("✓ Winkelwagentje geleegd");
+      toonToast("✓ Winkelwagentje geleegd — weekplan gereset");
     } else if (resultaat && resultaat.status === "niet_leeg") {
       const n = (resultaat.resterende_producten || []).length;
       zetMandjeStatusTekst(
