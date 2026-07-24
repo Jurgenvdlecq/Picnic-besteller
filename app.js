@@ -572,6 +572,54 @@ function berekenIngredientHerkomst(weekmenu) {
   return herkomst;
 }
 
+// Herkent of Picnic's eigen verpakkingsomschrijving (het "subtitle"-veld,
+// bv. "4 stuks", "8 x 250 ml", "Voor 10 stuks") een meerstuksverpakking
+// beschrijft — en zo ja, hoeveel stuks daar in zitten. Geeft null terug bij
+// een gewone maat/inhoud zonder stuksaantal (bv. "500 gram", "1 kilo"),
+// want dat is geen verpakking van meerdere stuks maar gewoon de grootte van
+// één stuk. Gebaseerd op de daadwerkelijk bij Picnic voorkomende patronen
+// (nagekeken in eerdere bestellingen).
+function verpakkingsGrootte(subtitle) {
+  if (!subtitle) return null;
+  const tekst = subtitle.trim();
+
+  // "Voor 10 stuks" / "Voor 11-13 stuks" — yield-omschrijving; bij een
+  // bereik de ondergrens gebruiken (liever iets te veel dan te weinig).
+  let m = tekst.match(/^Voor\s+(\d+)(?:-(\d+))?\s*stuks?\b/i);
+  if (m) return parseInt(m[1], 10);
+
+  // "8 x 250 ml", "4 x 100 gram" — meerstuksverpakking met maat per stuk.
+  m = tekst.match(/^(\d+)\s*x\s*[\d.,]+\s*(ml|gram|liter|g|l|kg)\b/i);
+  if (m) return parseInt(m[1], 10);
+
+  // "6 of 7 stuks" — bereik, ondergrens gebruiken.
+  m = tekst.match(/^(\d+)\s*of\s*\d+\s*stuks?\b/i);
+  if (m) return parseInt(m[1], 10);
+
+  // "3 stuks", "8 stuks M/L", "10 stuks M" — simpel stuksaantal.
+  m = tekst.match(/^(\d+)\s*stuks?\b/i);
+  if (m) return parseInt(m[1], 10);
+
+  // "4 rollen", "6 rollen" — vergelijkbaar patroon voor rolproducten.
+  m = tekst.match(/^(\d+)\s*rollen\b/i);
+  if (m) return parseInt(m[1], 10);
+
+  return null;
+}
+
+// Hoeveel verpakkingen van het gekozen product moeten er besteld worden om
+// aan "aantalNodig" stuks te komen? Alleen van toepassing op ingrediënten
+// die uit een gerecht komen (daar betekent "aantal" echt "stuks nodig voor
+// dit gerecht") — bij vaste boodschappen/voorraad betekent "aantal" al
+// "aantal verpakkingen" (bv. "3 x Alpro yoghurt" = gewoon 3 bakjes), dus
+// daar zou deze correctie het juist fout maken.
+function bepaalTeBestellenAantal(aantalNodig, gekozen, isWeekmenuIngredient) {
+  if (!isWeekmenuIngredient || !gekozen) return aantalNodig;
+  const grootte = verpakkingsGrootte(gekozen.subtitle);
+  if (!grootte || grootte <= 1) return aantalNodig;
+  return Math.max(1, Math.ceil(aantalNodig / grootte));
+}
+
 function schrijfBoodschappenlijst(weekmenu, producten, voorraadNamen) {
   const totalen = berekenTotalen(weekmenu, producten, voorraadNamen);
 
@@ -775,7 +823,11 @@ async function haalTekstBestandViaApi(pad) {
 }
 
 async function verversLaatsteBestelling() {
-  const tekst = await haalTekstBestandOp("laatste_bestelling.json");
+  // Direct via de GitHub API i.p.v. de gehoste site — dit wordt aangeroepen
+  // vlak nadat de bestel-actie is voltooid, en de site kan dan nog een
+  // oudere (nog niet herbouwde) versie van dit bestand serveren. Zie
+  // haalTekstBestandViaApi voor waarom dat verschil uitmaakt.
+  const tekst = await haalTekstBestandViaApi("laatste_bestelling.json");
   try {
     staat.laatsteBestelling = tekst ? JSON.parse(tekst) : null;
   } catch (e) {
@@ -1943,7 +1995,7 @@ function vervangProduct(naam, info) {
   controleLosNaamEl.focus();
 }
 
-function bouwControleItem(naam, info, compact) {
+function bouwControleItem(naam, info, compact, isWeekmenuIngredient) {
   const kandidaten = info.kandidaten || [];
   const idx = staat.productKeuzeIndex[naam] ?? 0;
   const gekozen = kandidaten[idx];
@@ -2005,6 +2057,16 @@ function bouwControleItem(naam, info, compact) {
     }
     if (heeftVoorkeurMismatch(naam, gekozen)) {
       infoKolom.appendChild(maakEl("div", "controle-mismatch", "⚠ niet je gebruikelijke keuze"));
+    }
+    const teBestellen = bepaalTeBestellenAantal(info.aantal, gekozen, isWeekmenuIngredient);
+    if (teBestellen !== info.aantal) {
+      infoKolom.appendChild(
+        maakEl(
+          "div",
+          "controle-verpakking",
+          `${info.aantal} nodig → ${teBestellen}× besteld (verpakking van ${verpakkingsGrootte(gekozen.subtitle)} stuks)`
+        )
+      );
     }
     resultaat.appendChild(infoKolom);
     item.appendChild(resultaat);
@@ -2195,6 +2257,14 @@ function renderControleScherm() {
     }
   }
 
+  // Herkomst (welke dag gebruikt welk ingrediënt) bepaalt ook of "aantal"
+  // hier "stuks nodig voor een gerecht" betekent (weekmenu-ingrediënt, dan
+  // is de verpakkingsgrootte-correctie van toepassing) of "aantal
+  // verpakkingen" (vaste boodschappen/voorraad, dan niet — zie
+  // bepaalTeBestellenAantal).
+  const herkomst = berekenIngredientHerkomst(staat.weekmenu);
+  const isWeekmenuIngredient = (naam) => herkomst.has(naam.toLowerCase());
+
   let totaalCent = 0;
   let onbekendePrijs = false;
   const aandachtPerNaam = {};
@@ -2206,7 +2276,8 @@ function renderControleScherm() {
     const gekozen = kandidaten[idx];
 
     if (gekozen && typeof gekozen.prijs_cent === "number") {
-      totaalCent += gekozen.prijs_cent * info.aantal;
+      const teBestellen = bepaalTeBestellenAantal(info.aantal, gekozen, isWeekmenuIngredient(naam));
+      totaalCent += gekozen.prijs_cent * teBestellen;
     } else {
       onbekendePrijs = true;
     }
@@ -2223,7 +2294,6 @@ function renderControleScherm() {
   // een eerdere dag staan. Producten zonder dag-herkomst (vaste
   // boodschappen, voorraad, of handmatig toegevoegd in dit scherm) komen in
   // een aparte sectie onderaan.
-  const herkomst = berekenIngredientHerkomst(staat.weekmenu);
   const toegewezen = new Set();
   const perDag = staat.weekmenu.map((dag) => {
     const alleNamen = actief.filter((naam) => {
@@ -2244,13 +2314,13 @@ function renderControleScherm() {
         maakEl("div", "controle-dag-gedeeld", "Ingrediënten hiervoor staan al bij een eerdere dag hierboven.")
       );
     } else {
-      for (const naam of weergaveNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam]));
+      for (const naam of weergaveNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam], true));
     }
   }
 
   if (vasteNamen.length > 0) {
     controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", "Vaste boodschappen"));
-    for (const naam of vasteNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam]));
+    for (const naam of vasteNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam], false));
   }
 
   if (geparkeerdOfVerwijderd.length > 0) {
@@ -2526,13 +2596,18 @@ async function startZoeken() {
 }
 
 function schrijfBoodschappenlijstVanControle() {
+  const herkomst = berekenIngredientHerkomst(staat.weekmenu);
   const regels = ["# Weekmenu:"];
   for (const dag of staat.weekmenu) regels.push(`#   ${dag.dag}: ${dag.naam}`);
   regels.push("#");
   for (const naam in staat.productVoorstellen) {
     const info = staat.productVoorstellen[naam];
     if (info.verwijderd || info.geparkeerd) continue;
-    regels.push(`${info.aantal} x ${naam}`);
+    const kandidaten = info.kandidaten || [];
+    const idx = staat.productKeuzeIndex[naam] ?? 0;
+    const gekozen = kandidaten[idx];
+    const teBestellen = bepaalTeBestellenAantal(info.aantal, gekozen, herkomst.has(naam.toLowerCase()));
+    regels.push(`${teBestellen} x ${naam}`);
   }
   return regels.join("\n") + "\n";
 }

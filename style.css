@@ -878,6 +878,12 @@ input.std-naam:focus {
   margin-top: 2px;
 }
 
+.controle-verpakking {
+  color: var(--muted);
+  font-size: 0.76rem;
+  margin-top: 2px;
+}
+
 .controle-acties {
   display: flex;
   flex-wrap: wrap;
