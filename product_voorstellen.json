@@ -135,18 +135,18 @@
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1015460",
-        "naam": "Mora kipburger",
-        "prijs_cent": 399,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/25250e71b006b7c0e605b991fc8d5cd3468dad4561dde7d016ce6f8374b8fdc3/small.png",
-        "subtitle": "4 stuks"
-      },
-      {
         "id": "s1165432",
         "naam": "Picnic Kipburgers",
         "prijs_cent": 499,
         "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0ca3d5b91c409bb136595918a8221a5a8a9922ee651f27e08a1b4de663a8d4c5/small.png",
         "subtitle": "4 x 80 gram"
+      },
+      {
+        "id": "s1015460",
+        "naam": "Mora kipburger",
+        "prijs_cent": 399,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/25250e71b006b7c0e605b991fc8d5cd3468dad4561dde7d016ce6f8374b8fdc3/small.png",
+        "subtitle": "4 stuks"
       },
       {
         "id": "s1181268",
@@ -168,6 +168,13 @@
     "aantal": 2,
     "kandidaten": [
       {
+        "id": "s1151146",
+        "naam": "Picnic broccoli",
+        "prijs_cent": 149,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/56e452f825b367491a06573dac78a3af7451c804438e3722c315d7d542850c3d/small.png",
+        "subtitle": "450 gram"
+      },
+      {
         "id": "s1000549",
         "naam": "Broccoli",
         "prijs_cent": 135,
@@ -180,13 +187,6 @@
         "prijs_cent": 279,
         "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c11c5222a7112a2c24a5ebfe66c03e5743a45273b2c63fe106db8372a8ea96e6/small.png",
         "subtitle": "300 gram"
-      },
-      {
-        "id": "s1151146",
-        "naam": "Picnic broccoli",
-        "prijs_cent": 149,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/56e452f825b367491a06573dac78a3af7451c804438e3722c315d7d542850c3d/small.png",
-        "subtitle": "450 gram"
       },
       {
         "id": "s1151146",
@@ -694,6 +694,18 @@
         "prijs_cent": 475,
         "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e6291ef9c6d204388b1619c72ee49fd78cec0b087278cb5b64dcb83319133db8/small.png",
         "subtitle": "180 gram"
+      }
+    ]
+  },
+  "Carrero": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1012566",
+        "naam": "Mora carrero",
+        "prijs_cent": 429,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5b9911890090da474e267c563a6bf5acb142374324332a04e99b589eb6beebd0/small.png",
+        "subtitle": "4 stuks"
       }
     ]
   },
