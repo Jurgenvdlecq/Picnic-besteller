@@ -1,14 +1,17 @@
 name: Bestel bij Picnic
 
-# Twee manieren om dit te laten draaien, zodat je geen Mac nodig hebt:
-#   1. Automatisch elke zondagochtend (zie de cron hieronder) — bestelt
-#      gewoon wat er al in boodschappenlijst.txt staat (jouw keuze via de
-#      website, of anders nog de lijst van vorige week; controleer_weekmenu.py
-#      waarschuwt je als je bent vergeten die bij te werken).
+# Twee manieren om hier terecht te komen, zodat je geen Mac nodig hebt:
+#   1. Automatisch elke zondagochtend (zie de cron hieronder). Dit plaatst
+#      BEWUST nooit zelf blind een nieuwe, ongecontroleerde bestelling — de
+#      cron controleert alleen of je deze week al zelf op "Definitief
+#      bestellen" op de website hebt gedrukt. Is dat zo, dan is er niets te
+#      doen (die bestelling is al geplaatst). Is dat niet zo, dan wordt er
+#      alleen een GitHub Issue als herinnering aangemaakt — geen bestelling.
 #   2. Handmatig vanaf je telefoon: open de GitHub-app (of github.com in
 #      Safari) -> deze repo -> tabblad "Actions" -> "Bestel bij Picnic" ->
-#      "Run workflow". Daar kun je zelf kiezen of er eerst een nieuw
-#      weekmenu gekozen moet worden.
+#      "Run workflow". Dat is de enige manier waarop deze workflow zelf
+#      ooit een bestelling plaatst zonder dat je eerst via de website op
+#      "Definitief bestellen" hebt gedrukt — een bewuste, handmatige actie.
 #
 # Voorwaarde: de secret PICNIC_SESSION_TOKEN moet gezet zijn (Settings ->
 # Secrets and variables -> Actions). Zie picnic_stap_voor_stap_gids.md voor
@@ -32,6 +35,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   bestellen:
@@ -48,26 +52,44 @@ jobs:
       - name: Dependencies installeren
         run: pip install -r requirements.txt
 
+      - name: Check of deze week al bevestigd is (alleen bij de zondag-cron)
+        if: ${{ github.event_name == 'schedule' }}
+        id: check
+        run: |
+          BEVESTIGD=$(python3 picnic_boodschappen.py --toon-bevestigd-deze-week)
+          echo "bevestigd=$BEVESTIGD" >> "$GITHUB_OUTPUT"
+
+      - name: Herinnering sturen (nog niet bevestigd deze week)
+        if: ${{ github.event_name == 'schedule' && steps.check.outputs.bevestigd == 'nee' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const datum = new Date().toLocaleDateString("nl-NL", { day: "numeric", month: "long" });
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Nog niet bevestigd — controleer je bestelling (${datum})`,
+              body: [
+                "Er is deze week nog geen bestelling bevestigd via de website.",
+                "",
+                "Er wordt NIET automatisch besteld: open de website, controleer het weekmenu/de boodschappenlijst en druk zelf op \"Definitief bestellen bij Picnic\" als het klopt.",
+                "",
+                "_Automatisch aangemaakt door de zondag-check. Sluit dit issue als je klaar bent._",
+              ].join("\n"),
+            });
+
       - name: Weekmenu kiezen
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.nieuw_weekmenu == 'ja' }}
         run: python3 weekmenu.py --automatisch
 
       - name: Bestellen bij Picnic
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
           PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
-        # --alleen-nieuwe-week alleen bij de automatische zondag-cron: als je
-        # deze week al zelf via de website hebt besteld, slaat het script de
-        # bestelling dan over in plaats van dezelfde lijst nog een keer te
-        # plaatsen. Een handmatige "Definitief bestellen" via de website
-        # (workflow_dispatch) bestelt altijd, ongeacht deze vlag.
-        run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            python3 picnic_boodschappen.py --automatisch --alleen-nieuwe-week
-          else
-            python3 picnic_boodschappen.py --automatisch
-          fi
+        run: python3 picnic_boodschappen.py --automatisch
 
       - name: Wijzigingen terugzetten in de repo
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

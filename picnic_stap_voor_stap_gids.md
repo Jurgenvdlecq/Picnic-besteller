@@ -167,11 +167,22 @@ onzichtbaar in logs — ook voor jezelf nadat je 'm hebt opgeslagen.
 > bestelling ooit mislukken met "sessie verlopen", herhaal dan gewoon Stap 5
 > op je Mac en werk de secret bij met het nieuwe token (2 minuutjes werk).
 
-### Stap 9 — Automatisch elke week laten bestellen
+### Stap 9 — De zondag-check (herinnering, geen automatische bestelling)
 
 Dat staat al klaar in `.github/workflows/bestel.yml`: elke zondag rond 8-9
-uur 's ochtends kiest de workflow automatisch een weekmenu en bestelt alles
-bij Picnic — zonder dat je Mac of iPhone aan hoeven te staan.
+uur 's ochtends controleert de workflow of je die week al zelf op
+"Definitief bestellen bij Picnic" hebt gedrukt via de website.
+
+- **Wel bevestigd?** Dan is de bestelling al geplaatst, en gebeurt er verder
+  niets.
+- **Nog niet bevestigd?** Dan wordt er bewust **geen** bestelling geplaatst
+  — in plaats daarvan verschijnt er een GitHub Issue als herinnering
+  ("Nog niet bevestigd — controleer je bestelling"). Open dan de website,
+  controleer het weekmenu en de boodschappenlijst, en bevestig zelf.
+
+Een echte bestelling wordt dus altijd door een bewuste actie geplaatst: via
+de website, of handmatig via "Run workflow" (zie Stap 10) — nooit stil op
+de achtergrond zonder dat iemand ernaar heeft gekeken.
 
 ### Stap 10 — Handmatig bestellen vanaf je iPhone
 
@@ -289,13 +300,16 @@ personen), en zondag is altijd de vaste airfryer-dag voor 4 personen.
 
 **Stap 2 — Voorraad.** Hier staan de vaste boodschappen (per categorie,
 zoals ontbijt/snacks/drinken/huishouden) — vink uit wat je niet nodig hebt
-of pas het aantal aan. Daaronder de **voorraadcheck**: voor veelgebruikte
-basisproducten (rijst, koffie, wc-papier, ...) geef je aan of de voorraad
-"Genoeg", "Bijna op" of "Op" is — alleen "Bijna op"/"Op" komt op de
-boodschappenlijst (de status wordt niet onthouden, elke week begin je
-schoon). Onderaan kun je bij **"Extra producten"** nog losse dingen
-toevoegen die nergens bij horen. De kassabon-samenvatting onderaan telt
-live mee.
+of pas het aantal aan, en tik op **"💾 Wijzigingen opslaan"** om dat
+permanent te maken. Let op: rijst, pasta, koffie, wc-papier e.d. worden NIET
+meer automatisch aan de lijst toegevoegd zodra een gerecht ze gebruikt — dat
+soort voorraadartikelen gaat over veel gerechten heen, dus "dit gerecht
+gebruikt rijst" zegt niks over of je deze week rijst nodig hebt. Klap
+**"Voorraad bijwerken"** open om aan te geven wat "Bijna op" of "Op" is —
+alleen dát komt op de boodschappenlijst (de status wordt niet onthouden,
+elke week begin je schoon). Onderaan kun je bij **"Extra producten"** nog
+losse dingen toevoegen die nergens bij horen. De kassabon-samenvatting
+onderaan telt live mee.
 
 ### Stap 17 — Controleren en bestellen
 
@@ -303,21 +317,30 @@ Picnic geeft niet altijd precies terug wat je bedoelt — daarom is dit een
 losse, derde stap:
 
 1. Tik in stap 2 op **"Zoek producten op"**. Na ongeveer een halve tot hele
-   minuut zie je een lijst met wat Picnic per product heeft gevonden.
-2. De lijst is ingedeeld: **"Nieuw / controleren"** bovenaan (producten die
-   nog niet eerder gekozen zijn, niet gevonden zijn, of afwijken van je
-   gebruikelijke keuze — met een ⚠-melding erbij) en **"Vertrouwd"**
-   daaronder compact (producten die overeenkomen met wat je meestal kiest).
-3. Per product kun je: het **aantal** aanpassen, **verwijderen**,
+   minuut zie je een lijst met wat Picnic per product heeft gevonden,
+   ingedeeld per dag (maandag t/m zondag) met daaronder de vaste
+   boodschappen. Bij elke dag staat meteen of alles al "✓ compleet" is of
+   "⚠ nog checken" nodig heeft, en een knop om in één keer alle
+   ingrediënten voor die dag te verwijderen (bv. "we koken donderdag toch
+   niet").
+2. Per product kun je: het **aantal** aanpassen, **verwijderen**,
    **parkeren** (haalt het uit déze bestelling maar blijft zichtbaar om
    makkelijk terug te zetten), **"Andere optie kiezen"** (wisselen tussen
-   gevonden varianten), **"Vervangen"** (zet het klaar om onder een andere
-   naam opnieuw te zoeken) of **"⭐ Voorkeur opslaan"** (onthoudt dit
-   product voortaan als standaardkeuze voor dit ingrediënt).
+   de gevonden varianten), **"🔍 Ander product zoeken"** (live bij Picnic
+   zoeken op een eigen zoekterm, met afbeelding — bv. "zilvervliesrijst"
+   i.p.v. het automatisch gevonden "basmatirijst"; duurt ~20-30 sec),
+   **"Vervangen"** (zet het klaar om onder een andere naam opnieuw te
+   zoeken), of **"Alleen deze keer"** (bestel dit product deze ene keer,
+   zonder je vaste voorkeur voor dit ingrediënt te veranderen).
+3. Voorkeuren zijn volledig zelflerend: elke definitieve bestelling wordt
+   automatisch de nieuwe standaardkeuze voor de volgende keer — er is geen
+   aparte "opslaan"-knop meer nodig.
 4. Onderaan kun je nog iets vergeten toevoegen — dat wordt bij het
    bestellen automatisch opgezocht.
 5. Alles goed? Tik op **"Definitief bestellen bij Picnic"**. Na nog eens
    een halve tot hele minuut staan de producten echt in je Picnic-mandje.
+   Doe je dit niet, dan wordt er zondag **niet** automatisch besteld — dan
+   krijg je alleen een herinnering (zie Stap 9).
 6. Open daarna de Picnic-app om een bezorgmoment te kiezen en af te rekenen.
 
 > Wil je toch nog iets aanpassen aan het weekmenu of de voorraad? Tik op

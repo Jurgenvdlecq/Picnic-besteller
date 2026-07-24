@@ -646,11 +646,14 @@ def main():
              "(product_voorstellen.json) zonder iets te bestellen — voor de controle-stap op de website.",
     )
     parser.add_argument(
-        "--alleen-nieuwe-week",
+        "--toon-bevestigd-deze-week",
         action="store_true",
-        help="Sla het bestellen over als er deze ISO-week al een geslaagde bestelling geregistreerd "
-             "staat. Gebruikt door de automatische zondag-cron, zodat een bestelling die je eerder "
-             "in de week al zelf via de website plaatste niet nog een keer wordt geplaatst.",
+        help="Print 'ja' als er deze ISO-week al een bevestigde bestelling is geregistreerd, anders "
+             "'nee'. Doet verder niets (geen inloggen bij Picnic nodig). Gebruikt door de zondag-cron "
+             "om te bepalen of er een bestelling geplaatst mag worden of alleen een herinnering "
+             "gestuurd moet worden — de cron bestelt bewust NOOIT zelf blind een nieuw, ongecontroleerd "
+             "weekmenu; alleen een bevestigde bestelling (via 'Definitief bestellen' op de website, of "
+             "een handmatige Run workflow) plaatst echt iets.",
     )
     parser.add_argument(
         "--losse-zoekterm",
@@ -662,6 +665,10 @@ def main():
     args = parser.parse_args()
     automatisch = args.automatisch or args.voorbeeld
 
+    if args.toon_bevestigd_deze_week:
+        print("ja" if _al_besteld_deze_week() else "nee")
+        return
+
     if args.losse_zoekterm:
         api = log_in(automatisch=True)
         kandidaten = zoek_producten(api, args.losse_zoekterm, automatisch=True, max_kandidaten=8)
@@ -671,16 +678,6 @@ def main():
         )
         log(f"Losse zoekterm '{args.losse_zoekterm}': {len(kandidaten)} resultaat/resultaten.", True)
         return
-
-    if args.alleen_nieuwe_week and not args.voorbeeld:
-        al_besteld_op = _al_besteld_deze_week()
-        if al_besteld_op:
-            log(
-                f"Deze week ({_iso_week_sleutel()}) is al besteld (op {al_besteld_op}) — "
-                "automatische zondagbestelling wordt overgeslagen.",
-                True,
-            )
-            return
 
     # In automatische modus (de cron of een website-bestelling) willen we een
     # mislukking altijd zichtbaar maken: de workflow-stap moet falen (zodat
