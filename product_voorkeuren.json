@@ -272,6 +272,13 @@
       "bron": "impliciet",
       "bevestigd": 2,
       "laatst": "2026-07-23T12:42:31.709272+00:00"
+    },
+    "wokgroente": {
+      "id": "s1002987",
+      "naam": "Mexicaanse roerbakgroenten",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-24T07:15:17.025Z"
     }
   },
   "gerecht_ingredient": {}
