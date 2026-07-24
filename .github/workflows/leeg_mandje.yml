@@ -44,10 +44,19 @@ jobs:
         # Draait ook als de vorige stap faalde (mandje kon niet volledig
         # geleegd worden) — juist dán moet het resultaatbestand alsnog
         # gecommit worden, anders leest de website nog het vorige resultaat.
+        #
+        # LET OP: de push mag NIET nogmaals achter "git diff --staged
+        # --quiet ||" hangen — na een geslaagde commit is de staged diff per
+        # definitie weer leeg, dus die guard zou de push altijd overslaan
+        # (precies de bug die hier zat: het resultaatbestand werd lokaal
+        # gecommit maar nooit echt gepusht, waardoor de website een oud of
+        # ontbrekend resultaat bleef lezen). Zelfde patroon als de andere
+        # workflows (zoek_producten.yml/bestel.yml): commit voorwaardelijk,
+        # push onvoorwaardelijk.
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add laatste_mandje_actie.json
           git diff --staged --quiet || git commit -m "Resultaat van winkelwagentje legen bijgewerkt"
-          git diff --staged --quiet || git push
+          git push
