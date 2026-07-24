@@ -1,1 +1,54 @@
-{}
+{
+  "zoekterm": "Supercrunch",
+  "kandidaten": [
+    {
+      "id": "s1011212",
+      "naam": "Aviko SuperCrunch Franse frites",
+      "prijs_cent": 249,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/57cac9082f8388163b272d4902868c6c24da09fddc30de4b2592a8d0385aec66/small.png",
+      "subtitle": "750 gram"
+    },
+    {
+      "id": "s1010336",
+      "naam": "Aviko SuperCrunch kreukel frieten",
+      "prijs_cent": 299,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6c0c4d752189fccf6c007e7f7aae8436d5ba013420b62e94537517bcdb424d88/small.png",
+      "subtitle": "750 gram"
+    },
+    {
+      "id": "s1009728",
+      "naam": "Aviko SuperCrunch Hollandse frites",
+      "prijs_cent": 289,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/53fb59d9c7b34bac0c5cba1f75336e076586f9a16a98752e6782266ce16a1a44/small.png",
+      "subtitle": "750 gram"
+    },
+    {
+      "id": "s1009640",
+      "naam": "Aviko SuperCrunch oven pommes frites",
+      "prijs_cent": 289,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/019a2f3fdabfeacf6bb54b12c10f0162fd26a231466efc3251e5390deeb4ef34/small.png",
+      "subtitle": "750 gram"
+    },
+    {
+      "id": "s1009802",
+      "naam": "Aviko SuperCrunch airfryer pommes frites",
+      "prijs_cent": 249,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f97fb8832bafb391399b499a8c902f4c1bff29a5c94f7b0afba81561aaf33d40/small.png",
+      "subtitle": "750 gram"
+    },
+    {
+      "id": "s1018230",
+      "naam": "Super Choice escargots met kruidenboter",
+      "prijs_cent": 599,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/391beedfc5bb3e44d17fa23f7ac0a9e4dab88d27957af4ce03c47219f57f5451/small.png",
+      "subtitle": "12 stuks"
+    },
+    {
+      "id": "s1148535",
+      "naam": "Butterfly shrimp",
+      "prijs_cent": 499,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/277bd3a1f72580dcc36384017c9d3a6c985efa42afa33a0df7e9f9ff65929b35/small.png",
+      "subtitle": "12 stuks"
+    }
+  ]
+}
