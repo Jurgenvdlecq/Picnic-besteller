@@ -5,6 +5,7 @@ const REPO = "Picnic-besteller";
 const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
 const BESTEL_WORKFLOW = "bestel.yml";
 const ZOEKEN_WORKFLOW = "zoek_producten.yml";
+const LEEG_MANDJE_WORKFLOW = "leeg_mandje.yml";
 
 // SHA-256 van de pincode, zodat de code zelf niet in platte tekst in de
 // paginabron staat. Dit is geen sterke beveiliging (view-source + brute
@@ -917,6 +918,8 @@ const meerTokenStatusEl = document.getElementById("meer-token-status");
 const meerTokenWijzigKnop = document.getElementById("meer-token-wijzig-knop");
 const meerVoorkeurenDetailEl = document.getElementById("meer-voorkeuren-detail");
 const meerLaatsteBestellingEl = document.getElementById("meer-laatste-bestelling");
+const meerMandjeStatusEl = document.getElementById("meer-mandje-status");
+const meerLeegMandjeKnop = document.getElementById("meer-leeg-mandje-knop");
 
 const TABS = ["overzicht", "gerechten", "boodschappen", "controle", "meer"];
 
@@ -949,6 +952,7 @@ let staat = {
   productKeuzeIndex: {},
   zoekenBezig: false,
   bestellenBezig: false,
+  mandjeLegenBezig: false,
 };
 
 function toonScherm(scherm) {
@@ -1301,6 +1305,38 @@ if (meerTokenWijzigKnop) {
     localStorage.removeItem(TOKEN_KEY);
     location.reload();
   };
+}
+
+async function leegWinkelwagentje() {
+  if (staat.mandjeLegenBezig) return;
+  if (!confirm("Alles uit je huidige Picnic-mandje verwijderen? Dit kan niet ongedaan gemaakt worden.")) return;
+
+  staat.mandjeLegenBezig = true;
+  const startTijd = new Date();
+  meerLeegMandjeKnop.disabled = true;
+  meerMandjeStatusEl.textContent = "Winkelwagentje wordt geleegd...";
+
+  try {
+    await dispatchWorkflow(LEEG_MANDJE_WORKFLOW, {});
+    const run = await volgWorkflow(LEEG_MANDJE_WORKFLOW, startTijd, meerMandjeStatusEl, "Bezig met legen...");
+    if (!run) {
+      meerMandjeStatusEl.textContent = "Kon de status niet vinden — check zo nodig zelf de Picnic-app.";
+    } else if (run.conclusion === "success") {
+      meerMandjeStatusEl.textContent = "✓ Winkelwagentje geleegd";
+      toonToast("✓ Winkelwagentje geleegd");
+    } else {
+      meerMandjeStatusEl.innerHTML = `Legen is mislukt. <a href="${run.html_url}" target="_blank" rel="noopener">Bekijk het logboek</a>.`;
+    }
+  } catch (e) {
+    meerMandjeStatusEl.textContent = "Er ging iets mis: " + e.message;
+  } finally {
+    staat.mandjeLegenBezig = false;
+    meerLeegMandjeKnop.disabled = false;
+  }
+}
+
+if (meerLeegMandjeKnop) {
+  meerLeegMandjeKnop.onclick = leegWinkelwagentje;
 }
 
 document.querySelectorAll(".nav-icoon[data-icoon]").forEach((el) => {

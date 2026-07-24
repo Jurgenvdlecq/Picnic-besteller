@@ -632,6 +632,17 @@ def _bestellen_uitvoeren(args, automatisch: bool):
         stuur_melding("Picnic boodschappen bijgewerkt", "De vaste lijst is toegevoegd aan je mandje.")
 
 
+def leeg_mandje(automatisch: bool = False):
+    """Verwijdert alles uit het huidige Picnic-mandje. Onomkeerbaar (de
+    producten zijn niet vanuit dit script terug te zetten) — de website
+    vraagt daarom altijd eerst een bevestiging voordat dit wordt aangeroepen."""
+    api = log_in(automatisch=True)
+    cart = api.get_cart()
+    aantal_producten = len(cart.get("items", []))
+    api.clear_cart()
+    log(f"✓ Winkelwagentje geleegd ({aantal_producten} product/producten verwijderd).", automatisch)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Picnic boodschappenlijst-tool")
     parser.add_argument(
@@ -662,11 +673,22 @@ def main():
              "losse_zoekresultaten.json, zonder de rest van de boodschappenlijst aan te raken — "
              "voor 'ander product zoeken' op het controlescherm van de website.",
     )
+    parser.add_argument(
+        "--leeg-mandje",
+        action="store_true",
+        help="Verwijder alles uit het huidige Picnic-mandje en stop meteen — raakt verder niets aan "
+             "(geen boodschappenlijst, geen bestelling). Alleen voor de 'Winkelwagentje legen'-knop op "
+             "de website, die hier altijd eerst zelf een bevestiging voor vraagt.",
+    )
     args = parser.parse_args()
     automatisch = args.automatisch or args.voorbeeld
 
     if args.toon_bevestigd_deze_week:
         print("ja" if _al_besteld_deze_week() else "nee")
+        return
+
+    if args.leeg_mandje:
+        leeg_mandje(automatisch=True)
         return
 
     if args.losse_zoekterm:

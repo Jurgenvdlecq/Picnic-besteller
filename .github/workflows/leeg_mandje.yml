@@ -1,0 +1,34 @@
+name: Leeg winkelwagentje bij Picnic
+
+# Verwijdert alles uit je huidige Picnic-mandje. Onomkeerbaar — wordt alleen
+# handmatig aangeroepen (via de "Winkelwagentje legen"-knop onder "Meer" op
+# de website, die daar zelf eerst een bevestiging voor vraagt) of rechtstreeks
+# via "Run workflow" in de Actions-tab. Raakt geen enkel bestand in de repo
+# aan (geen boodschappenlijst, geen bestelgeschiedenis) — alleen het mandje
+# bij Picnic zelf.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  legen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo ophalen
+        uses: actions/checkout@v4
+
+      - name: Python 3.13 installeren
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Dependencies installeren
+        run: pip install -r requirements.txt
+
+      - name: Winkelwagentje legen
+        env:
+          PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
+        run: python3 picnic_boodschappen.py --leeg-mandje
