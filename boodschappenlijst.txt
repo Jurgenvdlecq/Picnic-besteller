@@ -1,39 +1,27 @@
 # Weekmenu:
-#   Maandag: Pasta bolognese uit een pot
-#   Dinsdag: Kroketjes + Hamburger + Bloemkool
-#   Woensdag: Falafel wraps met tzatziki
-#   Donderdag: Varkensfilet met champignons en aardappelgratin
-#   Vrijdag (4p): Nacho's met gekruid gehakt
-#   Zaterdag (4p): Kip curry met naanbrood
-#   Zondag: Patat + Carrero + Mini kaassoufflé + Oude kaas stengels
+#   Maandag: Kipsaté met rijst
+#   Dinsdag: Aardappelblokjes + Kipburger + Snijbonen
+#   Woensdag: Kip met rijst en paprika
+#   Donderdag: Kip tikka masala met rijst
+#   Vrijdag (4p): Aardappelblokjes met hamburger en broccoli
+#   Zaterdag (4p): Pannenkoeken
+#   Zondag: Patat + Kipnuggets + Carrero + Mini kaassoufflé + Oude kaas stengels
 #
-2 x gehakt (500 gram)
-1 x pasta
-2 x bolognesesaus pot
-2 x geraspte kaas
-1 x Kroketjes
-1 x Hamburger
-1 x Bloemkool
-1 x falafel
-4 x tortilla wraps
-1 x tzatziki
-1 x komkommer
-1 x cherrytomaatjes
-1 x varkensfilet
-1 x champignons
-1 x aardappelgratin
-1 x roomsaus
-2 x rundergehakt (500 gram)
-1 x nachochips
-1 x salsa
-1 x guacamole
-1 x zure room
-4 x kipfilet
-1 x kerriesaus
-1 x kokosmelk
-1 x naanbrood
-2 x rijst
+3 x kipfilet
+1 x saté saus
+1 x kroepoek
+2 x Aardappelblokjes
+1 x Kipburger
+1 x Snijbonen
+2 x paprika
+2 x ui
+1 x tikka masala saus
+4 x hamburger
+1 x broccoli
+1 x pannenkoekenmix
+1 x stroop
 1 x Patat (airfryer)
+1 x Kipnuggets
 1 x Carrero
 1 x Mini kaassoufflé
 1 x Oude kaas stengels
