@@ -262,11 +262,14 @@
       "laatst": "2026-07-23T12:42:28.226659+00:00"
     },
     "keukenrol": {
-      "id": "s1014862",
-      "naam": "Edet easypull keukenrol navul",
-      "bron": "impliciet",
-      "bevestigd": 2,
-      "laatst": "2026-07-23T12:42:30.096260+00:00"
+      "id": "s1063758",
+      "naam": "Picnic keukenpapier 3 laags",
+      "prijs_cent": 355,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2eae62ab9fefacc0953a982fac7ccb66c25d1c506a851efec74b7bf86437f725/small.png",
+      "subtitle": "4 rollen",
+      "bron": "expliciet",
+      "bevestigd": 3,
+      "laatst": "2026-07-24T07:57:42.946Z"
     },
     "avikosupercrunchfransefriet": {
       "id": "s1011212",
