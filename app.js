@@ -1920,32 +1920,16 @@ function heeftVoorkeurMismatch(naam, gekozen) {
   return !!(voorkeur && voorkeur.id && voorkeur.id !== gekozen.id);
 }
 
-async function slaProductVoorkeurOp(naam, kandidaat) {
-  staat.productVoorkeuren = staat.productVoorkeuren || { ingredient: {}, gerecht_ingredient: {} };
-  staat.productVoorkeuren.ingredient = staat.productVoorkeuren.ingredient || {};
-  const sleutel = normaliseerIngredientNaam(naam);
-  const bestaand = staat.productVoorkeuren.ingredient[sleutel];
-  staat.productVoorkeuren.ingredient[sleutel] = {
-    id: kandidaat.id,
-    naam: kandidaat.naam,
-    prijs_cent: kandidaat.prijs_cent,
-    image_url: kandidaat.image_url,
-    subtitle: kandidaat.subtitle,
-    bron: "expliciet",
-    bevestigd: (bestaand?.bevestigd || 0) + 1,
-    laatst: new Date().toISOString(),
-  };
+// Voorkeuren zijn volledig zelflerend: elke definitieve bestelling wordt
+// automatisch de nieuwe standaardkeuze (zie bevestigBestelling +
+// _leer_voorkeur in picnic_boodschappen.py) — er is dus geen aparte
+// "opslaan"-actie meer nodig. Het enige wat je soms nog wil is het
+// omgekeerde: deze ene keer bewust iets anders bestellen zonder dat dát de
+// nieuwe standaard wordt. Dat regelt onderstaande vlag, die meegaat in
+// gekozen_producten.json en daar de auto-leerslag overslaat.
+function wisselAlleenDezeKeer(naam, info) {
+  info.alleenDezeKeer = !info.alleenDezeKeer;
   renderControleScherm();
-  try {
-    await githubPutFile(
-      "product_voorkeuren.json",
-      JSON.stringify(staat.productVoorkeuren, null, 2),
-      `Voorkeur opgeslagen: ${naam} -> ${kandidaat.naam}`
-    );
-    toonToast(`✓ Voorkeur opgeslagen: ${naam} → ${kandidaat.naam}`);
-  } catch (e) {
-    toonToast(`✗ Voorkeur opslaan mislukt: ${e.message}`, "fout");
-  }
 }
 
 // --- Controle-scherm ---
@@ -2035,7 +2019,13 @@ function bouwControleItem(naam, info, compact) {
       info.geparkeerd = true;
       renderControleScherm();
     }));
-    acties.appendChild(maakKnop("secundair", "⭐ Voorkeur opslaan", () => slaProductVoorkeurOp(naam, gekozen)));
+    acties.appendChild(
+      maakKnop(
+        "secundair" + (info.alleenDezeKeer ? " actief" : ""),
+        info.alleenDezeKeer ? "✓ Alleen deze keer" : "Alleen deze keer",
+        () => wisselAlleenDezeKeer(naam, info)
+      )
+    );
     item.appendChild(acties);
   }
 
@@ -2560,7 +2550,7 @@ async function bevestigBestelling() {
       const kandidaten = info.kandidaten || [];
       const idx = staat.productKeuzeIndex[naam] ?? 0;
       const gekozen = kandidaten[idx];
-      if (gekozen) gekozenProducten[naam] = gekozen;
+      if (gekozen) gekozenProducten[naam] = info.alleenDezeKeer ? { ...gekozen, alleen_deze_keer: true } : gekozen;
     }
     await githubPutFile("gekozen_producten.json", JSON.stringify(gekozenProducten, null, 2), "Productkeuzes bevestigd via de website");
     await githubPutFile(

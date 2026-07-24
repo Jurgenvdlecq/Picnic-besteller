@@ -124,9 +124,10 @@ LOSSE_ZOEKRESULTATEN_BESTAND = Path(__file__).parent / "losse_zoekresultaten.jso
 GEKOZEN_BESTAND = Path(__file__).parent / "gekozen_producten.json"
 
 # Geleerde productvoorkeuren per ingrediënt: welk Picnic-product hoort hier
-# meestal bij. "expliciet" (via "Voorkeur opslaan" op de website) wint
-# altijd; "impliciet" wordt hier automatisch bijgehouden na elke geslaagde
-# bestelling (telt hoe vaak een product bevestigd is).
+# meestal bij. Volledig zelflerend — elke geslaagde bestelling wordt
+# automatisch de nieuwe standaardkeuze voor de volgende keer (telt ook hoe
+# vaak een product bevestigd is), tenzij de website "alleen deze keer"
+# meegeeft (zie voeg_product_toe).
 PRODUCT_VOORKEUREN_BESTAND = Path(__file__).parent / "product_voorkeuren.json"
 
 # ---------------------------------------------------------------------------
@@ -380,12 +381,7 @@ def _sla_product_voorkeuren_op():
 
 
 def _pas_voorkeur_toe(kandidaten: list, naam: str) -> list:
-    """Zet een geleerd voorkeursproduct vooraan in de kandidatenlijst. Een
-    expliciete voorkeur (via "Voorkeur opslaan" op de website) en een
-    impliciete voorkeur (automatisch geleerd van eerdere bestellingen) staan
-    beide gewoon in dezelfde "ingredient"-tabel — welke van de twee het is,
-    bepaalt alleen of latere impliciete bevestigingen 'm mogen overschrijven
-    (zie _leer_voorkeur).
+    """Zet een geleerd voorkeursproduct vooraan in de kandidatenlijst.
 
     Staat het voorkeursproduct niet tussen de verse zoekresultaten (bv. omdat
     een generieke ingrediëntnaam als "rijst" bij Picnic een ander merk/type
@@ -410,17 +406,21 @@ def _pas_voorkeur_toe(kandidaten: list, naam: str) -> list:
 
 
 def _leer_voorkeur(naam: str, product: dict):
-    """Onthoudt (impliciet) welk product voor dit ingrediënt bevestigd is,
-    tenzij er al een expliciete voorkeur staat (die wint altijd). Bewaart ook
+    """Onthoudt welk product voor dit ingrediënt net besteld is — dit is de
+    enige plek waar een voorkeur wordt vastgelegd (geen aparte 'voorkeur
+    opslaan'-actie meer): elke afgeronde bestelling wordt automatisch de
+    nieuwe standaardkeuze voor de volgende keer. Bewaart ook
     prijs/afbeelding/subtitel, zodat _pas_voorkeur_toe deze kan tonen als het
-    product zelf niet meer tussen de verse zoekresultaten zit."""
+    product zelf niet meer tussen de verse zoekresultaten zit.
+
+    Wordt NIET aangeroepen als de website "Alleen deze keer" heeft
+    meegegeven (zie voeg_product_toe) — dan verandert de voorkeur bewust
+    niet, ook al is er deze ene keer iets anders besteld."""
     if not product or not product.get("id"):
         return
     voorkeuren = _laad_product_voorkeuren()
     sleutel = _normalize(naam)
     bestaand = voorkeuren["ingredient"].get(sleutel)
-    if bestaand and bestaand.get("bron") == "expliciet":
-        return
     zelfde_product = bool(bestaand and bestaand.get("id") == product.get("id"))
     voorkeuren["ingredient"][sleutel] = {
         "id": product["id"],
@@ -428,7 +428,6 @@ def _leer_voorkeur(naam: str, product: dict):
         "prijs_cent": product.get("prijs_cent"),
         "image_url": product.get("image_url"),
         "subtitle": product.get("subtitle"),
-        "bron": "impliciet",
         "bevestigd": (bestaand.get("bevestigd", 0) + 1) if zelfde_product else 1,
         "laatst": datetime.now(timezone.utc).isoformat(),
     }
@@ -497,7 +496,10 @@ def voeg_product_toe(api: PicnicAPI, naam: str, aantal: int = 1, automatisch: bo
         try:
             api.add_product(gekozen["id"], count=aantal)
             log(f"  ✓ {aantal}x {gekozen.get('naam', naam)} toegevoegd (gekozen via website)", automatisch)
-            _leer_voorkeur(naam, gekozen)
+            if gekozen.get("alleen_deze_keer"):
+                log(f"    (\"alleen deze keer\" — voorkeur voor '{naam}' blijft ongewijzigd)", automatisch)
+            else:
+                _leer_voorkeur(naam, gekozen)
             prijs_cent = gekozen.get("prijs_cent")
             return {
                 "status": "toegevoegd",

@@ -1524,3 +1524,10 @@ button.dag-verwijder {
 .zoek-box-resultaten {
   margin-top: 6px;
 }
+
+.controle-acties button.secundair.actief {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
