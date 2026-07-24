@@ -940,6 +940,8 @@ let staat = {
   tab: "overzicht",
   productVoorstellen: null,
   productKeuzeIndex: {},
+  zoekenBezig: false,
+  bestellenBezig: false,
 };
 
 function toonScherm(scherm) {
@@ -989,16 +991,25 @@ function gaNaarTab(tab) {
     el.classList.toggle("actief", el.dataset.tab === tab);
   });
 
-  statusEl.textContent = "";
+  // statusEl (en de disabled-state van actieKnop) blijven bewust ongemoeid
+  // wanneer er nog een zoek-/bestelactie loopt: dit is één gedeeld DOM-
+  // element dat door de achtergrond-polling van startZoeken/bevestigBestelling
+  // wordt bijgewerkt, ook terwijl de gebruiker op een ander tabblad zit. Het
+  // hier blind leegmaken zorgde ervoor dat de knop na terugwisselen van
+  // tabblad "dood" leek: nog uitgeschakeld, maar zonder enige statustekst.
   if (tab === "boodschappen") {
     actieKnopWrapEl.classList.remove("verborgen");
     actieKnop.textContent = "Zoek producten op";
     actieKnop.onclick = startZoeken;
+    actieKnop.disabled = staat.zoekenBezig;
+    if (!staat.zoekenBezig) statusEl.textContent = "";
   } else if (tab === "controle") {
     actieKnopWrapEl.classList.remove("verborgen");
     renderControleScherm();
     actieKnop.textContent = "Definitief bestellen bij Picnic";
     actieKnop.onclick = bevestigBestelling;
+    actieKnop.disabled = staat.bestellenBezig;
+    if (!staat.bestellenBezig) statusEl.textContent = "";
   } else {
     actieKnopWrapEl.classList.add("verborgen");
   }
@@ -2877,6 +2888,9 @@ async function slaWeekmenuOp() {
 }
 
 async function startZoeken() {
+  if (staat.zoekenBezig) return;
+  staat.zoekenBezig = true;
+
   const startTijd = new Date();
   actieKnop.disabled = true;
   waarschuwingenEl.innerHTML = "";
@@ -2900,11 +2914,22 @@ async function startZoeken() {
     staat.productVoorstellen = tekst ? JSON.parse(tekst) : {};
     staat.productKeuzeIndex = {};
     pasProductVoorkeurenToe();
-    statusEl.textContent = "";
-    gaNaarTab("controle");
+
+    // Alleen automatisch doorschakelen als de gebruiker nog steeds op dit
+    // tabblad zit. Was er intussen naar een ander tabblad gewisseld, dan
+    // voelt een geforceerde sprong naar Controle als een "vastloper" — laat
+    // die gebruiker met rust en toon in plaats daarvan een toast.
+    if (staat.tab === "boodschappen") {
+      statusEl.textContent = "";
+      gaNaarTab("controle");
+    } else {
+      toonToast("✓ Producten gevonden — bekijk ze bij Controle");
+    }
+    if (staat.tab === "overzicht") renderOverzicht();
   } catch (e) {
     statusEl.textContent = "Er ging iets mis: " + e.message;
   } finally {
+    staat.zoekenBezig = false;
     actieKnop.disabled = false;
   }
 }
@@ -2927,6 +2952,9 @@ function schrijfBoodschappenlijstVanControle() {
 }
 
 async function bevestigBestelling() {
+  if (staat.bestellenBezig) return;
+  staat.bestellenBezig = true;
+
   const startTijd = new Date();
   actieKnop.disabled = true;
   statusEl.textContent = "Bestelling wordt bevestigd...";
@@ -2959,6 +2987,7 @@ async function bevestigBestelling() {
   } catch (e) {
     statusEl.textContent = "Er ging iets mis: " + e.message;
   } finally {
+    staat.bestellenBezig = false;
     actieKnop.disabled = false;
   }
 }
