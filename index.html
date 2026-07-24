@@ -60,7 +60,12 @@
         <div class="ov-statskaarten" id="ov-statskaarten"></div>
 
         <section class="ov-kaart">
-          <div class="ov-kaart-titel">Wat wil je doen?</div>
+          <div class="ov-kaart-titel">Voortgang deze week</div>
+          <div class="ov-voortgang" id="ov-voortgang"></div>
+        </section>
+
+        <section class="ov-kaart">
+          <div class="ov-kaart-titel">Volgende stap</div>
           <div class="ov-acties" id="ov-primaire-acties"></div>
         </section>
 
@@ -75,6 +80,10 @@
 
     <div id="weekmenu-scherm" class="verborgen">
       <main id="dagen-wrap">
+        <div class="stap-intro">
+          <div class="stap-label">Stap 1 · Kies jullie gerechten</div>
+          <p class="stap-uitleg">Kies de gerechten voor deze week. De benodigde ingrediënten worden automatisch aan de boodschappen toegevoegd.</p>
+        </div>
         <div id="beoordeling-blok"></div>
         <div id="dagen"></div>
       </main>
@@ -82,31 +91,40 @@
 
     <div id="voorraad-scherm" class="verborgen">
       <main id="voorraad-wrap">
+        <div class="stap-intro">
+          <div class="stap-label">Stap 2 · Vul jullie boodschappen aan</div>
+          <p class="stap-uitleg">De ingrediënten uit jullie gerechten staan al klaar. Controleer alleen de vaste boodschappen, voorraad en extra producten.</p>
+        </div>
+
         <div class="kaart">
           <div class="kaart-titel">
             <span class="naam">Vaste boodschappen</span>
             <span class="tag">deze week</span>
           </div>
-          <div id="standaard-lijst"></div>
-          <div class="std-opslaan-rij">
-            <button id="standaard-opslaan-knop" class="secundair">💾 Wijzigingen opslaan</button>
-            <span id="standaard-opslaan-status" class="std-opslaan-status"></span>
+          <div id="standaard-samenvatting" class="aanvullen-samenvatting"></div>
+          <button id="standaard-toggle-knop" class="secundair aanvullen-tegel-knop" type="button">Bekijken en aanpassen</button>
+          <div id="standaard-detail" class="verborgen">
+            <p class="stap-uitleg aanvullen-detail-uitleg">Je gebruikelijke boodschappen staan standaard aan. Vink alleen uit wat je deze week niet nodig hebt.</p>
+            <div id="standaard-lijst"></div>
+            <div class="std-opslaan-rij">
+              <button id="standaard-opslaan-knop" class="secundair">💾 Wijzigingen opslaan</button>
+              <span id="standaard-opslaan-status" class="std-opslaan-status"></span>
+            </div>
+            <div class="std-footnote">Vink uit wat je deze week niet nodig hebt, of pas het aantal aan. Volgende week staat alles weer op de standaardhoeveelheid.</div>
           </div>
-          <div class="std-footnote">Vink uit wat je deze week niet nodig hebt, of pas het aantal aan. Volgende week staat alles weer op de standaardhoeveelheid.</div>
         </div>
 
         <div class="kaart">
           <div class="kaart-titel">
-            <span class="naam">Voorraadcheck</span>
+            <span class="naam">Voorraad</span>
             <span class="tag">optioneel</span>
           </div>
           <div id="voorraad-lijst"></div>
-          <div class="std-footnote">Rijst, pasta, koffie e.d. worden niet automatisch toegevoegd omdat een gerecht ze gebruikt — dat gaat over veel gerechten heen. Geef hier aan wat bijna op of op is, alleen dat komt op de lijst.</div>
         </div>
 
         <div class="kaart">
           <div class="kaart-titel">
-            <span class="naam">Extra producten</span>
+            <span class="naam">Extra product</span>
             <span class="tag">los</span>
           </div>
           <div id="losse-lijst"></div>
@@ -116,9 +134,15 @@
             <button id="los-toevoegen-knop" class="secundair">Toevoegen</button>
           </div>
         </div>
-      </main>
 
-      <div id="kassabon-wrap"></div>
+        <div class="kaart">
+          <div class="kaart-titel">
+            <span class="naam">Totale boodschappenlijst</span>
+          </div>
+          <div id="aanvullen-lijst-samenvatting" class="aanvullen-samenvatting"></div>
+          <button id="aanvullen-lijst-knop" class="secundair aanvullen-tegel-knop" type="button">Volledige lijst bekijken</button>
+        </div>
+      </main>
     </div>
 
     <div id="controle-scherm" class="verborgen">
@@ -143,6 +167,22 @@
           te bevestigen, dan krijg je zondag alleen een herinnering (er wordt
           nooit stilzwijgend besteld).
         </div>
+      </div>
+
+      <div class="kaart controle-mandje-kaart">
+        <div class="kaart-titel">
+          <span class="naam">Picnic-mandje</span>
+        </div>
+        <p class="uitleg" style="margin: 4px 0 12px 0; text-align: left;">
+          Voeg de gecontroleerde producten toe aan je Picnic-mandje. Begin je
+          liever opnieuw, dan kun je het mandje hieronder eerst legen.
+        </p>
+        <button id="controle-toevoegen-knop">Toevoegen aan Picnic</button>
+        <div class="controle-mandje-acties">
+          <button id="controle-leeg-mandje-knop" class="secundair controle-leeg-mandje-knop">Picnic-mandje legen</button>
+          <a id="controle-open-picnic-link" class="controle-open-picnic-link" href="https://picnic.app/nl/" target="_blank" rel="noopener">Open Picnic</a>
+        </div>
+        <div id="controle-mandje-status" class="controle-mandje-status"></div>
       </div>
     </div>
 
@@ -214,6 +254,7 @@
     </div>
 
     <div id="bestel-knop-wrap" class="verborgen">
+      <div id="actie-knop-uitleg" class="actie-knop-uitleg verborgen"></div>
       <div id="status"></div>
       <button id="actie-knop">Volgende</button>
     </div>
@@ -227,9 +268,9 @@
         <span class="nav-icoon" data-icoon="utensils"></span>
         <span class="nav-label">Gerechten</span>
       </button>
-      <button class="nav-item" data-tab="boodschappen" type="button">
+      <button class="nav-item" data-tab="aanvullen" type="button">
         <span class="nav-icoon" data-icoon="basket"></span>
-        <span class="nav-label">Boodschappen</span>
+        <span class="nav-label">Aanvullen</span>
       </button>
       <button class="nav-item" data-tab="controle" type="button">
         <span class="nav-icoon" data-icoon="check"></span>
@@ -243,6 +284,17 @@
   </div>
 
   <div id="toast-wrap"></div>
+
+  <div id="lijst-modal" class="modal-overlay verborgen">
+    <div class="modal-paneel">
+      <div class="modal-kop">
+        <span class="modal-titel">Totale boodschappenlijst</span>
+        <button id="lijst-modal-sluit-knop" class="modal-sluit-knop" type="button" aria-label="Sluiten">✕</button>
+      </div>
+      <p class="stap-uitleg" style="margin: 0 0 10px 0;">Dit zijn de boodschappen zelf — welk Picnic-product daarbij hoort, kies je bij Controle.</p>
+      <div id="lijst-modal-inhoud"></div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

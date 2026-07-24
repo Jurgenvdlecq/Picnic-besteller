@@ -60,6 +60,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -129,6 +130,12 @@ GEKOZEN_BESTAND = Path(__file__).parent / "gekozen_producten.json"
 # vaak een product bevestigd is), tenzij de website "alleen deze keer"
 # meegeeft (zie voeg_product_toe).
 PRODUCT_VOORKEUREN_BESTAND = Path(__file__).parent / "product_voorkeuren.json"
+
+# Resultaat van de laatste "Winkelwagentje legen"-actie (geslaagd/mislukt,
+# hoeveel producten er stonden/zijn verwijderd/zijn blijven staan), zodat de
+# website het echte resultaat kan tonen i.p.v. alleen "de workflow is
+# klaar" — zie leeg_mandje() voor waarom die twee dingen niet hetzelfde zijn.
+MANDJE_ACTIE_BESTAND = Path(__file__).parent / "laatste_mandje_actie.json"
 
 # ---------------------------------------------------------------------------
 # De boodschappenlijst staat in een los tekstbestand, in dezelfde map als dit
@@ -632,15 +639,148 @@ def _bestellen_uitvoeren(args, automatisch: bool):
         stuur_melding("Picnic boodschappen bijgewerkt", "De vaste lijst is toegevoegd aan je mandje.")
 
 
-def leeg_mandje(automatisch: bool = False):
-    """Verwijdert alles uit het huidige Picnic-mandje. Onomkeerbaar (de
-    producten zijn niet vanuit dit script terug te zetten) — de website
-    vraagt daarom altijd eerst een bevestiging voordat dit wordt aangeroepen."""
-    api = log_in(automatisch=True)
-    cart = api.get_cart()
-    aantal_producten = len(cart.get("items", []))
-    api.clear_cart()
-    log(f"✓ Winkelwagentje geleegd ({aantal_producten} product/producten verwijderd).", automatisch)
+def _cart_productregels(cart: dict) -> list:
+    """Loopt de (mogelijk meerdere niveaus geneste) mandje-structuur die
+    Picnic teruggeeft recursief af en geeft een platte lijst van echte
+    productregels terug: [{"id", "naam", "aantal"}, ...].
+
+    python-picnic-api2 modelleert de /cart-respons zelf niet (get_cart() geeft
+    de kale JSON terug) — hoe diep Picnic categorieën nest en onder welk
+    exact veldnaam een hoeveelheid staat, ligt dus niet vast in de library.
+    Deze functie is daarom bewust schema-voorzichtig: een knoop telt als een
+    echte productregel zodra hij een "id" heeft en geen eigen (niet-lege)
+    "items"-lijst — dat komt overeen met hoe python-picnic-api2's eigen
+    _tree_generator onderscheid maakt tussen een categorie (wordt verder
+    afgelopen) en een artikel (wordt getoond). Voor het "aantal" proberen we
+    een paar aannemelijke veldnamen en vallen terug op 1 — voor de
+    leegte-check hieronder maakt dat niet uit, die telt alleen of er nog
+    knopen met een "id" over zijn, ongeacht hun aantal-veld."""
+    regels = []
+
+    def _loop(nodes):
+        for node in nodes or []:
+            if not isinstance(node, dict):
+                continue
+            sub_items = node.get("items")
+            if isinstance(sub_items, list) and sub_items:
+                _loop(sub_items)
+                continue
+            if node.get("id"):
+                aantal = node.get("count") or node.get("amount") or node.get("quantity") or 1
+                regels.append({"id": node["id"], "naam": node.get("name") or node["id"], "aantal": aantal})
+
+    _loop(cart.get("items") if isinstance(cart, dict) else None)
+    return regels
+
+
+def leeg_mandje(automatisch: bool = False, api=None) -> bool:
+    """Verwijdert alles uit het huidige Picnic-mandje én controleert dat dit
+    ook echt gelukt is, voordat er ergens "geleegd" gemeld wordt.
+
+    Waarom die controle nodig is: PicnicAPI._post() (in python-picnic-api2)
+    controleert een respons alléén op een specifieke Picnic-authenticatie-
+    foutcode — niet op de HTTP-statuscode en niet op of de aangevraagde
+    actie daadwerkelijk is uitgevoerd. clear_cart() kan dus met succes
+    "returnen" (geen exception, geen foutcode) terwijl het mandje bij Picnic
+    zelf niets of maar deels is veranderd. Blind op die aanroep vertrouwen
+    (zoals deze functie eerder deed) kan daardoor een succesmelding tonen
+    terwijl er nog producten in het mandje staan.
+
+    Aanpak: mandje ophalen, legen, vers opnieuw ophalen, en pas als dat
+    verse mandje aantoonbaar leeg is "geleegd" melden. Lukt dat na
+    clear_cart() niet, dan wordt als fallback geprobeerd de overgebleven
+    regels stuk voor stuk te verwijderen (met een ruim overschatte
+    hoeveelheid zodat een regel van bv. 3 stuks niet per ongeluk maar met 1
+    wordt verminderd), gevolgd door nog een verse controle.
+
+    Retourneert True alleen als het mandje na afloop aantoonbaar leeg is.
+    Schrijft in alle gevallen MANDJE_ACTIE_BESTAND weg (status/aantallen/
+    resterende producten/foutmelding), zodat de website het echte resultaat
+    kan tonen zonder zelf bij Picnic te hoeven inloggen."""
+    if api is None:
+        api = log_in(automatisch=True)
+
+    fout = None
+    voor_regels = []
+    na_regels = []
+
+    try:
+        voor_regels = _cart_productregels(api.get_cart())
+        log(f"Mandje voor het legen: {len(voor_regels)} productregel(s).", automatisch)
+
+        na_regels = voor_regels
+        if voor_regels:
+            api.clear_cart()
+            na_regels = _herhaal_tot_leeg_of_stabiel(api)
+
+        if na_regels:
+            log(
+                f"clear_cart() liet nog {len(na_regels)} productregel(s) staan — "
+                "probeer ze individueel te verwijderen.",
+                automatisch,
+            )
+            for regel in na_regels:
+                try:
+                    # Ruim overschat i.p.v. regel["aantal"] zelf: dat veld is
+                    # een educated guess (zie _cart_productregels) en een
+                    # regel niet volledig verwijderen door een te lage
+                    # hoeveelheid is precies het probleem dat we willen
+                    # voorkomen.
+                    api.remove_product(regel["id"], count=max(regel["aantal"], 1) + 20)
+                except Exception as e:
+                    fout = f"{fout + '; ' if fout else ''}Verwijderen van '{regel['naam']}' mislukt: {e}"
+            na_regels = _herhaal_tot_leeg_of_stabiel(api)
+
+    except Exception as e:
+        fout = f"{fout + '; ' if fout else ''}{e}"
+        na_regels = na_regels or voor_regels or [{"id": "?", "naam": "onbekend", "aantal": 1}]
+
+    leeg = len(na_regels) == 0
+    verwijderd_aantal = max(len(voor_regels) - len(na_regels), 0)
+
+    resultaat = {
+        "datum": datetime.now(timezone.utc).isoformat(),
+        "status": "leeg" if leeg else ("mislukt" if fout else "niet_leeg"),
+        "aantal_voor": len(voor_regels),
+        "aantal_verwijderd": verwijderd_aantal,
+        "resterende_producten": [f"{r['naam']} ({r['aantal']}x)" for r in na_regels],
+    }
+    if fout:
+        resultaat["foutmelding"] = fout
+    try:
+        MANDJE_ACTIE_BESTAND.write_text(json.dumps(resultaat, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass  # niet kritiek: het echte resultaat is al bepaald, alleen het wegschrijven ervan lukte niet
+
+    if leeg:
+        log(f"✓ Winkelwagentje geleegd ({len(voor_regels)} product/producten verwijderd).", automatisch)
+    else:
+        namen = ", ".join(r["naam"] for r in na_regels) or "onbekend"
+        log(
+            f"✗ Winkelwagentje NIET volledig geleegd. Voor het legen: {len(voor_regels)} regel(s), "
+            f"nog over: {len(na_regels)} ({namen}).",
+            automatisch,
+        )
+        if fout:
+            log(f"  Foutmelding: {fout}", automatisch)
+
+    return leeg
+
+
+def _herhaal_tot_leeg_of_stabiel(api, pogingen: int = 3, wachttijd_seconden: float = 1.5) -> list:
+    """Haalt het mandje tot 'pogingen' keer vers op (met een korte pauze
+    ertussen) totdat het leeg blijkt, en geeft de laatst geziene productregels
+    terug. De pauze is er omdat Picnic's eigen API/CDN een fractie van een
+    seconde nog een verouderd (van-vóór-de-wijziging) antwoord kan
+    teruggeven — zonder die marge zou zo'n moment ten onrechte als "nog niet
+    leeg" gezien kunnen worden."""
+    regels = []
+    for poging in range(pogingen):
+        time.sleep(wachttijd_seconden)
+        regels = _cart_productregels(api.get_cart())
+        if not regels:
+            break
+    return regels
 
 
 def main():
@@ -688,8 +828,12 @@ def main():
         return
 
     if args.leeg_mandje:
-        leeg_mandje(automatisch=True)
-        return
+        # Exitcode moet écht de waarheid vertellen: de workflow-stap (en dus
+        # de "geslaagd/mislukt"-status die de website eraan afleest) mag
+        # alleen groen zijn als het mandje aantoonbaar leeg is — zie
+        # leeg_mandje() voor de verificatie die daarvoor zorgt.
+        gelukt = leeg_mandje(automatisch=True)
+        sys.exit(0 if gelukt else 1)
 
     if args.losse_zoekterm:
         api = log_in(automatisch=True)

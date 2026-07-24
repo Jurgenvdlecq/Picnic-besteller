@@ -1,17 +1,24 @@
 name: Leeg winkelwagentje bij Picnic
 
 # Verwijdert alles uit je huidige Picnic-mandje. Onomkeerbaar — wordt alleen
-# handmatig aangeroepen (via de "Winkelwagentje legen"-knop onder "Meer" op
-# de website, die daar zelf eerst een bevestiging voor vraagt) of rechtstreeks
-# via "Run workflow" in de Actions-tab. Raakt geen enkel bestand in de repo
-# aan (geen boodschappenlijst, geen bestelgeschiedenis) — alleen het mandje
-# bij Picnic zelf.
+# handmatig aangeroepen (via de "Winkelwagentje legen"-knop onder "Meer" of
+# "Controle" op de website, die daar zelf eerst een bevestiging voor vraagt)
+# of rechtstreeks via "Run workflow" in de Actions-tab.
+#
+# picnic_boodschappen.py --leeg-mandje controleert zelf (door het mandje na
+# het legen vers opnieuw op te halen) of het echt leeg is geworden, en geeft
+# alleen exitcode 0 als dat aantoonbaar zo is — anders faalt deze stap
+# bewust, zodat de workflow-run als "mislukt" verschijnt. Het resultaat
+# (status/aantallen/eventueel resterende producten) wordt altijd — ook bij
+# een mislukte poging — weggeschreven naar laatste_mandje_actie.json en
+# teruggezet in de repo, zodat de website het echte resultaat kan tonen
+# i.p.v. alleen "de workflow is klaar".
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   legen:
@@ -32,3 +39,15 @@ jobs:
         env:
           PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
         run: python3 picnic_boodschappen.py --leeg-mandje
+
+      - name: Resultaat terugzetten in de repo
+        # Draait ook als de vorige stap faalde (mandje kon niet volledig
+        # geleegd worden) — juist dán moet het resultaatbestand alsnog
+        # gecommit worden, anders leest de website nog het vorige resultaat.
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add laatste_mandje_actie.json
+          git diff --staged --quiet || git commit -m "Resultaat van winkelwagentje legen bijgewerkt"
+          git diff --staged --quiet || git push

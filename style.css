@@ -2107,7 +2107,12 @@ button.dag-verwijder {
    raakt niets buiten #app (dus niet de pincode-/sleutelschermen) en niets van
    de klassen ov- en meer- (die lezen uitsluitend var(--ov-...) rechtstreeks
    uit, nooit deze oudere namen). */
-#app {
+/* #lijst-modal zit buiten #app in de DOM (net als #toast-wrap, zodat het
+   ook boven de onderste navigatie kan zweven) maar moet dezelfde
+   tokens-ombouw krijgen — anders zou de inhoud (die .bon-rij/.bon-naam
+   hergebruikt) in de oude, warme kleuren blijven staan terwijl de rest van
+   de modal al wit/licht is. */
+#app, #lijst-modal {
   --bg: var(--ov-bg);
   --card: var(--ov-surface);
   --text: var(--ov-text);
@@ -2125,6 +2130,9 @@ button.dag-verwijder {
   --header-text: var(--ov-text);
   --header-muted: var(--ov-text-secondary);
   --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#app {
   background: var(--ov-bg);
   min-height: 100vh;
 }
@@ -2295,4 +2303,230 @@ main#voorraad-wrap {
 .toast.toast-fout {
   background: var(--ov-primary);
   color: #ffffff;
+}
+
+/* --- Controle: aparte "Picnic-mandje"-sectie (toevoegen + mandje legen) --- */
+.controle-mandje-kaart {
+  margin-top: 14px;
+}
+
+.controle-mandje-acties {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* Bewust minder prominent dan de primaire "Toevoegen aan Picnic"-knop
+   erboven: kleiner, en een waarschuwingskleur i.p.v. het gewone secundaire
+   grijs, zodat duidelijk is dat dit een uitzonderingsactie is. */
+.controle-leeg-mandje-knop {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: none;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  color: var(--ov-orange);
+  border-color: var(--ov-orange-soft);
+  background: var(--ov-orange-soft);
+}
+
+.controle-open-picnic-link {
+  font-size: 0.85rem;
+  color: var(--ov-text-secondary);
+  text-decoration: underline;
+}
+
+.controle-mandje-status {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--ov-text-secondary);
+  min-height: 1.2em;
+}
+
+.controle-mandje-status.status-succes {
+  color: var(--ov-green);
+}
+
+.controle-mandje-status.status-fout {
+  color: var(--ov-orange);
+}
+
+/* --- Stap-intro (korte contextuele uitleg bovenaan Gerechten/Aanvullen) --- */
+.stap-intro {
+  padding: 4px 0 14px;
+}
+
+.stap-label {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ov-primary);
+  margin-bottom: 4px;
+}
+
+.stap-uitleg {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ov-text-secondary);
+  line-height: 1.4;
+}
+
+/* --- Aanvullen: compacte tegels (vaste boodschappen/voorraad/totale lijst) --- */
+.aanvullen-samenvatting {
+  font-size: 0.88rem;
+  color: var(--ov-text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.aanvullen-tegel-knop {
+  width: 100%;
+}
+
+.aanvullen-detail-uitleg {
+  margin: 2px 0 12px 0 !important;
+}
+
+#standaard-detail {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ov-border);
+}
+
+/* --- Volledige-boodschappenlijst-modal (bottom sheet op mobiel) --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-paneel {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--ov-surface);
+  color: var(--ov-text);
+  border-radius: var(--ov-radius-l) var(--ov-radius-l) 0 0;
+  padding: 18px var(--ov-space) calc(18px + env(safe-area-inset-bottom)) var(--ov-space);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.modal-kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modal-titel {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.modal-sluit-knop {
+  width: 32px;
+  height: 32px;
+  max-width: none;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--ov-bg);
+  color: var(--ov-text-secondary);
+  border: none;
+  font-size: 0.95rem;
+}
+
+#lijst-modal-inhoud .bon-rij {
+  border-bottom: 1px solid var(--ov-border);
+  padding: 8px 0;
+}
+
+#lijst-modal-inhoud .bon-rij:last-child {
+  border-bottom: none;
+}
+
+.actie-knop-uitleg {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--ov-text-secondary);
+  margin-bottom: 4px;
+}
+
+/* --- Overzicht: compacte 4-stappen-voortgang --- */
+.ov-voortgang {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ov-voortgang-stap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  position: relative;
+}
+
+.ov-voortgang-stap:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 32px;
+  width: 2px;
+  height: 14px;
+  background: var(--ov-border);
+}
+
+.ov-voortgang-bol {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--ov-bg);
+  color: var(--ov-text-secondary);
+  border: 1.5px solid var(--ov-border);
+}
+
+.ov-voortgang-bol svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ov-voortgang-label {
+  font-size: 0.9rem;
+  color: var(--ov-text-secondary);
+}
+
+.ov-voortgang-voltooid .ov-voortgang-bol {
+  background: var(--ov-green);
+  border-color: var(--ov-green);
+  color: #ffffff;
+}
+
+.ov-voortgang-voltooid .ov-voortgang-label {
+  color: var(--ov-text);
+}
+
+.ov-voortgang-actief .ov-voortgang-bol {
+  background: var(--ov-primary);
+  border-color: var(--ov-primary);
+  color: #ffffff;
+}
+
+.ov-voortgang-actief .ov-voortgang-label {
+  color: var(--ov-text);
+  font-weight: 700;
 }

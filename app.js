@@ -881,13 +881,20 @@ const dagenEl = document.getElementById("dagen");
 const weekInfoEl = document.getElementById("week-info");
 const laatstBesteldEl = document.getElementById("laatst-besteld");
 const standaardLijstEl = document.getElementById("standaard-lijst");
+const standaardSamenvattingEl = document.getElementById("standaard-samenvatting");
+const standaardToggleKnop = document.getElementById("standaard-toggle-knop");
+const standaardDetailEl = document.getElementById("standaard-detail");
 const standaardOpslaanKnop = document.getElementById("standaard-opslaan-knop");
 const standaardOpslaanStatusEl = document.getElementById("standaard-opslaan-status");
 const toastWrapEl = document.getElementById("toast-wrap");
 const voorraadLijstEl = document.getElementById("voorraad-lijst");
 const beoordelingBlokEl = document.getElementById("beoordeling-blok");
 const receptenbeheerEl = document.getElementById("receptenbeheer");
-const kassabonEl = document.getElementById("kassabon-wrap");
+const aanvullenLijstSamenvattingEl = document.getElementById("aanvullen-lijst-samenvatting");
+const aanvullenLijstKnop = document.getElementById("aanvullen-lijst-knop");
+const lijstModalEl = document.getElementById("lijst-modal");
+const lijstModalInhoudEl = document.getElementById("lijst-modal-inhoud");
+const lijstModalSluitKnop = document.getElementById("lijst-modal-sluit-knop");
 const waarschuwingenEl = document.getElementById("waarschuwingen");
 const statusEl = document.getElementById("status");
 const losseLijstEl = document.getElementById("losse-lijst");
@@ -902,6 +909,7 @@ const controleLijstEl = document.getElementById("controle-lijst");
 const controleLosNaamEl = document.getElementById("controle-los-naam");
 const controleLosAantalEl = document.getElementById("controle-los-aantal");
 const actieKnopWrapEl = document.getElementById("bestel-knop-wrap");
+const actieKnopUitlegEl = document.getElementById("actie-knop-uitleg");
 const actieKnop = document.getElementById("actie-knop");
 const onderNavEl = document.getElementById("onder-nav");
 const ovGroetEl = document.getElementById("ov-groet");
@@ -911,6 +919,7 @@ const ovBelKnopEl = document.getElementById("ov-bel-knop");
 const ovBelIcoonEl = document.getElementById("ov-bel-icoon");
 const ovBelBadgeEl = document.getElementById("ov-bel-badge");
 const ovStatskaartenEl = document.getElementById("ov-statskaarten");
+const ovVoortgangEl = document.getElementById("ov-voortgang");
 const ovPrimaireActiesEl = document.getElementById("ov-primaire-acties");
 const ovSnelleActiesEl = document.getElementById("ov-snelle-acties");
 const ovVolgendeWrapEl = document.getElementById("ov-volgende-wrap");
@@ -920,8 +929,11 @@ const meerVoorkeurenDetailEl = document.getElementById("meer-voorkeuren-detail")
 const meerLaatsteBestellingEl = document.getElementById("meer-laatste-bestelling");
 const meerMandjeStatusEl = document.getElementById("meer-mandje-status");
 const meerLeegMandjeKnop = document.getElementById("meer-leeg-mandje-knop");
+const controleMandjeStatusEl = document.getElementById("controle-mandje-status");
+const controleLeegMandjeKnop = document.getElementById("controle-leeg-mandje-knop");
+const controleToevoegenKnop = document.getElementById("controle-toevoegen-knop");
 
-const TABS = ["overzicht", "gerechten", "boodschappen", "controle", "meer"];
+const TABS = ["overzicht", "gerechten", "aanvullen", "controle", "meer"];
 
 let staat = {
   pools: null,
@@ -930,6 +942,7 @@ let staat = {
   standaardCategorieen: [],
   standaardUitgevinkt: new Set(),
   standaardlijstGewijzigd: false,
+  standaardOpen: false,
   voorraadCategorieen: [],
   voorraadStatus: {},
   voorraadOpen: false,
@@ -980,7 +993,8 @@ function ververs() {
   renderWeekmenu();
   renderBeoordelingBlok();
   renderReceptenbeheer();
-  renderKassabon();
+  renderBoodschappenlijstSamenvatting();
+  renderStandaardTegel();
   renderOverzicht();
   renderMeer();
 }
@@ -993,7 +1007,7 @@ function gaNaarTab(tab) {
   staat.tab = tab;
   overzichtSchermEl.classList.toggle("verborgen", tab !== "overzicht");
   weekmenuSchermEl.classList.toggle("verborgen", tab !== "gerechten");
-  voorraadSchermEl.classList.toggle("verborgen", tab !== "boodschappen");
+  voorraadSchermEl.classList.toggle("verborgen", tab !== "aanvullen");
   controleSchermEl.classList.toggle("verborgen", tab !== "controle");
   meerSchermEl.classList.toggle("verborgen", tab !== "meer");
   if (headerTopEl) headerTopEl.classList.toggle("verborgen", tab === "overzicht");
@@ -1008,18 +1022,35 @@ function gaNaarTab(tab) {
   // wordt bijgewerkt, ook terwijl de gebruiker op een ander tabblad zit. Het
   // hier blind leegmaken zorgde ervoor dat de knop na terugwisselen van
   // tabblad "dood" leek: nog uitgeschakeld, maar zonder enige statustekst.
-  if (tab === "boodschappen") {
+  if (actieKnopUitlegEl) actieKnopUitlegEl.classList.add("verborgen");
+
+  if (tab === "gerechten") {
     actieKnopWrapEl.classList.remove("verborgen");
-    actieKnop.textContent = "Zoek producten op";
+    actieKnop.textContent = "Verder naar aanvullen";
+    actieKnop.onclick = () => gaNaarTab("aanvullen");
+    renderGerechtenSamenvatting();
+  } else if (tab === "aanvullen") {
+    actieKnopWrapEl.classList.remove("verborgen");
+    actieKnop.textContent = "Picnic-producten zoeken";
     actieKnop.onclick = startZoeken;
-    actieKnop.disabled = staat.zoekenBezig;
-    if (!staat.zoekenBezig) statusEl.textContent = "";
+    if (actieKnopUitlegEl) {
+      actieKnopUitlegEl.textContent = "We zoeken voor alle geselecteerde boodschappen het best passende Picnic-product.";
+      actieKnopUitlegEl.classList.remove("verborgen");
+    }
+    if (!staat.zoekenBezig) {
+      const aantalProducten = huidigeBoodschappenTotalen().length;
+      actieKnop.disabled = aantalProducten === 0;
+      statusEl.textContent = aantalProducten === 0 ? "Selecteer eerst minstens één boodschap om te zoeken." : "";
+    } else {
+      actieKnop.disabled = true;
+    }
   } else if (tab === "controle") {
     actieKnopWrapEl.classList.remove("verborgen");
     renderControleScherm();
     actieKnop.textContent = "Definitief bestellen bij Picnic";
     actieKnop.onclick = bevestigBestelling;
     actieKnop.disabled = staat.bestellenBezig;
+    if (controleToevoegenKnop) controleToevoegenKnop.disabled = staat.bestellenBezig;
     if (!staat.bestellenBezig) statusEl.textContent = "";
   } else {
     actieKnopWrapEl.classList.add("verborgen");
@@ -1172,36 +1203,79 @@ function renderOverzicht() {
     ovStatskaartenEl.appendChild(kaart);
   }
 
-  // Primaire acties
-  ovPrimaireActiesEl.innerHTML = "";
-  ovPrimaireActiesEl.appendChild(
-    bouwOvActieKnop({
+  // Eén contextuele hoofdactie (i.p.v. drie gelijkwaardige knoppen) + een
+  // compacte 4-stappen-voortgang, allebei afgeleid uit dezelfde, al
+  // bestaande state hierboven (gerechtenAantal/controlerenAantal) — geen
+  // aparte "voortgang"-vlag die uit de pas kan gaan lopen met de echte data.
+  const heeftGezocht = !!staat.productVoorstellen;
+  const boodschappenAantal = huidigeBoodschappenTotalen().length;
+
+  let fase;
+  let hoofdactie;
+  if (gerechtenAantal === 0) {
+    fase = 1;
+    hoofdactie = {
       icoon: "utensils",
       kleur: "green",
-      titel: "Gerechten kiezen",
-      sub: "Bekijk, vervang of pas je gerechten aan",
+      titel: "Kies gerechten",
+      sub: "Kies de gerechten voor deze week om te beginnen",
       onClick: () => gaNaarTab("gerechten"),
-    })
-  );
-  ovPrimaireActiesEl.appendChild(
-    bouwOvActieKnop({
+    };
+  } else if (!heeftGezocht && boodschappenAantal === 0) {
+    fase = 2;
+    hoofdactie = {
       icoon: "basket",
       kleur: "blue",
-      titel: "Boodschappen controleren",
-      sub: "Controleer producten, hoeveelheden en verpakkingen",
-      badge: controlerenAantal ? `${controlerenAantal} controleren` : null,
+      titel: "Vul boodschappen aan",
+      sub: "Controleer je vaste boodschappen, voorraad en extra producten",
+      onClick: () => gaNaarTab("aanvullen"),
+    };
+  } else if (!heeftGezocht) {
+    fase = 3;
+    hoofdactie = {
+      icoon: "truck",
+      kleur: "blue",
+      titel: "Zoek Picnic-producten",
+      sub: "We zoeken het best passende Picnic-product voor elke boodschap",
+      onClick: () => gaNaarTab("aanvullen"),
+    };
+  } else if (controlerenAantal > 0) {
+    fase = 4;
+    hoofdactie = {
+      icoon: "alertTriangle",
+      kleur: "orange",
+      titel: `Controleer ${controlerenAantal} product${controlerenAantal === 1 ? "" : "en"}`,
+      sub: "Er staan nog producten open die een controle nodig hebben",
       onClick: () => gaNaarTab("controle"),
-    })
-  );
-  ovPrimaireActiesEl.appendChild(
-    bouwOvActieKnop({
+    };
+  } else {
+    fase = 4;
+    hoofdactie = {
       icoon: "truck",
       kleur: "red",
       titel: "Toevoegen aan Picnic",
       sub: "Verstuur je boodschappenlijst naar Picnic",
       onClick: () => gaNaarTab("controle"),
-    })
-  );
+    };
+  }
+
+  ovPrimaireActiesEl.innerHTML = "";
+  ovPrimaireActiesEl.appendChild(bouwOvActieKnop(hoofdactie));
+
+  if (ovVoortgangEl) {
+    const STAPPEN = ["Gerechten kiezen", "Boodschappen aanvullen", "Picnic-producten zoeken", "Controleren en toevoegen"];
+    ovVoortgangEl.innerHTML = "";
+    STAPPEN.forEach((label, i) => {
+      const nr = i + 1;
+      const status = nr < fase ? "voltooid" : nr === fase ? "actief" : "toekomst";
+      const rij = maakEl("div", `ov-voortgang-stap ov-voortgang-${status}`);
+      const bol = maakEl("div", "ov-voortgang-bol");
+      bol.innerHTML = status === "voltooid" ? icoonSvg("check") : String(nr);
+      rij.appendChild(bol);
+      rij.appendChild(maakEl("span", "ov-voortgang-label", label));
+      ovVoortgangEl.appendChild(rij);
+    });
+  }
 
   // Snelle acties
   ovSnelleActiesEl.innerHTML = "";
@@ -1211,7 +1285,7 @@ function renderOverzicht() {
       kleur: "blue",
       label: "Los product toevoegen",
       onClick: () => {
-        gaNaarTab("boodschappen");
+        gaNaarTab("aanvullen");
         setTimeout(() => losNaamEl && losNaamEl.focus(), 50);
       },
     })
@@ -1221,7 +1295,7 @@ function renderOverzicht() {
       icoon: "clipboardList",
       kleur: "orange",
       label: "Vaste boodschappen",
-      onClick: () => gaNaarTab("boodschappen"),
+      onClick: () => gaNaarTab("aanvullen"),
     })
   );
   ovSnelleActiesEl.appendChild(
@@ -1231,7 +1305,7 @@ function renderOverzicht() {
       label: "Voorraad controleren",
       onClick: () => {
         staat.voorraadOpen = true;
-        gaNaarTab("boodschappen");
+        gaNaarTab("aanvullen");
         renderVoorraad();
       },
     })
@@ -1307,37 +1381,91 @@ if (meerTokenWijzigKnop) {
   };
 }
 
+// Eén gedeelde functie voor beide "Picnic-mandje legen"-knoppen (onder Meer
+// en onder Controle) — geen losse kopie van de dispatch/poll-logica, en de
+// staat.mandjeLegenBezig-vlag zorgt dat hij niet twee keer tegelijk vanaf
+// allebei de plekken gestart kan worden.
+function zetMandjeStatusTekst(tekst, status) {
+  for (const el of [meerMandjeStatusEl, controleMandjeStatusEl]) {
+    if (!el) continue;
+    el.textContent = tekst;
+    el.classList.toggle("status-succes", status === "succes");
+    el.classList.toggle("status-fout", status === "fout");
+  }
+}
+
+function zetMandjeKnoppenDisabled(disabled) {
+  if (meerLeegMandjeKnop) meerLeegMandjeKnop.disabled = disabled;
+  if (controleLeegMandjeKnop) controleLeegMandjeKnop.disabled = disabled;
+}
+
+// Kleine proxy die alleen de .innerHTML-setter doorstuurt naar beide echte
+// statuselementen — zo kan volgWorkflow() (die intern statusEl.innerHTML
+// zet, o.a. voor de "bekijk voortgang"-link) ongewijzigd hergebruikt worden.
+const mandjeStatusProxyEl = {
+  set innerHTML(html) {
+    for (const el of [meerMandjeStatusEl, controleMandjeStatusEl]) {
+      if (el) el.innerHTML = html;
+    }
+  },
+};
+
 async function leegWinkelwagentje() {
   if (staat.mandjeLegenBezig) return;
   if (!confirm("Alles uit je huidige Picnic-mandje verwijderen? Dit kan niet ongedaan gemaakt worden.")) return;
 
   staat.mandjeLegenBezig = true;
   const startTijd = new Date();
-  meerLeegMandjeKnop.disabled = true;
-  meerMandjeStatusEl.textContent = "Winkelwagentje wordt geleegd...";
+  zetMandjeKnoppenDisabled(true);
+  zetMandjeStatusTekst("Winkelwagentje wordt geleegd...");
 
   try {
     await dispatchWorkflow(LEEG_MANDJE_WORKFLOW, {});
-    const run = await volgWorkflow(LEEG_MANDJE_WORKFLOW, startTijd, meerMandjeStatusEl, "Bezig met legen...");
+    const run = await volgWorkflow(LEEG_MANDJE_WORKFLOW, startTijd, mandjeStatusProxyEl, "Bezig met legen...");
+
     if (!run) {
-      meerMandjeStatusEl.textContent = "Kon de status niet vinden — check zo nodig zelf de Picnic-app.";
-    } else if (run.conclusion === "success") {
-      meerMandjeStatusEl.textContent = "✓ Winkelwagentje geleegd";
+      zetMandjeStatusTekst("Kon de status niet vinden — check zo nodig zelf de Picnic-app.", "fout");
+      return;
+    }
+
+    // De workflow-conclusie alleen is niet genoeg: die zegt alleen dat de
+    // stap zonder crash is afgerond. Het echte resultaat (is het mandje
+    // aantoonbaar leeg?) staat in laatste_mandje_actie.json, dat
+    // picnic_boodschappen.py --leeg-mandje pas na een verse her-controle
+    // wegschrijft — alleen bij status "leeg" tonen we hier ook "geleegd".
+    let resultaat = null;
+    try {
+      const tekst = await haalTekstBestandViaApi("laatste_mandje_actie.json");
+      resultaat = tekst ? JSON.parse(tekst) : null;
+    } catch (e) {
+      resultaat = null;
+    }
+
+    if (run.conclusion === "success" && resultaat && resultaat.status === "leeg") {
+      zetMandjeStatusTekst("✓ Winkelwagentje geleegd", "succes");
       toonToast("✓ Winkelwagentje geleegd");
+    } else if (resultaat && resultaat.status === "niet_leeg") {
+      const n = (resultaat.resterende_producten || []).length;
+      zetMandjeStatusTekst(
+        `Het mandje kon niet volledig worden geleegd. Er sta${n === 1 ? "at" : "an"} nog ${n} product${n === 1 ? "" : "en"} in. Controleer de Picnic-app.`,
+        "fout"
+      );
+    } else if (resultaat && resultaat.foutmelding) {
+      zetMandjeStatusTekst(`Legen is mislukt: ${resultaat.foutmelding}`, "fout");
     } else {
-      meerMandjeStatusEl.innerHTML = `Legen is mislukt. <a href="${run.html_url}" target="_blank" rel="noopener">Bekijk het logboek</a>.`;
+      mandjeStatusProxyEl.innerHTML = `Legen is mislukt. <a href="${run.html_url}" target="_blank" rel="noopener">Bekijk het logboek</a>.`;
     }
   } catch (e) {
-    meerMandjeStatusEl.textContent = "Er ging iets mis: " + e.message;
+    zetMandjeStatusTekst("Er ging iets mis: " + e.message, "fout");
   } finally {
     staat.mandjeLegenBezig = false;
-    meerLeegMandjeKnop.disabled = false;
+    zetMandjeKnoppenDisabled(false);
   }
 }
 
-if (meerLeegMandjeKnop) {
-  meerLeegMandjeKnop.onclick = leegWinkelwagentje;
-}
+if (meerLeegMandjeKnop) meerLeegMandjeKnop.onclick = leegWinkelwagentje;
+if (controleLeegMandjeKnop) controleLeegMandjeKnop.onclick = leegWinkelwagentje;
+if (controleToevoegenKnop) controleToevoegenKnop.onclick = bevestigBestelling;
 
 document.querySelectorAll(".nav-icoon[data-icoon]").forEach((el) => {
   el.innerHTML = icoonSvg(el.dataset.icoon);
@@ -1422,6 +1550,36 @@ function renderStandaardlijst() {
 
   standaardLijstEl.appendChild(bouwStandaardToevoegRij());
   renderStandaardOpslaanStatus();
+}
+
+// Compacte "tegel" op Aanvullen: hoeveel van de vaste boodschappen (die
+// standaard allemaal aan staan) geselecteerd zijn, met een paar
+// voorbeeldnamen. De volledige lijst (met vinkjes/aantal/naam-bewerken)
+// blijft precies wat renderStandaardlijst() hierboven al opbouwt — dit is
+// puur een in-/uitklap-laag eromheen, geen aparte implementatie.
+function renderStandaardTegel() {
+  if (!standaardSamenvattingEl) return;
+  const totaal = staat.standaardlijst.length;
+  const geselecteerd = totaal - staat.standaardUitgevinkt.size;
+  const voorbeelden = staat.standaardlijst
+    .filter((item) => !staat.standaardUitgevinkt.has(item.naam.toLowerCase()))
+    .slice(0, 3)
+    .map((item) => item.naam);
+
+  standaardSamenvattingEl.textContent =
+    totaal === 0
+      ? "Geen vaste boodschappenlijst gevonden."
+      : `${geselecteerd} van ${totaal} producten geselecteerd${voorbeelden.length > 0 ? ` · ${voorbeelden.join(", ")}${geselecteerd > voorbeelden.length ? ", ..." : ""}` : ""}`;
+
+  if (standaardToggleKnop) standaardToggleKnop.textContent = staat.standaardOpen ? "Inklappen" : "Bekijken en aanpassen";
+  if (standaardDetailEl) standaardDetailEl.classList.toggle("verborgen", !staat.standaardOpen);
+}
+
+if (standaardToggleKnop) {
+  standaardToggleKnop.onclick = () => {
+    staat.standaardOpen = !staat.standaardOpen;
+    renderStandaardTegel();
+  };
 }
 
 function renderStandaardOpslaanStatus() {
@@ -1511,14 +1669,19 @@ function renderVoorraad() {
 
   const laagAantal = voorraadTeBestellen().length;
   voorraadLijstEl.appendChild(
-    maakKnop(
-      "ingredienten-toggle",
-      `${staat.voorraadOpen ? "▾" : "▸"} Voorraad bijwerken${laagAantal > 0 ? ` (${laagAantal} laag)` : ""}`,
-      () => {
-        staat.voorraadOpen = !staat.voorraadOpen;
-        renderVoorraad();
-      }
+    maakEl(
+      "div",
+      "aanvullen-samenvatting",
+      laagAantal > 0
+        ? `${laagAantal} voorraadproduct${laagAantal === 1 ? "" : "en"} geselecteerd`
+        : "Nog geen voorraadproducten geselecteerd"
     )
+  );
+  voorraadLijstEl.appendChild(
+    maakKnop("secundair aanvullen-tegel-knop", staat.voorraadOpen ? "Inklappen" : "Voorraad controleren", () => {
+      staat.voorraadOpen = !staat.voorraadOpen;
+      renderVoorraad();
+    })
   );
   if (!staat.voorraadOpen) return;
 
@@ -1545,6 +1708,14 @@ function renderVoorraad() {
       voorraadLijstEl.appendChild(rij);
     }
   }
+
+  voorraadLijstEl.appendChild(
+    maakEl(
+      "div",
+      "std-footnote",
+      "Rijst, pasta, koffie e.d. worden niet automatisch toegevoegd omdat een gerecht ze gebruikt — dat gaat over veel gerechten heen. Geef hier aan wat bijna op of op is, alleen dat komt op de lijst."
+    )
+  );
 }
 
 // Producten waarvan de voorraad "bijna op" of "op" is — dit zijn de items
@@ -1654,6 +1825,26 @@ function renderWeekmenu() {
       dagenEl.appendChild(bouwCombiKaart(dag, index));
     }
   });
+  renderGerechtenSamenvatting();
+}
+
+// Samenvatting + status van de vaste "Verder naar aanvullen"-knop onderaan
+// het Gerechten-tabblad — echte state (geen slag om de arm): telt de
+// daadwerkelijk gekozen dagen en de daaruit voortvloeiende, samengevoegde
+// ingrediënten (dezelfde samenvoeging als de rest van de app gebruikt om
+// van "ingrediënt per dag" naar "boodschap" te gaan).
+function renderGerechtenSamenvatting() {
+  if (staat.tab !== "gerechten") return;
+  const gerechtenAantal = staat.weekmenu.length;
+  const ingredientenAantal = berekenTotalen(staat.weekmenu, [], voorraadArtikelNamen(staat.voorraadCategorieen)).length;
+
+  if (gerechtenAantal === 0) {
+    statusEl.textContent = "Kies eerst minstens één gerecht om verder te gaan.";
+    actieKnop.disabled = true;
+  } else {
+    statusEl.textContent = `${gerechtenAantal} gerecht${gerechtenAantal === 1 ? "" : "en"} gekozen · ${ingredientenAantal} ingrediënt${ingredientenAantal === 1 ? "" : "en"} toegevoegd`;
+    actieKnop.disabled = false;
+  }
 }
 
 // Past het aantal personen voor deze dag aan (handmatige override op het
@@ -2249,38 +2440,59 @@ function gekozenStandaardProducten() {
   return staat.standaardlijst.filter((item) => !staat.standaardUitgevinkt.has(item.naam.toLowerCase()));
 }
 
-function renderKassabon() {
+// De volledige conceptlijst (menselijke boodschappen — "2 x ui", nog geen
+// concreet Picnic-product) hoort niet meer permanent op het Aanvullen-
+// scherm te staan (dat maakte dat scherm te druk) en toont bewust geen
+// bedrag meer (dat kon voor deze stap nooit meer dan een educated guess
+// zijn — zie renderOverzicht/renderControleScherm voor waar een bedrag wél
+// op echte, actuele Picnic-prijzen is gebaseerd). Deze functie berekent
+// alleen de compacte samenvatting op het Aanvullen-scherm zelf; de volledige
+// lijst wordt pas opgebouwd (zie toonVolledigeLijstModal) op het moment dat
+// de gebruiker "Volledige lijst bekijken" aantikt.
+function huidigeBoodschappenTotalen() {
   const producten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
-  const totalen = berekenTotalen(staat.weekmenu, producten, voorraadArtikelNamen(staat.voorraadCategorieen));
+  return berekenTotalen(staat.weekmenu, producten, voorraadArtikelNamen(staat.voorraadCategorieen));
+}
 
-  kassabonEl.innerHTML = "";
-  const bon = maakEl("div", "bon");
-  bon.appendChild(maakEl("div", "bon-titel", "Boodschappenlijst"));
-  bon.appendChild(maakEl("div", "bon-sub", `${totalen.length} producten — voorvertoning`));
+function renderBoodschappenlijstSamenvatting() {
+  if (!aanvullenLijstSamenvattingEl) return;
+  const aantal = huidigeBoodschappenTotalen().length;
+  aanvullenLijstSamenvattingEl.textContent = aantal > 0 ? `${aantal} product${aantal === 1 ? "" : "en"} geselecteerd` : "Nog geen producten geselecteerd";
+  if (lijstModalEl && !lijstModalEl.classList.contains("verborgen")) renderVolledigeLijstModalInhoud();
+}
 
+function renderVolledigeLijstModalInhoud() {
+  if (!lijstModalInhoudEl) return;
+  const totalen = huidigeBoodschappenTotalen();
+  lijstModalInhoudEl.innerHTML = "";
+  if (totalen.length === 0) {
+    lijstModalInhoudEl.appendChild(maakEl("div", "std-footnote", "Nog geen boodschappen geselecteerd."));
+    return;
+  }
   for (const { naam, aantal } of totalen) {
     const rij = maakEl("div", "bon-rij");
     rij.appendChild(maakEl("span", "bon-naam", naam));
     rij.appendChild(maakEl("span", "bon-aantal", `${aantal}×`));
-    bon.appendChild(rij);
+    lijstModalInhoudEl.appendChild(rij);
   }
+}
 
-  bon.appendChild(maakEl("div", "bon-streep"));
+function toonVolledigeLijstModal() {
+  if (!lijstModalEl) return;
+  renderVolledigeLijstModalInhoud();
+  lijstModalEl.classList.remove("verborgen");
+}
 
-  const totaalRij = maakEl("div", "bon-totaal");
-  const linkerKant = document.createElement("span");
-  linkerKant.textContent = "Geschat totaal";
-  linkerKant.appendChild(maakEl("span", "let-op", "op basis van de vorige bestelling — kan afwijken"));
+function verbergVolledigeLijstModal() {
+  if (lijstModalEl) lijstModalEl.classList.add("verborgen");
+}
 
-  const rechterKant = document.createElement("span");
-  const heeftPrijs = staat.laatsteBestelling && typeof staat.laatsteBestelling.totaal_prijs_cent === "number";
-  rechterKant.textContent = heeftPrijs ? `≈ €${(staat.laatsteBestelling.totaal_prijs_cent / 100).toFixed(2)}` : "nog onbekend";
-
-  totaalRij.appendChild(linkerKant);
-  totaalRij.appendChild(rechterKant);
-  bon.appendChild(totaalRij);
-
-  kassabonEl.appendChild(bon);
+if (aanvullenLijstKnop) aanvullenLijstKnop.onclick = toonVolledigeLijstModal;
+if (lijstModalSluitKnop) lijstModalSluitKnop.onclick = verbergVolledigeLijstModal;
+if (lijstModalEl) {
+  lijstModalEl.onclick = (e) => {
+    if (e.target === lijstModalEl) verbergVolledigeLijstModal();
+  };
 }
 
 function toonWaarschuwingenNaBestelling() {
@@ -2790,6 +3002,7 @@ async function laadWeekmenuScherm() {
   staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
   staat.standaardUitgevinkt = new Set();
   staat.standaardlijstGewijzigd = false;
+  staat.standaardOpen = false;
   staat.voorraadCategorieen = laadVoorraadCategorieen(voorraadTekst);
   staat.voorraadStatus = {};
   staat.voorraadOpen = false;
@@ -2932,37 +3145,56 @@ async function slaWeekmenuOp() {
 
 async function startZoeken() {
   if (staat.zoekenBezig) return;
-  staat.zoekenBezig = true;
 
+  // 1. Valideren: niets te zoeken zonder geselecteerde boodschappen. De knop
+  // staat in dat geval al uitgeschakeld (zie gaNaarTab), maar deze check
+  // blijft ook correct als startZoeken() ooit ergens anders vandaan wordt
+  // aangeroepen.
+  if (huidigeBoodschappenTotalen().length === 0) {
+    statusEl.textContent = "Selecteer eerst minstens één boodschap om te zoeken.";
+    return;
+  }
+
+  staat.zoekenBezig = true;
   const startTijd = new Date();
   actieKnop.disabled = true;
   waarschuwingenEl.innerHTML = "";
-  statusEl.textContent = "Weekmenu opslaan...";
+  // Begrijpelijke, niet-technische statussen — geen "workflow gestart" of
+  // vergelijkbaar. Elke fase hieronder komt overeen met een van deze vier
+  // stappen: boodschappen opslaan -> bij Picnic zoeken -> lokaal verwerken
+  // (verpakkingen/voorkeuren) -> klaar om te controleren.
+  statusEl.textContent = "Boodschappen verzamelen...";
 
   try {
+    // 2. Wijzigingen opslaan.
     await slaWeekmenuOp();
 
-    statusEl.textContent = "Producten opzoeken bij Picnic wordt gestart...";
+    // 3. De bestaande zoekworkflow starten.
+    statusEl.textContent = "Producten zoeken bij Picnic...";
     await dispatchWorkflow(ZOEKEN_WORKFLOW, {});
-    const run = await volgWorkflow(ZOEKEN_WORKFLOW, startTijd, statusEl, "Producten worden opgezocht...");
+    const run = await volgWorkflow(ZOEKEN_WORKFLOW, startTijd, statusEl, "Producten zoeken bij Picnic...");
 
     if (!run || run.conclusion !== "success") {
       statusEl.textContent = run
-        ? "Zoeken bij Picnic is mislukt — probeer het nog eens."
-        : "Kon de status niet vinden — probeer het nog eens.";
+        ? "Zoeken bij Picnic is mislukt — probeer het opnieuw. Je keuzes blijven gewoon staan."
+        : "Kon de status niet vinden — probeer het opnieuw. Je keuzes blijven gewoon staan.";
       return;
     }
 
+    statusEl.textContent = "Producten en verpakkingen controleren...";
     const tekst = await haalTekstBestandViaApi("product_voorstellen.json");
     staat.productVoorstellen = tekst ? JSON.parse(tekst) : {};
     staat.productKeuzeIndex = {};
     pasProductVoorkeurenToe();
 
-    // Alleen automatisch doorschakelen als de gebruiker nog steeds op dit
-    // tabblad zit. Was er intussen naar een ander tabblad gewisseld, dan
-    // voelt een geforceerde sprong naar Controle als een "vastloper" — laat
-    // die gebruiker met rust en toon in plaats daarvan een toast.
-    if (staat.tab === "boodschappen") {
+    // 4. Duidelijke afronding + automatisch naar Controle — maar alleen als
+    // de gebruiker nog steeds op dit tabblad zit. Was er intussen naar een
+    // ander tabblad gewisseld, dan voelt een geforceerde sprong naar
+    // Controle als een "vastloper" — laat die gebruiker met rust en toon in
+    // plaats daarvan een toast.
+    statusEl.textContent = "Klaar om te controleren";
+    if (staat.tab === "aanvullen") {
+      await sleep(500);
       statusEl.textContent = "";
       gaNaarTab("controle");
     } else {
@@ -2970,10 +3202,10 @@ async function startZoeken() {
     }
     if (staat.tab === "overzicht") renderOverzicht();
   } catch (e) {
-    statusEl.textContent = "Er ging iets mis: " + e.message;
+    statusEl.textContent = "Er ging iets mis: " + e.message + " Je keuzes blijven gewoon staan — probeer het opnieuw.";
   } finally {
     staat.zoekenBezig = false;
-    actieKnop.disabled = false;
+    actieKnop.disabled = huidigeBoodschappenTotalen().length === 0;
   }
 }
 
@@ -3000,6 +3232,7 @@ async function bevestigBestelling() {
 
   const startTijd = new Date();
   actieKnop.disabled = true;
+  if (controleToevoegenKnop) controleToevoegenKnop.disabled = true;
   statusEl.textContent = "Bestelling wordt bevestigd...";
 
   try {
@@ -3032,6 +3265,7 @@ async function bevestigBestelling() {
   } finally {
     staat.bestellenBezig = false;
     actieKnop.disabled = false;
+    if (controleToevoegenKnop) controleToevoegenKnop.disabled = false;
   }
 }
 
