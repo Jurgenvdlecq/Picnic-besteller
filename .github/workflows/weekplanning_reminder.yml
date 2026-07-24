@@ -1,6 +1,6 @@
 name: Weekplanning-herinnering
 
-# Maakt elke zaterdagochtend een GitHub Issue aan als herinnering om de
+# Maakt elke donderdagochtend een GitHub Issue aan als herinnering om de
 # weekplanning voor komende week te checken (weekmenu doorlopen, voorraad
 # bijwerken, controleren en bestellen). Gebruikt alleen de ingebouwde
 # GITHUB_TOKEN — geen nieuwe secrets of externe diensten nodig. Heb je op
@@ -11,7 +11,7 @@ name: Weekplanning-herinnering
 on:
   schedule:
     # 08:00 UTC ~ 09:00/10:00 Nederlandse tijd (afhankelijk van zomer/wintertijd).
-    - cron: "0 8 * * 6"
+    - cron: "0 8 * * 4"
   workflow_dispatch:
 
 permissions:
