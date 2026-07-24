@@ -1,4 +1,61 @@
 {
-  "zoekterm": "Lungo",
-  "kandidaten": []
+  "zoekterm": "Kaasstengel",
+  "kandidaten": [
+    {
+      "id": "s1070909",
+      "naam": "Smelik roomboter kaasstengels",
+      "prijs_cent": 299,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/8e46cc69a7098d09672580c901f20e141c02f5dbf0a2f264e18cfcb341a3054b/small.png",
+      "subtitle": "100 gram"
+    },
+    {
+      "id": "s1163400",
+      "naam": "Topking kaastengels oude kaas",
+      "prijs_cent": 535,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e1760cc980e1f1ef67abaabb3166ec4c908c3ba26c951ab235b1226f59aba2ba/small.png",
+      "subtitle": "10 stuks"
+    },
+    {
+      "id": "s1070912",
+      "naam": "Smelik roomboter kaasstengels met zaden",
+      "prijs_cent": 299,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5b0e2d4498572e58246ad2551d7ff5fca92a96f60e25630f04327bdf9e84cad0/small.png",
+      "subtitle": "100 gram"
+    },
+    {
+      "id": "s1163351",
+      "naam": "Topking kaastengels chili kaas oven & airfryer",
+      "prijs_cent": 549,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/80016ac3d6319e9271b3870c833bc27bdd469b5acc7585a02190967f979c54fb/small.png",
+      "subtitle": "10 stuks"
+    },
+    {
+      "id": "s1016969",
+      "naam": "Picnic kaasvlinders",
+      "prijs_cent": 199,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/00e02d7dd11dacb66732ed80dadaac0e70910a81630cfd3ca39d7b207ab24a79/small.png",
+      "subtitle": "100 gram"
+    },
+    {
+      "id": "s1070911",
+      "naam": "Smelik roomboter kaas twists",
+      "prijs_cent": 269,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c7b6637b39df74e409e45491162b40ed90f515367828aaf64b018ab1b2574a78/small.png",
+      "subtitle": "90 gram"
+    },
+    {
+      "id": "s1016988",
+      "naam": "Picnic kaaskoekjes mix",
+      "prijs_cent": 199,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/8ea3656e97c733a80caee694fb1c7a4b282d81dce517fc6a5f177ddd3c44f99b/small.png",
+      "subtitle": "100 gram"
+    },
+    {
+      "id": "s1070910",
+      "naam": "Smelik roomboter kaaskantjes",
+      "prijs_cent": 299,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2465bfea247106947593f4d6a2c9a5fc9e18efc3baa7d0c79a6b00c01dd1091e/small.png",
+      "subtitle": "100 gram"
+    }
+  ]
 }
