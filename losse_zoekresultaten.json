@@ -1,4 +1,26 @@
 {
-  "zoekterm": "Lingo picnic",
-  "kandidaten": []
+  "zoekterm": "Lungo picnic",
+  "kandidaten": [
+    {
+      "id": "s1012887",
+      "naam": "Picnic lungo forte",
+      "prijs_cent": 529,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/903e4c2ba992af0d2c10594d88816f580810b3271c1b7f1f614f0542c49a4db8/small.png",
+      "subtitle": "20 cups"
+    },
+    {
+      "id": "s1012864",
+      "naam": "Picnic lungo classic",
+      "prijs_cent": 529,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/8c3ae95489baa9811c90897f3c61431165174e01386e223603fbca02476964b0/small.png",
+      "subtitle": "20 cups"
+    },
+    {
+      "id": "s1012933",
+      "naam": "Picnic lungo decaffeinato",
+      "prijs_cent": 529,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0bcc06702154dfbc66e7208922be107b0e347d4ca661157ef8e62d0cdfd7163b/small.png",
+      "subtitle": "20 cups"
+    }
+  ]
 }
