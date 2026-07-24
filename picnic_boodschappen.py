@@ -112,6 +112,12 @@ OVERZICHT_BESTAND = Path(__file__).parent / "laatste_bestelling.json"
 # tonen en je kan kiezen bij twijfel/meerdere varianten.
 VOORSTELLEN_BESTAND = Path(__file__).parent / "product_voorstellen.json"
 
+# Resultaat van een --losse-zoekterm-run: kandidaten (met afbeelding) voor
+# één losse, door de gebruiker ingetypte zoekterm — voor het "ander product
+# zoeken" op het controlescherm van de website, los van de normale
+# weekmenu-zoekopdracht.
+LOSSE_ZOEKRESULTATEN_BESTAND = Path(__file__).parent / "losse_zoekresultaten.json"
+
 # Door de website geschreven keuzes (welk exact product-ID bij welke
 # gezochte naam hoort), opgeslagen na de controle-stap. Als dit bestaat
 # wordt er niet opnieuw gezocht maar precies dát product besteld.
@@ -374,24 +380,40 @@ def _sla_product_voorkeuren_op():
 
 
 def _pas_voorkeur_toe(kandidaten: list, naam: str) -> list:
-    """Zet een geleerd voorkeursproduct vooraan in de kandidatenlijst, als
-    het (nog) tussen de zoekresultaten zit. Een expliciete voorkeur (via
-    "Voorkeur opslaan" op de website) en een impliciete voorkeur (automatisch
-    geleerd van eerdere bestellingen) staan beide gewoon in dezelfde
-    "ingredient"-tabel — welke van de twee het is, bepaalt alleen of latere
-    impliciete bevestigingen 'm mogen overschrijven (zie _leer_voorkeur)."""
+    """Zet een geleerd voorkeursproduct vooraan in de kandidatenlijst. Een
+    expliciete voorkeur (via "Voorkeur opslaan" op de website) en een
+    impliciete voorkeur (automatisch geleerd van eerdere bestellingen) staan
+    beide gewoon in dezelfde "ingredient"-tabel — welke van de twee het is,
+    bepaalt alleen of latere impliciete bevestigingen 'm mogen overschrijven
+    (zie _leer_voorkeur).
+
+    Staat het voorkeursproduct niet tussen de verse zoekresultaten (bv. omdat
+    een generieke ingrediëntnaam als "rijst" bij Picnic een ander merk/type
+    bovenaan zet dan de vorige keer gekozen werd), dan wordt het zelf vooraan
+    gezet met de eerder opgeslagen gegevens — anders zou de gebruikelijke
+    keuze soms wel en soms niet als standaard verschijnen, afhankelijk van
+    wat Picnic's eigen zoekmachine die week toevallig teruggeeft."""
     voorkeur = _laad_product_voorkeuren().get("ingredient", {}).get(_normalize(naam))
     if not voorkeur or not voorkeur.get("id"):
         return kandidaten
     for i, k in enumerate(kandidaten):
         if k["id"] == voorkeur["id"]:
             return [kandidaten[i]] + kandidaten[:i] + kandidaten[i + 1:]
-    return kandidaten
+    synthetisch = {
+        "id": voorkeur["id"],
+        "naam": voorkeur.get("naam", naam),
+        "prijs_cent": voorkeur.get("prijs_cent"),
+        "image_url": voorkeur.get("image_url"),
+        "subtitle": voorkeur.get("subtitle"),
+    }
+    return [synthetisch] + kandidaten
 
 
 def _leer_voorkeur(naam: str, product: dict):
     """Onthoudt (impliciet) welk product voor dit ingrediënt bevestigd is,
-    tenzij er al een expliciete voorkeur staat (die wint altijd)."""
+    tenzij er al een expliciete voorkeur staat (die wint altijd). Bewaart ook
+    prijs/afbeelding/subtitel, zodat _pas_voorkeur_toe deze kan tonen als het
+    product zelf niet meer tussen de verse zoekresultaten zit."""
     if not product or not product.get("id"):
         return
     voorkeuren = _laad_product_voorkeuren()
@@ -403,6 +425,9 @@ def _leer_voorkeur(naam: str, product: dict):
     voorkeuren["ingredient"][sleutel] = {
         "id": product["id"],
         "naam": product.get("naam"),
+        "prijs_cent": product.get("prijs_cent"),
+        "image_url": product.get("image_url"),
+        "subtitle": product.get("subtitle"),
         "bron": "impliciet",
         "bevestigd": (bestaand.get("bevestigd", 0) + 1) if zelfde_product else 1,
         "laatst": datetime.now(timezone.utc).isoformat(),
@@ -625,8 +650,25 @@ def main():
              "staat. Gebruikt door de automatische zondag-cron, zodat een bestelling die je eerder "
              "in de week al zelf via de website plaatste niet nog een keer wordt geplaatst.",
     )
+    parser.add_argument(
+        "--losse-zoekterm",
+        default=None,
+        help="Zoek bij Picnic naar precies deze ene term en schrijf de kandidaten weg naar "
+             "losse_zoekresultaten.json, zonder de rest van de boodschappenlijst aan te raken — "
+             "voor 'ander product zoeken' op het controlescherm van de website.",
+    )
     args = parser.parse_args()
     automatisch = args.automatisch or args.voorbeeld
+
+    if args.losse_zoekterm:
+        api = log_in(automatisch=True)
+        kandidaten = zoek_producten(api, args.losse_zoekterm, automatisch=True, max_kandidaten=8)
+        LOSSE_ZOEKRESULTATEN_BESTAND.write_text(
+            json.dumps({"zoekterm": args.losse_zoekterm, "kandidaten": kandidaten}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        log(f"Losse zoekterm '{args.losse_zoekterm}': {len(kandidaten)} resultaat/resultaten.", True)
+        return
 
     if args.alleen_nieuwe_week and not args.voorbeeld:
         al_besteld_op = _al_besteld_deze_week()

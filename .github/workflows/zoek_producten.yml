@@ -8,6 +8,13 @@ name: Zoek producten op bij Picnic
 
 on:
   workflow_dispatch:
+    inputs:
+      losse_zoekterm:
+        description: >
+          Optioneel: zoek alleen naar deze ene term (voor "ander product
+          zoeken" op het controlescherm) i.p.v. de hele boodschappenlijst.
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -30,12 +37,18 @@ jobs:
       - name: Producten opzoeken bij Picnic
         env:
           PICNIC_SESSION_TOKEN: ${{ secrets.PICNIC_SESSION_TOKEN }}
-        run: python3 picnic_boodschappen.py --voorbeeld
+          LOSSE_ZOEKTERM: ${{ github.event.inputs.losse_zoekterm }}
+        run: |
+          if [ -n "$LOSSE_ZOEKTERM" ]; then
+            python3 picnic_boodschappen.py --losse-zoekterm "$LOSSE_ZOEKTERM"
+          else
+            python3 picnic_boodschappen.py --voorbeeld
+          fi
 
       - name: Voorstellen terugzetten in de repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add product_voorstellen.json
+          git add product_voorstellen.json losse_zoekresultaten.json
           git diff --staged --quiet || git commit -m "Productvoorstellen bijgewerkt"
           git push

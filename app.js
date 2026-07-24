@@ -528,6 +528,25 @@ function berekenTotalen(weekmenu, producten) {
   return [...totalen.values()];
 }
 
+// Voor het controlescherm: per ingrediëntnaam (dezelfde sleutel als
+// berekenTotalen/schrijfBoodschappenlijst gebruikt) bijhouden welke dag(en)
+// van het weekmenu dit nodig hebben en met welk aantal — zodat het
+// controlescherm producten per dag kan groeperen en "verwijder [dag]" kan
+// aanbieden. Puur client-side afgeleid van staat.weekmenu; niet opgeslagen.
+function berekenIngredientHerkomst(weekmenu) {
+  const herkomst = new Map();
+  for (const dag of weekmenu) {
+    for (const regel of dag.ingredienten) {
+      const item = parseAantalNaam(regel);
+      const sleutel = item.naam.toLowerCase();
+      if (!herkomst.has(sleutel)) herkomst.set(sleutel, { naam: item.naam, dagen: new Map() });
+      const entry = herkomst.get(sleutel);
+      entry.dagen.set(dag.dag, (entry.dagen.get(dag.dag) || 0) + item.aantal);
+    }
+  }
+  return herkomst;
+}
+
 function schrijfBoodschappenlijst(weekmenu, producten) {
   const totalen = berekenTotalen(weekmenu, producten);
 
@@ -729,6 +748,9 @@ const weekInfoEl = document.getElementById("week-info");
 const stappenIndicatorEl = document.getElementById("stappen-indicator");
 const laatstBesteldEl = document.getElementById("laatst-besteld");
 const standaardLijstEl = document.getElementById("standaard-lijst");
+const standaardOpslaanKnop = document.getElementById("standaard-opslaan-knop");
+const standaardOpslaanStatusEl = document.getElementById("standaard-opslaan-status");
+const toastWrapEl = document.getElementById("toast-wrap");
 const voorraadLijstEl = document.getElementById("voorraad-lijst");
 const beoordelingBlokEl = document.getElementById("beoordeling-blok");
 const receptenbeheerEl = document.getElementById("receptenbeheer");
@@ -780,6 +802,19 @@ let staat = {
 function toonScherm(scherm) {
   for (const el of [schermPin, schermToken, schermLaden, appEl]) el.classList.add("verborgen");
   scherm.classList.remove("verborgen");
+}
+
+// Kort, zichtbaar bevestigingsbericht na een actie (toevoegen/verwijderen/
+// opslaan), zodat duidelijk is dat een wijziging echt is doorgevoerd i.p.v.
+// alleen stil de lijst te verversen.
+function toonToast(bericht, type) {
+  const toast = maakEl("div", "toast" + (type ? ` toast-${type}` : ""), bericht);
+  toastWrapEl.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("zichtbaar"));
+  setTimeout(() => {
+    toast.classList.remove("zichtbaar");
+    setTimeout(() => toast.remove(), 300);
+  }, 2800);
 }
 
 function ververs() {
@@ -872,8 +907,10 @@ function renderStandaardlijst() {
       naamVeld.onchange = () => {
         const nieuweNaam = naamVeld.value.trim();
         if (nieuweNaam && nieuweNaam !== item.naam) {
+          const vorigeNaam = item.naam;
           item.naam = nieuweNaam;
           staat.standaardlijstGewijzigd = true;
+          toonToast(`✓ "${vorigeNaam}" hernoemd naar "${nieuweNaam}"`);
         }
         ververs();
       };
@@ -905,6 +942,7 @@ function renderStandaardlijst() {
           staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
           staat.standaardUitgevinkt.delete(sleutel);
           staat.standaardlijstGewijzigd = true;
+          toonToast(`✓ Verwijderd: ${item.naam}`);
           ververs();
         })
       );
@@ -914,7 +952,28 @@ function renderStandaardlijst() {
   }
 
   standaardLijstEl.appendChild(bouwStandaardToevoegRij());
+  renderStandaardOpslaanStatus();
 }
+
+function renderStandaardOpslaanStatus() {
+  standaardOpslaanKnop.classList.toggle("nadruk", staat.standaardlijstGewijzigd);
+  standaardOpslaanStatusEl.textContent = staat.standaardlijstGewijzigd ? "Niet opgeslagen wijzigingen" : "";
+}
+
+standaardOpslaanKnop.onclick = async () => {
+  standaardOpslaanKnop.disabled = true;
+  standaardOpslaanStatusEl.textContent = "Opslaan...";
+  try {
+    await githubPutFile("standaardlijst.txt", herbouwStandaardlijstTekst(), "Vaste boodschappen aangepast via de website");
+    staat.standaardlijstGewijzigd = false;
+    standaardOpslaanKnop.disabled = false;
+    renderStandaardOpslaanStatus();
+    toonToast("✓ Vaste boodschappenlijst opgeslagen");
+  } catch (e) {
+    standaardOpslaanKnop.disabled = false;
+    standaardOpslaanStatusEl.textContent = "Opslaan mislukt: " + e.message;
+  }
+};
 
 function bouwStandaardToevoegRij() {
   const rij = maakEl("div", "std-toevoeg-rij");
@@ -952,6 +1011,7 @@ function bouwStandaardToevoegRij() {
     categorie.items.push({ naam, aantal });
     staat.standaardlijst = staat.standaardCategorieen.flatMap((c) => c.items);
     staat.standaardlijstGewijzigd = true;
+    toonToast(`✓ Toegevoegd: ${naam}`);
     naamVeld.value = "";
     aantalVeld.value = "1";
     ververs();
@@ -1806,6 +1866,9 @@ async function slaProductVoorkeurOp(naam, kandidaat) {
   staat.productVoorkeuren.ingredient[sleutel] = {
     id: kandidaat.id,
     naam: kandidaat.naam,
+    prijs_cent: kandidaat.prijs_cent,
+    image_url: kandidaat.image_url,
+    subtitle: kandidaat.subtitle,
     bron: "expliciet",
     bevestigd: (bestaand?.bevestigd || 0) + 1,
     laatst: new Date().toISOString(),
@@ -1817,8 +1880,9 @@ async function slaProductVoorkeurOp(naam, kandidaat) {
       JSON.stringify(staat.productVoorkeuren, null, 2),
       `Voorkeur opgeslagen: ${naam} -> ${kandidaat.naam}`
     );
+    toonToast(`✓ Voorkeur opgeslagen: ${naam} → ${kandidaat.naam}`);
   } catch (e) {
-    // best-effort; de voorkeur blijft lokaal zichtbaar deze sessie
+    toonToast(`✗ Voorkeur opslaan mislukt: ${e.message}`, "fout");
   }
 }
 
@@ -1871,6 +1935,9 @@ function bouwControleItem(naam, info, compact) {
       ? "Nog niet opgezocht — wordt automatisch bij Picnic gezocht op het moment van bestellen."
       : "Niet gevonden bij Picnic — voeg dit later zelf toe in de Picnic-app.";
     item.appendChild(maakEl("div", "controle-fout" + (info.nieuw ? " nieuw" : ""), bericht));
+    const acties = maakEl("div", "controle-acties");
+    acties.appendChild(maakKnop("secundair", "🔍 Ander product zoeken", () => toonZoekBox(item, naam, info)));
+    item.appendChild(acties);
   } else {
     const resultaat = maakEl("div", "controle-resultaat");
 
@@ -1900,6 +1967,7 @@ function bouwControleItem(naam, info, compact) {
     if (kandidaten.length > 1) {
       acties.appendChild(maakKnop("secundair", "Andere optie kiezen", () => toonAlternatieven(item, naam, kandidaten, idx)));
     }
+    acties.appendChild(maakKnop("secundair", "🔍 Ander product zoeken", () => toonZoekBox(item, naam, info)));
     acties.appendChild(maakKnop("secundair", "Vervangen", () => vervangProduct(naam, info)));
     acties.appendChild(maakKnop("secundair", "Parkeren", () => {
       info.geparkeerd = true;
@@ -1910,6 +1978,144 @@ function bouwControleItem(naam, info, compact) {
   }
 
   return item;
+}
+
+// --- Live zoeken naar een ander product (met afbeelding) via de
+// bestaande zoek_producten.yml-actie, met een losse zoekterm i.p.v. de
+// hele boodschappenlijst. Duurt ~15-30 sec (workflow moet opstarten). ---
+
+function toonZoekBox(item, naam, info) {
+  if (item.querySelector(".zoek-box")) return;
+
+  const box = maakEl("div", "zoek-box");
+  const rij = maakEl("div", "zoek-box-rij");
+  const invoer = document.createElement("input");
+  invoer.type = "text";
+  invoer.className = "zoek-box-invoer";
+  invoer.value = naam;
+  invoer.placeholder = "Zoekterm bij Picnic";
+  rij.appendChild(invoer);
+
+  const status = maakEl("div", "zoek-box-status");
+  const resultaten = maakEl("div", "zoek-box-resultaten");
+
+  const zoekKnop = maakKnop("secundair", "Zoeken bij Picnic", async () => {
+    const term = invoer.value.trim();
+    if (!term) return;
+    zoekKnop.disabled = true;
+    resultaten.innerHTML = "";
+    await zoekAndereOptie(naam, info, term, status, resultaten);
+    zoekKnop.disabled = false;
+  });
+  rij.appendChild(zoekKnop);
+
+  box.appendChild(rij);
+  box.appendChild(status);
+  box.appendChild(resultaten);
+  item.appendChild(box);
+  invoer.focus();
+}
+
+async function zoekAndereOptie(naam, info, zoekterm, statusEl, resultatenEl) {
+  const startTijd = new Date();
+  statusEl.textContent = "Zoeken bij Picnic gestart (kan ~20-30 sec duren)...";
+  try {
+    await dispatchWorkflow(ZOEKEN_WORKFLOW, { losse_zoekterm: zoekterm });
+    const run = await volgWorkflow(ZOEKEN_WORKFLOW, startTijd, statusEl, "Zoeken bij Picnic...");
+    if (!run || run.conclusion !== "success") {
+      statusEl.textContent = run
+        ? "Zoeken is mislukt — probeer het nog eens."
+        : "Kon de status niet vinden — probeer het nog eens.";
+      return;
+    }
+    const tekst = await haalTekstBestandOp("losse_zoekresultaten.json");
+    const resultaat = tekst ? JSON.parse(tekst) : {};
+    statusEl.textContent = "";
+    toonZoekResultaten(resultatenEl, naam, info, resultaat.kandidaten || []);
+  } catch (e) {
+    statusEl.textContent = "Er ging iets mis: " + e.message;
+  }
+}
+
+function toonZoekResultaten(resultatenEl, naam, info, kandidaten) {
+  resultatenEl.innerHTML = "";
+  if (kandidaten.length === 0) {
+    resultatenEl.appendChild(maakEl("div", "controle-fout", `Niets gevonden voor deze zoekterm.`));
+    return;
+  }
+
+  const lijst = maakEl("div", "alternatieven");
+  kandidaten.forEach((k) => {
+    const wrapper = maakEl("div", "alternatieven-item");
+    if (k.image_url) {
+      const img = document.createElement("img");
+      img.src = k.image_url;
+      img.className = "alternatieven-img";
+      img.alt = k.naam;
+      wrapper.appendChild(img);
+    }
+    const text = maakEl("div", "alternatieven-text");
+    text.appendChild(maakEl("div", "", k.naam));
+    if (k.subtitle) text.appendChild(maakEl("div", "alternatieven-detail", k.subtitle));
+    if (typeof k.prijs_cent === "number") {
+      text.appendChild(maakEl("div", "alternatieven-prijs", `€${(k.prijs_cent / 100).toFixed(2)}`));
+    }
+    wrapper.appendChild(text);
+
+    const knop = maakKnop("", "", () => {
+      info.kandidaten = [k, ...(info.kandidaten || []).filter((x) => x.id !== k.id)];
+      staat.productKeuzeIndex[naam] = 0;
+      info.nieuw = false;
+      info.verwijderd = false;
+      toonToast(`✓ Gewisseld naar: ${k.naam}`);
+      renderControleScherm();
+    });
+    knop.className = "";
+    knop.appendChild(wrapper);
+    knop.style.display = "block";
+    knop.style.width = "100%";
+    knop.style.marginBottom = "8px";
+    knop.style.textAlign = "left";
+    lijst.appendChild(knop);
+  });
+  resultatenEl.appendChild(lijst);
+}
+
+// Dag-kop boven een groep controle-items: gerecht + een indicator of alles
+// voor die dag al gecontroleerd is + een knop om in één keer alle
+// ingrediënten van die dag uit de bestelling te halen (bv. "we koken
+// donderdag toch niet").
+function bouwControleDagKop(dag, dagNamen, aandachtPerNaam, herkomst, items) {
+  const dagLabel = dag.dag.replace(/\s*\(\d+p\)/, "");
+
+  const kop = maakEl("div", "controle-dag-kop");
+  const titel = maakEl("div", "controle-dag-titel");
+  titel.appendChild(maakEl("span", "controle-dag-naam", `${dagLabel} · ${dag.naam}`));
+  const heeftAandacht = dagNamen.some((naam) => aandachtPerNaam[naam]);
+  titel.appendChild(
+    maakEl("span", "controle-dag-status" + (heeftAandacht ? " let-op" : " compleet"), heeftAandacht ? "⚠ nog checken" : "✓ compleet")
+  );
+  kop.appendChild(titel);
+
+  kop.appendChild(
+    maakKnop("secundair dag-verwijder", `🗑 Geen eten op ${dagLabel.toLowerCase()}`, () => {
+      if (!confirm(`Alle ingrediënten voor ${dagLabel} (${dag.naam}) uit deze bestelling halen?`)) return;
+      for (const naam of dagNamen) {
+        const info = items[naam];
+        const entry = herkomst.get(naam.toLowerCase());
+        const dagAantal = entry ? entry.dagen.get(dag.dag) || 0 : info.aantal;
+        info.aantal -= dagAantal;
+        if (info.aantal <= 0) {
+          info.aantal = 0;
+          info.verwijderd = true;
+        }
+      }
+      toonToast(`✓ Eten voor ${dagLabel} verwijderd uit de bestelling`);
+      renderControleScherm();
+    })
+  );
+
+  return kop;
 }
 
 function renderControleScherm() {
@@ -1933,10 +2139,9 @@ function renderControleScherm() {
     }
   }
 
-  const aandacht = [];
-  const vertrouwd = [];
   let totaalCent = 0;
   let onbekendePrijs = false;
+  const aandachtPerNaam = {};
 
   for (const naam of actief) {
     const info = items[naam];
@@ -1950,18 +2155,46 @@ function renderControleScherm() {
       onbekendePrijs = true;
     }
 
-    const heeftAandachtNodig = !gekozen || info.nieuw || heeftVoorkeurMismatch(naam, gekozen);
-    (heeftAandachtNodig ? aandacht : vertrouwd).push(naam);
+    aandachtPerNaam[naam] = !gekozen || info.nieuw || heeftVoorkeurMismatch(naam, gekozen);
   }
 
-  if (aandacht.length > 0) {
-    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", "Nieuw / controleren"));
-    for (const naam of aandacht) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], false));
+  // Groepeer per dag (maandag t/m zondag, in weekmenu-volgorde) zodat in één
+  // oogopslag te zien is of er voor elke dag alles klaarstaat. Een
+  // ingrediënt dat door meerdere dagen wordt gebruikt (bv. ui) wordt maar
+  // één keer als kaart getoond (bij de eerste dag die het nodig heeft) —
+  // maar de dag-kop zelf (status + "verwijder deze dag") blijft voor élke
+  // dag zichtbaar die het ingrediënt gebruikt, ook als alle kaarten al bij
+  // een eerdere dag staan. Producten zonder dag-herkomst (vaste
+  // boodschappen, voorraad, of handmatig toegevoegd in dit scherm) komen in
+  // een aparte sectie onderaan.
+  const herkomst = berekenIngredientHerkomst(staat.weekmenu);
+  const toegewezen = new Set();
+  const perDag = staat.weekmenu.map((dag) => {
+    const alleNamen = actief.filter((naam) => {
+      const entry = herkomst.get(naam.toLowerCase());
+      return entry && entry.dagen.has(dag.dag);
+    });
+    const weergaveNamen = alleNamen.filter((naam) => !toegewezen.has(naam));
+    weergaveNamen.forEach((naam) => toegewezen.add(naam));
+    return { dag, alleNamen, weergaveNamen };
+  });
+  const vasteNamen = actief.filter((naam) => !toegewezen.has(naam));
+
+  for (const { dag, alleNamen, weergaveNamen } of perDag) {
+    if (alleNamen.length === 0) continue;
+    controleLijstEl.appendChild(bouwControleDagKop(dag, alleNamen, aandachtPerNaam, herkomst, items));
+    if (weergaveNamen.length === 0) {
+      controleLijstEl.appendChild(
+        maakEl("div", "controle-dag-gedeeld", "Ingrediënten hiervoor staan al bij een eerdere dag hierboven.")
+      );
+    } else {
+      for (const naam of weergaveNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam]));
+    }
   }
 
-  if (vertrouwd.length > 0) {
-    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", `Vertrouwd (${vertrouwd.length})`));
-    for (const naam of vertrouwd) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], true));
+  if (vasteNamen.length > 0) {
+    controleLijstEl.appendChild(maakEl("div", "controle-sectie-kop", "Vaste boodschappen"));
+    for (const naam of vasteNamen) controleLijstEl.appendChild(bouwControleItem(naam, items[naam], !aandachtPerNaam[naam]));
   }
 
   if (geparkeerdOfVerwijderd.length > 0) {

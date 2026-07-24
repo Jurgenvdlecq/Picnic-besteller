@@ -1357,3 +1357,170 @@ input.std-naam:focus {
   color: var(--accent);
   font-size: 0.85rem;
 }
+
+/* --- Opslaan-knop + status bij vaste boodschappen --- */
+.std-opslaan-rij {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.std-opslaan-rij button {
+  width: auto;
+  max-width: none;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+}
+
+.std-opslaan-rij button.nadruk {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.std-opslaan-status {
+  font-size: 0.78rem;
+  color: var(--warn);
+}
+
+/* --- Toast-meldingen (bevestiging bij wijzigingen) --- */
+#toast-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.toast {
+  background: var(--header-band);
+  color: var(--header-text);
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  max-width: 420px;
+  text-align: center;
+}
+
+.toast.zichtbaar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.toast-fout {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+/* --- Controlescherm: per-dag-groepering --- */
+.controle-dag-kop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 18px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.controle-sectie-kop + .controle-dag-kop,
+.controle-dag-kop:first-child {
+  margin-top: 0;
+}
+
+.controle-dag-titel {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.controle-dag-naam {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.controle-dag-status {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.controle-dag-status.compleet {
+  color: var(--muted);
+  background: var(--chip-bg);
+}
+
+.controle-dag-status.let-op {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+button.dag-verwijder {
+  width: auto;
+  max-width: none;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+.controle-dag-gedeeld {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: italic;
+  padding: 4px 0 10px;
+}
+
+/* --- Live zoeken naar een ander product (met afbeelding) --- */
+.zoek-box {
+  margin-top: 8px;
+  padding: 10px;
+  background: var(--chip-bg);
+  border-radius: 10px;
+}
+
+.zoek-box-rij {
+  display: flex;
+  gap: 8px;
+}
+
+.zoek-box-invoer {
+  flex: 1;
+  font-family: var(--font-body);
+  letter-spacing: normal;
+  text-align: left;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+}
+
+.zoek-box-rij button {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.zoek-box-status {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.zoek-box-resultaten {
+  margin-top: 6px;
+}
