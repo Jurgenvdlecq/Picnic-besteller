@@ -299,6 +299,16 @@
       "bron": "expliciet",
       "bevestigd": 1,
       "laatst": "2026-07-24T07:15:47.062Z"
+    },
+    "hamburger": {
+      "id": "s1004024",
+      "naam": "'t Slagershuys runderburgers",
+      "prijs_cent": 489,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/79919e766c0fc9baf46fceb913cf8fd75a721ca10b14ee9d6a96ee252a5148e8/small.png",
+      "subtitle": "4 x 100 gram",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-24T07:53:20.868Z"
     }
   },
   "gerecht_ingredient": {}
