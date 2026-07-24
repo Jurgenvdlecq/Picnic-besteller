@@ -5,7 +5,7 @@
 #   Donderdag: Linzencurry met rijst
 #   Vrijdag (4p): Aardappelblokjes met hamburger en broccoli
 #   Zaterdag (4p): Spareribs met aardappelpartjes
-#   Zondag: Patat + Oude kaas stengels
+#   Zondag: Patat + Oude kaas stengels + Carrero
 #
 3 x rijst
 10 x eieren
@@ -29,6 +29,7 @@
 1 x coleslaw
 1 x Patat (airfryer)
 1 x Oude kaas stengels
+1 x Carrero
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels
 1 x Hagelslag XXL
