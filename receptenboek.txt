@@ -161,10 +161,6 @@ Tags: snel, maandag, bowl
 1 x wokgroente
 1 x sesamzaad
 
-# ============================================================
-# Label: vrijdag_veel — vrijdag/zaterdag bij 4 personen (oneven week)
-# ============================================================
-
 Gerecht: Aardappelblokjes met hamburger en broccoli
 Vlees: rund
 Label: vrijdag_veel
@@ -260,13 +256,8 @@ Tags: bowl
 1 x geraspte kaas
 1 x nachochips
 
-# ============================================================
-# Geen label — algemene pool, woensdag/donderdag, altijd 2 personen
-# ============================================================
-
 Gerecht: Kip met rijst en paprika
 Vlees: kip
-Basispersonen: 2
 Tags: rijst
 1 x kipfilet
 1 x rijst
@@ -275,7 +266,6 @@ Tags: rijst
 
 Gerecht: Rundergehaktballen met zoete aardappel
 Vlees: rund
-Basispersonen: 2
 Tags: aardappel-vlees-groente
 1 x rundergehakt
 2 x zoete aardappel
@@ -284,7 +274,6 @@ Tags: aardappel-vlees-groente
 
 Gerecht: Omelet met spinazie en kip
 Vlees: kip
-Basispersonen: 2
 Tags: snel
 6 x eieren
 1 x spinazie
@@ -292,7 +281,6 @@ Tags: snel
 
 Gerecht: Rundergehakt-curry
 Vlees: rund
-Basispersonen: 2
 1 x rundergehakt
 1 x kokosmelk
 1 x paprika
@@ -301,7 +289,6 @@ Basispersonen: 2
 
 Gerecht: Eieren met spek en avocado
 Vlees: varken
-Basispersonen: 2
 Tags: snel
 6 x eieren
 1 x spekreepjes
@@ -309,7 +296,6 @@ Tags: snel
 
 Gerecht: Kip tikka masala met rijst
 Vlees: kip
-Basispersonen: 2
 Tags: rijst
 1 x kipfilet
 1 x tikka masala saus
@@ -318,7 +304,6 @@ Tags: rijst
 
 Gerecht: Beef stroganoff met rijst
 Vlees: rund
-Basispersonen: 2
 Tags: rijst
 1 x runderreepjes
 1 x champignons
@@ -328,7 +313,6 @@ Tags: rijst
 
 Gerecht: Gehaktschotel met bloemkoolpuree
 Vlees: rund
-Basispersonen: 2
 1 x rundergehakt
 1 x bloemkool
 1 x ui
@@ -336,7 +320,6 @@ Basispersonen: 2
 
 Gerecht: Kip fajita bowl
 Vlees: kip
-Basispersonen: 2
 Tags: rijst, bowl
 1 x kipfilet
 2 x paprika
@@ -345,7 +328,6 @@ Tags: rijst, bowl
 
 Gerecht: Runderreepjes teriyaki met broccoli
 Vlees: rund
-Basispersonen: 2
 Tags: rijst
 1 x runderreepjes
 1 x teriyakisaus
@@ -354,7 +336,6 @@ Tags: rijst
 
 Gerecht: Gevulde paprika met gehakt en rijst
 Vlees: rund
-Basispersonen: 2
 Tags: rijst
 1 x rundergehakt
 3 x paprika
@@ -363,7 +344,6 @@ Tags: rijst
 
 Gerecht: Kip cacciatore met aardappelpuree
 Vlees: kip
-Basispersonen: 2
 Tags: aardappel-vlees-groente
 1 x kipfilet
 1 x tomatensaus
@@ -372,7 +352,6 @@ Tags: aardappel-vlees-groente
 
 Gerecht: Chili con carne met rijst
 Vlees: rund
-Basispersonen: 2
 Tags: rijst
 1 x rundergehakt
 1 x kidneybonen
@@ -382,7 +361,6 @@ Tags: rijst
 
 Gerecht: Varkenshaas met champignonsaus en aardappelpuree
 Vlees: varken
-Basispersonen: 2
 Tags: aardappel-vlees-groente
 1 x varkenshaas
 1 x champignons
@@ -391,7 +369,6 @@ Tags: aardappel-vlees-groente
 
 Gerecht: Kip caesar bowl
 Vlees: kip
-Basispersonen: 2
 Tags: bowl
 1 x kipfilet
 1 x romeinse sla
@@ -401,8 +378,7 @@ Tags: bowl
 
 Gerecht: Groente wraps met halloumi
 Vlees: ei-vega
-Basispersonen: 2
-Tags: wraps
+Tags: wraps, niet-meer-tonen
 1 x halloumi
 4 x tortilla wraps
 1 x paprika
@@ -411,7 +387,6 @@ Tags: wraps
 
 Gerecht: Runderburger met zoete aardappelfriet
 Vlees: rund
-Basispersonen: 2
 Tags: aardappel-vlees-groente, airfryer
 2 x runderburgers
 1 x zoete aardappelfriet
@@ -420,7 +395,6 @@ Tags: aardappel-vlees-groente, airfryer
 
 Gerecht: Pasta carbonara
 Vlees: varken
-Basispersonen: 2
 Tags: pasta, snel
 1 x pasta
 1 x spekreepjes
@@ -430,7 +404,6 @@ Tags: pasta, snel
 
 Gerecht: Kip pad thai
 Vlees: kip
-Basispersonen: 2
 Tags: bowl
 1 x kipfilet
 1 x pad thai noedels
@@ -440,7 +413,6 @@ Tags: bowl
 
 Gerecht: Linzencurry met rijst
 Vlees: ei-vega
-Basispersonen: 2
 Tags: rijst
 1 x rode linzen
 1 x kokosmelk
@@ -450,7 +422,6 @@ Tags: rijst
 
 Gerecht: Varkensfilet met champignons en aardappelgratin
 Vlees: varken
-Basispersonen: 2
 Tags: aardappel-vlees-groente
 1 x varkensfilet
 1 x champignons
@@ -459,17 +430,12 @@ Tags: aardappel-vlees-groente
 
 Gerecht: Falafel wraps met tzatziki
 Vlees: ei-vega
-Basispersonen: 2
 Tags: wraps
 1 x falafel
 4 x tortilla wraps
 1 x tzatziki
 1 x komkommer
 1 x cherrytomaatjes
-
-# ============================================================
-# Actief: nee — naslag, niet in de automatische rotatie
-# ============================================================
 
 Gerecht: Kip cordon bleu zelfgemaakt
 Vlees: kip
