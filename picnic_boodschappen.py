@@ -705,13 +705,22 @@ def leeg_mandje(automatisch: bool = False, api=None) -> bool:
     na_regels = []
 
     try:
-        voor_regels = _cart_productregels(api.get_cart())
+        cart_voor = api.get_cart()
+        # Tijdelijke diagnose: python-picnic-api2 documenteert de exacte
+        # vorm van de /cart-respons niet. Als _cart_productregels() het mis
+        # heeft (bv. een andere sleutel dan "items", of items die niet op
+        # "id" te herkennen zijn), telt hij ten onrechte 0 — dan meldt deze
+        # functie "leeg" terwijl het echte mandje nog vol zit. Deze regel
+        # legt de ruwe respons vast zodat dat verschil zichtbaar wordt in de
+        # workflow-log, i.p.v. dat we daar opnieuw naar moeten gokken.
+        log(f"[diagnose] ruwe mandje-respons: {json.dumps(cart_voor, ensure_ascii=False)[:4000]}", automatisch)
+        voor_regels = _cart_productregels(cart_voor)
         log(f"Mandje voor het legen: {len(voor_regels)} productregel(s).", automatisch)
 
         na_regels = voor_regels
         if voor_regels:
             api.clear_cart()
-            na_regels = _herhaal_tot_leeg_of_stabiel(api)
+            na_regels = _herhaal_tot_leeg_of_stabiel(api, automatisch=automatisch)
 
         if na_regels:
             log(
@@ -729,7 +738,7 @@ def leeg_mandje(automatisch: bool = False, api=None) -> bool:
                     api.remove_product(regel["id"], count=max(regel["aantal"], 1) + 20)
                 except Exception as e:
                     fout = f"{fout + '; ' if fout else ''}Verwijderen van '{regel['naam']}' mislukt: {e}"
-            na_regels = _herhaal_tot_leeg_of_stabiel(api)
+            na_regels = _herhaal_tot_leeg_of_stabiel(api, automatisch=automatisch)
 
     except Exception as e:
         fout = f"{fout + '; ' if fout else ''}{e}"
@@ -767,7 +776,7 @@ def leeg_mandje(automatisch: bool = False, api=None) -> bool:
     return leeg
 
 
-def _herhaal_tot_leeg_of_stabiel(api, pogingen: int = 3, wachttijd_seconden: float = 1.5) -> list:
+def _herhaal_tot_leeg_of_stabiel(api, pogingen: int = 3, wachttijd_seconden: float = 1.5, automatisch: bool = True) -> list:
     """Haalt het mandje tot 'pogingen' keer vers op (met een korte pauze
     ertussen) totdat het leeg blijkt, en geeft de laatst geziene productregels
     terug. De pauze is er omdat Picnic's eigen API/CDN een fractie van een
@@ -777,7 +786,9 @@ def _herhaal_tot_leeg_of_stabiel(api, pogingen: int = 3, wachttijd_seconden: flo
     regels = []
     for poging in range(pogingen):
         time.sleep(wachttijd_seconden)
-        regels = _cart_productregels(api.get_cart())
+        cart = api.get_cart()
+        log(f"[diagnose] ruwe mandje-respons (na legen, poging {poging + 1}): {json.dumps(cart, ensure_ascii=False)[:4000]}", automatisch)
+        regels = _cart_productregels(cart)
         if not regels:
             break
     return regels
