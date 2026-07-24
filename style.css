@@ -2094,3 +2094,205 @@ button.dag-verwijder {
 @media (min-width: 380px) {
   .ov-snel-label { font-size: 0.85rem; }
 }
+
+/* ===========================================================================
+   Gerechten / Boodschappen / Controle / kop-header — dezelfde Apple/Linear-
+   stijl als Overzicht en Meer. Deze schermen zijn opgebouwd met de oudere
+   --bg/--card/--text/--border/--muted/--accent/--chip-bg/--warn/--header-*-
+   tokens; vrijwel elke regel in deze schermen leest die tokens al uit (zie
+   .kaart, .chip, .stepper, .controle-item, .std-item, header.top, enz.). Door
+   die tokens hier, alleen binnen #app, opnieuw te laten verwijzen naar de
+   --ov-*-tokens, krijgen al die bestaande regels automatisch het nieuwe
+   uiterlijk zonder dat elke selector apart overschreven hoeft te worden. Dit
+   raakt niets buiten #app (dus niet de pincode-/sleutelschermen) en niets van
+   de klassen ov- en meer- (die lezen uitsluitend var(--ov-...) rechtstreeks
+   uit, nooit deze oudere namen). */
+#app {
+  --bg: var(--ov-bg);
+  --card: var(--ov-surface);
+  --text: var(--ov-text);
+  --muted: var(--ov-text-secondary);
+  --border: var(--ov-border);
+  --chip-bg: var(--ov-bg);
+  --accent: var(--ov-primary);
+  --accent-text: #ffffff;
+  --accent-soft: var(--ov-primary-soft);
+  --warn: var(--ov-orange);
+  --warn-soft: var(--ov-orange-soft);
+  --good-soft: var(--ov-green-soft);
+  --receipt: var(--ov-surface);
+  --header-band: var(--ov-surface);
+  --header-text: var(--ov-text);
+  --header-muted: var(--ov-text-secondary);
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--ov-bg);
+  min-height: 100vh;
+}
+
+#weekmenu-scherm, #voorraad-scherm, #controle-scherm {
+  background: var(--ov-bg);
+}
+
+/* De kop boven Gerechten/Boodschappen/Controle/Meer: was een donkerrode
+   band met een cursief serif-lettertype, nu een rustige lichte balk in
+   dezelfde stijl als de rest van de app. */
+header.top {
+  border-radius: 0 0 var(--ov-radius-m) var(--ov-radius-m);
+  border-bottom: 1px solid var(--ov-border);
+  box-shadow: var(--ov-shadow);
+}
+
+header.top h1 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+header.top #week-info {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.laatst-besteld {
+  border-color: var(--ov-border);
+  background: var(--ov-bg);
+}
+
+/* Kaarten (dagkaarten, vaste-boodschappenkaart, voorraadkaart, controlekaart) */
+#app .kaart {
+  border-radius: var(--ov-radius-m);
+  box-shadow: var(--ov-shadow);
+}
+
+#app .kaart-titel .naam {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+main#dagen-wrap,
+main#voorraad-wrap,
+#dagen,
+#kassabon-wrap {
+  padding: 0 var(--ov-space);
+}
+
+main#dagen-wrap,
+main#voorraad-wrap {
+  padding-top: var(--ov-space);
+}
+
+#controle-scherm {
+  padding: var(--ov-space) var(--ov-space) 0;
+}
+
+/* Chips, badges, dagkop */
+#app .chip {
+  border-radius: 999px;
+}
+
+#app .gerecht-rij {
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: var(--ov-radius-s);
+}
+
+#app .gerecht-rij.gekozen {
+  font-weight: 700;
+}
+
+#app .vast-item {
+  font-family: inherit;
+  border-radius: var(--ov-radius-s);
+}
+
+#app .std-categorie-kop,
+#app .controle-sectie-kop {
+  font-family: inherit;
+  font-weight: 700;
+}
+
+/* Kleine tik-knopjes (stepper, personen, verwijderen) iets ruimer voor
+   een prettiger tikgebied op mobiel. */
+#app .stap-knop {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--ov-radius-s);
+}
+
+#app .personen-knop {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+
+#app .ingredient-verwijder {
+  padding: 6px 10px;
+}
+
+/* Controle-scherm: productkaartjes, alternatieven, zoekbox */
+#app .controle-resultaat {
+  background: var(--ov-bg);
+  border-radius: var(--ov-radius-s);
+}
+
+#app .controle-afbeelding {
+  background: var(--ov-surface);
+  border: 1px solid var(--ov-border);
+}
+
+#app .alternatieven {
+  background: var(--ov-bg);
+  border-radius: var(--ov-radius-s);
+}
+
+#app .alternatieven-item.actief {
+  border-color: var(--ov-primary);
+}
+
+#app .alternatieven-img {
+  background: var(--ov-surface);
+  border: 1px solid var(--ov-border);
+}
+
+#app .zoek-box {
+  border-radius: var(--ov-radius-s);
+}
+
+#app .controle-dag-status {
+  border-radius: 999px;
+}
+
+#app .controle-dag-status.compleet {
+  color: var(--ov-green);
+  background: var(--ov-green-soft);
+}
+
+/* Onderbalk (zoeken/bevestigen), waarschuwingen, toast */
+#bestel-knop-wrap {
+  background: var(--ov-surface);
+  border-top: 1px solid var(--ov-border);
+}
+
+#actie-knop {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  min-height: 56px;
+  border-radius: var(--ov-radius-s);
+}
+
+.waarschuwing {
+  border-radius: var(--ov-radius-s);
+}
+
+.toast {
+  background: var(--ov-text);
+  color: var(--ov-surface);
+  box-shadow: var(--ov-shadow);
+}
+
+.toast.toast-fout {
+  background: var(--ov-primary);
+  color: #ffffff;
+}
