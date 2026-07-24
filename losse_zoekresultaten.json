@@ -1,61 +1,61 @@
 {
-  "zoekterm": "Aviko",
+  "zoekterm": "Zilvervliesrijst",
   "kandidaten": [
     {
-      "id": "s1049196",
-      "naam": "Aviko Grip ‘n Dip",
-      "prijs_cent": 319,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f7acd46e10b202b9f2f2a3629ecd401f6f4b213686bbad26b9b1c7a177442505/small.png",
-      "subtitle": "600 gram"
+      "id": "s1006873",
+      "naam": "Lassie zilvervliesrijst",
+      "prijs_cent": 119,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5ecbc8a3cdc45352904ec70b3627caf9e350073ef5b0a75807a123e3e5f7a0e2/small.png",
+      "subtitle": "400 gram"
     },
     {
-      "id": "s1009065",
-      "naam": "Aviko rösti rondjes",
-      "prijs_cent": 289,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/446ecab7dcac5f3333aafbbfb4603a1d4589cf705b73d78a76267cd23ec52990/small.png",
+      "id": "s1176444",
+      "naam": "Lassie zilvervliesrijst",
+      "prijs_cent": 225,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d488cd96603ed0d2ad1991c8234c1571d75561d812b990f4778467157505e750/small.png",
       "subtitle": "750 gram"
     },
     {
-      "id": "s1010214",
-      "naam": "Aviko pommes frites",
-      "prijs_cent": 275,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/640c023fdc73908c66652c8b2b96dca7cb6f73ffc421cac0f0fa11eb88733086/small.png",
+      "id": "s1090037",
+      "naam": "Lassie zilvervliesrijst bio",
+      "prijs_cent": 229,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3fa7395764d539d0927c4ad337efc512d489d9cf11475a5ac2e9f23c3818422e/small.png",
+      "subtitle": "375 gram"
+    },
+    {
+      "id": "s1016785",
+      "naam": "Picnic snelkook zilvervliesrijst",
+      "prijs_cent": 145,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5f5a6e76dff93d02d48fffbf97cebc8155e7ac76c029f312dc03fa0ac0f8dc32/small.png",
       "subtitle": "1 kilo"
     },
     {
-      "id": "s1000081",
-      "naam": "Aviko oma's smulfrieten",
-      "prijs_cent": 289,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bdd273bea2c457646234aef88f5613945fbae55dc9ac7802f126f8297022c25b/small.png",
-      "subtitle": "750 gram"
+      "id": "s1006783",
+      "naam": "Lassie zilvervliesrijst builtjes",
+      "prijs_cent": 199,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b2e1fb85060228845b6be49fb4995f8b109d62f2479b476352718b40274a82e6/small.png",
+      "subtitle": "300 gram"
     },
     {
-      "id": "s1009818",
-      "naam": "Aviko zoete aardappel friet",
-      "prijs_cent": 369,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/80128bc9daf96f1301930e1ff52fd715a05c810736da112cb59e2e5b0cc1a391/small.png",
-      "subtitle": "450 gram"
+      "id": "s1016785",
+      "naam": "Picnic snelkook zilvervliesrijst",
+      "prijs_cent": 145,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5f5a6e76dff93d02d48fffbf97cebc8155e7ac76c029f312dc03fa0ac0f8dc32/small.png",
+      "subtitle": "1 kilo"
     },
     {
-      "id": "s1185594",
-      "naam": "Aviko frietvan't huis opa's friet",
-      "prijs_cent": 299,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/306c8ec9f3e1b2343da4b14dddbc1390a7508ff525ae58adedd0b7362ebbe51c/small.png",
-      "subtitle": "750 gram"
+      "id": "s1016844",
+      "naam": "Picnic snelkook zilvervliesrijst",
+      "prijs_cent": 99,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5effc2fc3bb03f3c00ba2a131d86352c95278a92957f9152d30f8518f8695c00/small.png",
+      "subtitle": "400 gram"
     },
     {
-      "id": "s1011212",
-      "naam": "Aviko SuperCrunch Franse frites",
-      "prijs_cent": 249,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/57cac9082f8388163b272d4902868c6c24da09fddc30de4b2592a8d0385aec66/small.png",
-      "subtitle": "750 gram"
-    },
-    {
-      "id": "s1013887",
-      "naam": "Aviko Griekse aardappelschotel",
-      "prijs_cent": 279,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c59da9a02aa4cfa78caae08c3a54e50ae264a824a15ee636f95528faf68bb02f/small.png",
-      "subtitle": "450 gram"
+      "id": "s1016712",
+      "naam": "Picnic bio snelkook zilvervliesrijst",
+      "prijs_cent": 99,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/411a8d82a0194968223e7d9c7e478be265268c56fc19202ded9341232e3f3302/small.png",
+      "subtitle": "400 gram"
     }
   ]
 }
