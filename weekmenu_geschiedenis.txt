@@ -86,7 +86,7 @@ zondag|Patat + Oude kaas stengels
 zondag|Patat + Kipnuggets
 zondag|Patat + Kipnuggets + Carrero + Mini kaassoufflé
 zondag|Patat + Carrero
-zondag|Patat + Oude kaas stengels
+zondag|Patat + Oude kaas stengels + Carrero
 vrijdag_veel|Kip curry met naanbrood
 vrijdag_veel|Ovenschotel aardappel, gehakt en groente
 vrijdag_veel|Aardappelblokjes met hamburger en broccoli
