@@ -60,8 +60,18 @@ from pathlib import Path
 RECEPTENBOEK_BESTAND = Path(__file__).parent / "receptenboek.txt"
 DAG_OPTIES_BESTAND = Path(__file__).parent / "dag_opties.txt"
 STANDAARDLIJST_BESTAND = Path(__file__).parent / "standaardlijst.txt"
+VOORRAAD_BESTAND = Path(__file__).parent / "voorraad.txt"
 GESCHIEDENIS_BESTAND = Path(__file__).parent / "weekmenu_geschiedenis.txt"
 BOODSCHAPPENLIJST = Path(__file__).parent / "boodschappenlijst.txt"
+
+# Voorraadartikelen (rijst, pasta, koffie, wc-papier, ...) gaan over veel
+# gerechten heen (een zak rijst van 1 kilo doe je misschien wel 10 gerechten
+# mee) — "dit gerecht gebruikt rijst" zegt dus niks over of je deze week
+# rijst nodig hebt. Een normale hoeveelheid voor zo'n artikel wordt daarom
+# NIET automatisch meegeteld in de boodschappenlijst; alleen een ongewoon
+# grote hoeveelheid voor één gerecht (bv. 10 eieren voor een bakrecept) is
+# duidelijk gerecht-specifieke vraag en telt gewoon mee.
+VOORRAAD_DREMPEL = 4
 
 AANTAL_PATROON = re.compile(r"^\s*(\d+)\s*[xX]\s*(.+)$")
 
@@ -233,6 +243,26 @@ def laad_standaardlijst() -> list:
             continue
         items.append(parse_aantal_naam(regel))
     return items
+
+
+def laad_voorraad_namen() -> set:
+    """Namen (lowercase) van alle voorraadartikelen uit voorraad.txt, plat
+    over alle categorieën heen. Bestand is optioneel bij dit
+    command-line-pad (i.h.t. de website is er hier geen sessie waarin je kan
+    aangeven wat er "bijna op" is — zie schrijf_boodschappenlijst)."""
+    if not VOORRAAD_BESTAND.exists():
+        return set()
+    namen = set()
+    for regel in VOORRAAD_BESTAND.read_text(encoding="utf-8").splitlines():
+        regel = regel.strip()
+        if not regel or regel.startswith("#") or re.match(r"^==\s*(.+?)\s*==$", regel):
+            continue
+        namen.add(regel.lower())
+    return namen
+
+
+def is_onderdrukbaar_voorraad_artikel(naam: str, aantal: int, voorraad_namen: set) -> bool:
+    return naam.lower() in voorraad_namen and aantal <= VOORRAAD_DREMPEL
 
 
 # ---------------------------------------------------------------------------
@@ -446,7 +476,14 @@ def stel_weekmenu_samen(pools: dict, dag_opties: dict, even_week: bool, geschied
 # Boodschappenlijst schrijven
 # ---------------------------------------------------------------------------
 
-def schrijf_boodschappenlijst(weekmenu: list, standaardlijst: list):
+def schrijf_boodschappenlijst(weekmenu: list, standaardlijst: list, voorraad_namen: set = None):
+    """Let op: dit command-line-pad kent geen website-sessie, dus er is hier
+    geen manier om aan te geven dat een voorraadartikel "bijna op" is — een
+    onderdrukt voorraadartikel komt via dit pad dus nooit op de
+    boodschappenlijst terecht, in tegenstelling tot de website (waar de
+    voorraadcheck dat als aanvulling regelt). Wie dit script los draait en
+    toch rijst/pasta/koffie e.d. nodig heeft, voegt dat zelf toe."""
+    voorraad_namen = voorraad_namen or set()
     totalen = {}
 
     def voeg_toe(naam: str, aantal: int):
@@ -459,6 +496,8 @@ def schrijf_boodschappenlijst(weekmenu: list, standaardlijst: list):
     for dag in weekmenu:
         for regel in dag["ingredienten"]:
             item = parse_aantal_naam(regel)
+            if is_onderdrukbaar_voorraad_artikel(item["naam"], item["aantal"], voorraad_namen):
+                continue
             voeg_toe(item["naam"], item["aantal"])
 
     for item in standaardlijst:
@@ -622,6 +661,7 @@ def main():
     receptenboek = laad_receptenboek()
     dag_opties = laad_dag_opties()
     standaardlijst = laad_standaardlijst()
+    voorraad_namen = laad_voorraad_namen()
     geschiedenis = laad_geschiedenis()
     even_week = is_even_week()
     pools = bepaal_pools(receptenboek)
@@ -636,7 +676,7 @@ def main():
     else:
         weekmenu = laat_gebruiker_aanpassen(weekmenu, pools, dag_opties, even_week, geschiedenis, receptenboek)
 
-    schrijf_boodschappenlijst(weekmenu, standaardlijst)
+    schrijf_boodschappenlijst(weekmenu, standaardlijst, voorraad_namen)
 
     # Geschiedenis bijwerken per categorie
     for dag in weekmenu:

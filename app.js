@@ -506,7 +506,31 @@ function zoekReceptenOpNaam(receptenboek, zoekterm) {
   return receptenboek.filter((g) => g.naam.toLowerCase().includes(z));
 }
 
-function berekenTotalen(weekmenu, producten) {
+// Voorraadartikelen (rijst, pasta, koffie, wc-papier, ...) gaan over veel
+// gerechten heen (een zak rijst van 1 kilo doe je misschien wel 10 gerechten
+// mee) — "dit gerecht gebruikt rijst" zegt dus niks over of je deze week
+// rijst nodig hebt. Een normale hoeveelheid voor zo'n artikel telt daarom
+// NIET automatisch mee in de boodschappenlijst; die komt er alleen bij via
+// de voorraadcheck (zie voorraadTeBestellen). Uitzondering: een ongewoon
+// grote hoeveelheid voor één gerecht (bv. 10 eieren voor een bakrecept) is
+// duidelijk gerecht-specifieke vraag, geen algemene voorraad-aanvulling —
+// die telt gewoon mee.
+const VOORRAAD_DREMPEL = 4;
+
+function voorraadArtikelNamen(voorraadCategorieen) {
+  const namen = new Set();
+  for (const categorie of voorraadCategorieen || []) {
+    for (const naam of categorie.items) namen.add(naam.toLowerCase());
+  }
+  return namen;
+}
+
+function isOnderdrukbaarVoorraadArtikel(naam, aantal, voorraadNamen) {
+  return voorraadNamen.has(naam.toLowerCase()) && aantal <= VOORRAAD_DREMPEL;
+}
+
+function berekenTotalen(weekmenu, producten, voorraadNamen) {
+  const namen = voorraadNamen || new Set();
   const totalen = new Map();
   function voegToe(naam, aantal) {
     const sleutel = naam.toLowerCase();
@@ -520,6 +544,7 @@ function berekenTotalen(weekmenu, producten) {
   for (const dag of weekmenu) {
     for (const regel of dag.ingredienten) {
       const item = parseAantalNaam(regel);
+      if (isOnderdrukbaarVoorraadArtikel(item.naam, item.aantal, namen)) continue;
       voegToe(item.naam, item.aantal);
     }
   }
@@ -547,8 +572,8 @@ function berekenIngredientHerkomst(weekmenu) {
   return herkomst;
 }
 
-function schrijfBoodschappenlijst(weekmenu, producten) {
-  const totalen = berekenTotalen(weekmenu, producten);
+function schrijfBoodschappenlijst(weekmenu, producten, voorraadNamen) {
+  const totalen = berekenTotalen(weekmenu, producten, voorraadNamen);
 
   const regels = ["# Weekmenu:"];
   for (const dag of weekmenu) regels.push(`#   ${dag.dag}: ${dag.naam}`);
@@ -803,6 +828,7 @@ let staat = {
   standaardlijstGewijzigd: false,
   voorraadCategorieen: [],
   voorraadStatus: {},
+  voorraadOpen: false,
   receptenboek: null,
   receptenboekHeader: "",
   receptenboekGewijzigd: false,
@@ -1062,6 +1088,19 @@ function renderVoorraad() {
     voorraadLijstEl.appendChild(maakEl("div", "std-footnote", "Geen voorraad.txt gevonden."));
     return;
   }
+
+  const laagAantal = voorraadTeBestellen().length;
+  voorraadLijstEl.appendChild(
+    maakKnop(
+      "ingredienten-toggle",
+      `${staat.voorraadOpen ? "▾" : "▸"} Voorraad bijwerken${laagAantal > 0 ? ` (${laagAantal} laag)` : ""}`,
+      () => {
+        staat.voorraadOpen = !staat.voorraadOpen;
+        renderVoorraad();
+      }
+    )
+  );
+  if (!staat.voorraadOpen) return;
 
   for (const categorie of staat.voorraadCategorieen) {
     voorraadLijstEl.appendChild(maakEl("div", "std-categorie-kop", categorie.naam));
@@ -1792,7 +1831,7 @@ function gekozenStandaardProducten() {
 
 function renderKassabon() {
   const producten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
-  const totalen = berekenTotalen(staat.weekmenu, producten);
+  const totalen = berekenTotalen(staat.weekmenu, producten, voorraadArtikelNamen(staat.voorraadCategorieen));
 
   kassabonEl.innerHTML = "";
   const bon = maakEl("div", "bon");
@@ -2325,6 +2364,7 @@ async function laadWeekmenuScherm() {
   staat.standaardlijstGewijzigd = false;
   staat.voorraadCategorieen = laadVoorraadCategorieen(voorraadTekst);
   staat.voorraadStatus = {};
+  staat.voorraadOpen = false;
   staat.geschiedenis = laadGeschiedenis(geschiedenisTekst);
   staat.evenWeek = isEvenWeek();
   staat.pools = bepaalPools(staat.receptenboek);
@@ -2455,7 +2495,7 @@ async function slaWeekmenuOp() {
   }
 
   const alleProducten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
-  const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten);
+  const lijstTekst = schrijfBoodschappenlijst(staat.weekmenu, alleProducten, voorraadArtikelNamen(staat.voorraadCategorieen));
   await githubPutFile("boodschappenlijst.txt", lijstTekst, "Weekmenu gekozen via de website");
 
   const nieuweGeschiedenis = werkGeschiedenisBij(staat.geschiedenis, staat.weekmenu);
