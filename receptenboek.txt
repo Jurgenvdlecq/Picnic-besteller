@@ -267,7 +267,7 @@ Tags: rijst
 
 Gerecht: Rundergehaktballen met zoete aardappel
 Vlees: rund
-Tags: aardappel-vlees-groente
+Tags: aardappel-vlees-groente, niet-meer-tonen
 1 x rundergehakt
 2 x zoete aardappel
 1 x ui
