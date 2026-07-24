@@ -1,61 +1,61 @@
 {
-  "zoekterm": "Zilvervliesrijst",
+  "zoekterm": "Appelmoes 0,0",
   "kandidaten": [
     {
-      "id": "s1006873",
-      "naam": "Lassie zilvervliesrijst",
-      "prijs_cent": 119,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5ecbc8a3cdc45352904ec70b3627caf9e350073ef5b0a75807a123e3e5f7a0e2/small.png",
-      "subtitle": "400 gram"
-    },
-    {
-      "id": "s1176444",
-      "naam": "Lassie zilvervliesrijst",
-      "prijs_cent": 225,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d488cd96603ed0d2ad1991c8234c1571d75561d812b990f4778467157505e750/small.png",
-      "subtitle": "750 gram"
-    },
-    {
-      "id": "s1090037",
-      "naam": "Lassie zilvervliesrijst bio",
-      "prijs_cent": 229,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3fa7395764d539d0927c4ad337efc512d489d9cf11475a5ac2e9f23c3818422e/small.png",
-      "subtitle": "375 gram"
-    },
-    {
-      "id": "s1016785",
-      "naam": "Picnic snelkook zilvervliesrijst",
-      "prijs_cent": 145,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5f5a6e76dff93d02d48fffbf97cebc8155e7ac76c029f312dc03fa0ac0f8dc32/small.png",
-      "subtitle": "1 kilo"
-    },
-    {
-      "id": "s1006783",
-      "naam": "Lassie zilvervliesrijst builtjes",
+      "id": "s1010633",
+      "naam": "Picnic appelmoes 0%",
       "prijs_cent": 199,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b2e1fb85060228845b6be49fb4995f8b109d62f2479b476352718b40274a82e6/small.png",
-      "subtitle": "300 gram"
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6fe56b6d7a92f1967237705e5f058b8045b4cf35c11c0b8e6f72ace851f5fd5c/small.png",
+      "subtitle": "8 x 100 gram"
     },
     {
-      "id": "s1016785",
-      "naam": "Picnic snelkook zilvervliesrijst",
-      "prijs_cent": 145,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5f5a6e76dff93d02d48fffbf97cebc8155e7ac76c029f312dc03fa0ac0f8dc32/small.png",
-      "subtitle": "1 kilo"
+      "id": "s1010613",
+      "naam": "Picnic appelmoes 0%",
+      "prijs_cent": 85,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0e7d9d94d0fcf04dc62d839de8f2be1ff53d772b7e5c03e342f2bebe4ae4ca71/small.png",
+      "subtitle": "350 gram"
     },
     {
-      "id": "s1016844",
-      "naam": "Picnic snelkook zilvervliesrijst",
-      "prijs_cent": 99,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5effc2fc3bb03f3c00ba2a131d86352c95278a92957f9152d30f8518f8695c00/small.png",
-      "subtitle": "400 gram"
+      "id": "s1010563",
+      "naam": "Picnic appelmoes 0%",
+      "prijs_cent": 149,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ceecb2f5df1117ccf6e643652d48f8fb0c7da0d3aa53cebb5a06715933b2f25e/small.png",
+      "subtitle": "710 gram"
     },
     {
-      "id": "s1016712",
-      "naam": "Picnic bio snelkook zilvervliesrijst",
-      "prijs_cent": 99,
-      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/411a8d82a0194968223e7d9c7e478be265268c56fc19202ded9341232e3f3302/small.png",
-      "subtitle": "400 gram"
+      "id": "s1018517",
+      "naam": "Servero appelmoes 100%",
+      "prijs_cent": 159,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a563b63d5ab7e47c4ab8c5f02c9275ee8eb8fe801cb44e72e28bfce00a465659/small.png",
+      "subtitle": "350 gram"
+    },
+    {
+      "id": "s1010210",
+      "naam": "Picnic bio appelmoes 0%",
+      "prijs_cent": 119,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a84b42d931a66853cfb10d24550cc15d575854cfea0a48b56279fdf82e2de6b1/small.png",
+      "subtitle": "350 gram"
+    },
+    {
+      "id": "s1016827",
+      "naam": "Hak appelmoes 0% suiker",
+      "prijs_cent": 249,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b4695c84b4c8472609c678cc696afdc8895eca592383500141b2e7486615e7ae/small.png",
+      "subtitle": "350 gram"
+    },
+    {
+      "id": "s1008399",
+      "naam": "Hak appelmoes light",
+      "prijs_cent": 239,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/26017eb5690cd0d6adde5e0c0c5063b50d5f1873b14288c32383a98521de65d6/small.png",
+      "subtitle": "350 gram"
+    },
+    {
+      "id": "s1005178",
+      "naam": "Hak appelmoes kaneel",
+      "prijs_cent": 239,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/875d8611defe1b611166fe0ed48344d2d694b0a18826ba77c58a1444e1976162/small.png",
+      "subtitle": "355 gram"
     }
   ]
 }
