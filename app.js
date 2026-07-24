@@ -1849,6 +1849,24 @@ function bouwIngredientenSectie(kaart, dag, index) {
 
 function renderWeekmenu() {
   dagenEl.innerHTML = "";
+
+  if (staat.weekmenu.length === 0) {
+    // Kan voorkomen na "Winkelwagentje legen" (reset het weekplan) — zonder
+    // dit was er dan geen enkele dagkaart meer zichtbaar en dus ook geen
+    // manier om weer een gerecht te kiezen.
+    const leeg = maakEl("div", "kaart");
+    leeg.appendChild(maakEl("div", "std-footnote", "Nog geen weekmenu samengesteld voor deze week."));
+    leeg.appendChild(
+      maakKnop("secundair", "Weekmenu samenstellen", () => {
+        staat.weekmenu = stelWeekmenuSamen(staat.pools, staat.dagOpties, staat.evenWeek, staat.geschiedenis);
+        ververs();
+      })
+    );
+    dagenEl.appendChild(leeg);
+    renderGerechtenSamenvatting();
+    return;
+  }
+
   staat.weekmenu.forEach((dag, index) => {
     if (POOL_VOOR_CATEGORIE[dag.categorie]) {
       dagenEl.appendChild(bouwGerechtKaart(dag, index));
