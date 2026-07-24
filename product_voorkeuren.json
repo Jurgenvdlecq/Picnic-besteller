@@ -325,6 +325,16 @@
       "bron": "expliciet",
       "bevestigd": 1,
       "laatst": "2026-07-24T07:54:58.956Z"
+    },
+    "koffiecups": {
+      "id": "s1012887",
+      "naam": "Picnic lungo forte",
+      "prijs_cent": 529,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/903e4c2ba992af0d2c10594d88816f580810b3271c1b7f1f614f0542c49a4db8/small.png",
+      "subtitle": "20 cups",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-24T07:59:46.166Z"
     }
   },
   "gerecht_ingredient": {}
