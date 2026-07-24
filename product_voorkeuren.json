@@ -312,6 +312,16 @@
       "bron": "expliciet",
       "bevestigd": 1,
       "laatst": "2026-07-24T07:53:20.868Z"
+    },
+    "appelmoes": {
+      "id": "s1010633",
+      "naam": "Picnic appelmoes 0%",
+      "prijs_cent": 199,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6fe56b6d7a92f1967237705e5f058b8045b4cf35c11c0b8e6f72ace851f5fd5c/small.png",
+      "subtitle": "8 x 100 gram",
+      "bron": "expliciet",
+      "bevestigd": 1,
+      "laatst": "2026-07-24T07:54:58.956Z"
     }
   },
   "gerecht_ingredient": {}
