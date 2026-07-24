@@ -113,6 +113,31 @@ function maakKnop(className, tekst, onClick) {
   return knop;
 }
 
+// Kleine, consistente set lichtgewicht SVG-iconen (stroke-based, in de
+// geest van Lucide) voor de overzicht-pagina en onderste navigatie — puur
+// inline, geen externe iconenset-dependency nodig.
+const ICOON_SVG = {
+  home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9v-6h6v6h2.5a1 1 0 0 0 1-1v-9"/>',
+  utensils: '<path d="M7 3v7a1.5 1.5 0 0 0 3 0V3"/><path d="M8.5 3v18"/><path d="M8.5 10v0"/><path d="M16 3c-1.2 0-2 1.5-2 4s.8 4 2 4v10"/>',
+  basket: '<path d="M4 10h16l-1.5 9a1.5 1.5 0 0 1-1.5 1.3H7A1.5 1.5 0 0 1 5.5 19L4 10Z"/><path d="M8 10 9.5 4h5L16 10"/><path d="M9 14v3"/><path d="M15 14v3"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+  meer: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
+  plusCircle: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  clipboardList: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="M9 10h6M9 14h6M9 18h3"/>',
+  package: '<path d="M3.5 8 12 3.5 20.5 8 12 12.5 3.5 8Z"/><path d="M3.5 8v9L12 21.5 20.5 17V8"/><path d="M12 12.5V21.5"/>',
+  refresh: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/>',
+  calendar: '<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/>',
+  bell: '<path d="M7 9a5 5 0 0 1 10 0c0 4 1.5 5.5 1.5 5.5H5.5S7 13 7 9Z"/><path d="M10.3 18a1.7 1.7 0 0 0 3.4 0"/>',
+  truck: '<rect x="2.5" y="7" width="12" height="10" rx="1"/><path d="M14.5 10.5H18l3 3V17h-2"/><circle cx="7" cy="18.5" r="1.6"/><circle cx="17" cy="18.5" r="1.6"/>',
+  chevronRight: '<path d="M9 5l7 7-7 7"/>',
+  alertTriangle: '<path d="M12 4 3 20h18L12 4Z"/><path d="M12 10v4"/><circle cx="12" cy="17" r="0.7" fill="currentColor" stroke="none"/>',
+};
+
+function icoonSvg(naam, extraClass) {
+  const inhoud = ICOON_SVG[naam] || ICOON_SVG.meer;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"${extraClass ? ` class="${extraClass}"` : ""}>${inhoud}</svg>`;
+}
+
 // ---------------------------------------------------------------------------
 // Inlezen en parsen (spiegelt weekmenu.py exact)
 // ---------------------------------------------------------------------------
@@ -843,9 +868,9 @@ const schermPin = document.getElementById("scherm-pin");
 const schermToken = document.getElementById("scherm-token");
 const schermLaden = document.getElementById("scherm-laden");
 const appEl = document.getElementById("app");
+const headerTopEl = document.getElementById("header-top");
 const dagenEl = document.getElementById("dagen");
 const weekInfoEl = document.getElementById("week-info");
-const stappenIndicatorEl = document.getElementById("stappen-indicator");
 const laatstBesteldEl = document.getElementById("laatst-besteld");
 const standaardLijstEl = document.getElementById("standaard-lijst");
 const standaardOpslaanKnop = document.getElementById("standaard-opslaan-knop");
@@ -860,16 +885,33 @@ const statusEl = document.getElementById("status");
 const losseLijstEl = document.getElementById("losse-lijst");
 const losNaamEl = document.getElementById("los-naam");
 const losAantalEl = document.getElementById("los-aantal");
+const overzichtSchermEl = document.getElementById("overzicht-scherm");
 const weekmenuSchermEl = document.getElementById("weekmenu-scherm");
 const voorraadSchermEl = document.getElementById("voorraad-scherm");
 const controleSchermEl = document.getElementById("controle-scherm");
+const meerSchermEl = document.getElementById("meer-scherm");
 const controleLijstEl = document.getElementById("controle-lijst");
 const controleLosNaamEl = document.getElementById("controle-los-naam");
 const controleLosAantalEl = document.getElementById("controle-los-aantal");
-const terugKnop = document.getElementById("terug-knop");
+const actieKnopWrapEl = document.getElementById("bestel-knop-wrap");
 const actieKnop = document.getElementById("actie-knop");
+const onderNavEl = document.getElementById("onder-nav");
+const ovGroetEl = document.getElementById("ov-groet");
+const ovTitelEl = document.getElementById("ov-titel");
+const ovSubtitelEl = document.getElementById("ov-subtitel");
+const ovBelKnopEl = document.getElementById("ov-bel-knop");
+const ovBelIcoonEl = document.getElementById("ov-bel-icoon");
+const ovBelBadgeEl = document.getElementById("ov-bel-badge");
+const ovStatskaartenEl = document.getElementById("ov-statskaarten");
+const ovPrimaireActiesEl = document.getElementById("ov-primaire-acties");
+const ovSnelleActiesEl = document.getElementById("ov-snelle-acties");
+const ovVolgendeWrapEl = document.getElementById("ov-volgende-wrap");
+const meerTokenStatusEl = document.getElementById("meer-token-status");
+const meerTokenWijzigKnop = document.getElementById("meer-token-wijzig-knop");
+const meerVoorkeurenDetailEl = document.getElementById("meer-voorkeuren-detail");
+const meerLaatsteBestellingEl = document.getElementById("meer-laatste-bestelling");
 
-const STAP_VOLGORDE = ["weekmenu", "voorraad", "controleren"];
+const TABS = ["overzicht", "gerechten", "boodschappen", "controle", "meer"];
 
 let staat = {
   pools: null,
@@ -895,7 +937,7 @@ let staat = {
   laatsteWeekmenu: null,
   beoordelingen: {},
   productVoorkeuren: { ingredient: {}, gerecht_ingredient: {} },
-  stap: "weekmenu",
+  tab: "overzicht",
   productVoorstellen: null,
   productKeuzeIndex: {},
 };
@@ -926,42 +968,48 @@ function ververs() {
   renderBeoordelingBlok();
   renderReceptenbeheer();
   renderKassabon();
+  renderOverzicht();
+  renderMeer();
 }
 
-function gaNaarStap(stap) {
-  staat.stap = stap;
-  weekmenuSchermEl.classList.toggle("verborgen", stap !== "weekmenu");
-  voorraadSchermEl.classList.toggle("verborgen", stap !== "voorraad");
-  controleSchermEl.classList.toggle("verborgen", stap !== "controleren");
-  terugKnop.classList.toggle("verborgen", stap === "weekmenu");
+// Navigatie: 5 vaste tabs (onderin) i.p.v. de vorige lineaire 3-stappen-
+// wizard met Terug/Volgende. Elke tab toont zijn eigen scherm; de
+// contextuele actieknop-balk (zoeken/bestellen) verschijnt alleen op de
+// tabs waar dat een zinnige, eenduidige actie is.
+function gaNaarTab(tab) {
+  staat.tab = tab;
+  overzichtSchermEl.classList.toggle("verborgen", tab !== "overzicht");
+  weekmenuSchermEl.classList.toggle("verborgen", tab !== "gerechten");
+  voorraadSchermEl.classList.toggle("verborgen", tab !== "boodschappen");
+  controleSchermEl.classList.toggle("verborgen", tab !== "controle");
+  meerSchermEl.classList.toggle("verborgen", tab !== "meer");
+  if (headerTopEl) headerTopEl.classList.toggle("verborgen", tab === "overzicht");
 
-  stappenIndicatorEl.querySelectorAll(".stap-bolletje").forEach((el) => {
-    const idx = STAP_VOLGORDE.indexOf(el.dataset.stap);
-    const huidigeIdx = STAP_VOLGORDE.indexOf(stap);
-    el.classList.toggle("actief", el.dataset.stap === stap);
-    el.classList.toggle("voltooid", idx < huidigeIdx);
+  onderNavEl.querySelectorAll(".nav-item").forEach((el) => {
+    el.classList.toggle("actief", el.dataset.tab === tab);
   });
 
   statusEl.textContent = "";
-  if (stap === "weekmenu") {
-    actieKnop.textContent = "Volgende: voorraad";
-    actieKnop.onclick = () => gaNaarStap("voorraad");
-  } else if (stap === "voorraad") {
+  if (tab === "boodschappen") {
+    actieKnopWrapEl.classList.remove("verborgen");
     actieKnop.textContent = "Zoek producten op";
     actieKnop.onclick = startZoeken;
-  } else if (stap === "controleren") {
+  } else if (tab === "controle") {
+    actieKnopWrapEl.classList.remove("verborgen");
     renderControleScherm();
     actieKnop.textContent = "Definitief bestellen bij Picnic";
     actieKnop.onclick = bevestigBestelling;
+  } else {
+    actieKnopWrapEl.classList.add("verborgen");
   }
+
+  if (tab === "overzicht") renderOverzicht();
+  if (tab === "meer") renderMeer();
 }
 
-terugKnop.onclick = () => {
-  const huidigeIdx = STAP_VOLGORDE.indexOf(staat.stap);
-  if (huidigeIdx <= 0) return;
-  if (staat.stap === "controleren") wisControleStaat();
-  gaNaarStap(STAP_VOLGORDE[huidigeIdx - 1]);
-};
+onderNavEl.querySelectorAll(".nav-item").forEach((el) => {
+  el.onclick = () => gaNaarTab(el.dataset.tab);
+});
 
 // --- Kop: week-info + laatst besteld ---
 
@@ -974,6 +1022,272 @@ function renderKopInfo() {
     laatstBesteldEl.textContent = "Nog niet eerder besteld";
   }
 }
+
+// --- Overzicht (hoofdpagina) ---
+
+function overzichtOpenstaandeBeoordelingen() {
+  if (!staat.laatsteWeekmenu || !staat.laatsteWeekmenu.gerechten) return [];
+  return staat.laatsteWeekmenu.gerechten.filter((naam) => {
+    const b = staat.beoordelingen[naam];
+    if (!b || !b.laatst) return true;
+    return new Date(b.laatst) < new Date(staat.laatsteWeekmenu.datum);
+  });
+}
+
+function bouwOvActieKnop(a) {
+  const knop = document.createElement("button");
+  knop.type = "button";
+  knop.className = "ov-actie";
+  const icoon = maakEl("div", `ov-actie-icoon ov-tint-${a.kleur}`);
+  icoon.innerHTML = icoonSvg(a.icoon);
+  knop.appendChild(icoon);
+  const tekst = maakEl("div", "ov-actie-tekst");
+  const titelRij = maakEl("div", "ov-actie-titel-rij");
+  titelRij.appendChild(maakEl("span", "ov-actie-titel", a.titel));
+  if (a.badge) titelRij.appendChild(maakEl("span", "ov-actie-badge", a.badge));
+  tekst.appendChild(titelRij);
+  tekst.appendChild(maakEl("div", "ov-actie-sub", a.sub));
+  knop.appendChild(tekst);
+  const chevron = maakEl("div", "ov-actie-chevron");
+  chevron.innerHTML = icoonSvg("chevronRight");
+  knop.appendChild(chevron);
+  knop.onclick = a.onClick;
+  return knop;
+}
+
+function bouwOvSnelKnop(a) {
+  const knop = document.createElement("button");
+  knop.type = "button";
+  knop.className = "ov-snel-knop";
+  const icoon = maakEl("div", `ov-snel-icoon ov-tint-${a.kleur}`);
+  icoon.innerHTML = icoonSvg(a.icoon);
+  knop.appendChild(icoon);
+  knop.appendChild(maakEl("div", "ov-snel-label", a.label));
+  knop.onclick = a.onClick;
+  return knop;
+}
+
+function renderOverzicht() {
+  if (!ovTitelEl) return;
+
+  const uur = new Date().getHours();
+  ovGroetEl.textContent = uur < 12 ? "Goedemorgen!" : uur < 18 ? "Goedemiddag!" : "Goedenavond!";
+  ovTitelEl.textContent = "Jouw boodschappen";
+  ovSubtitelEl.textContent =
+    staat.laatsteBestelling && staat.laatsteBestelling.datum
+      ? `Laatst besteld: ${relatieveTijd(staat.laatsteBestelling.datum)}`
+      : "Nog niet eerder besteld";
+
+  // Notificatiebel: alleen tonen bij een echte, actionable waarschuwing.
+  const belAantal =
+    (staat.laatsteBestelling && staat.laatsteBestelling.status === "mislukt" ? 1 : 0) +
+    (staat.laatsteBestelling && staat.laatsteBestelling.niet_gevonden ? staat.laatsteBestelling.niet_gevonden.length : 0);
+  if (!ovBelIcoonEl.innerHTML) ovBelIcoonEl.innerHTML = icoonSvg("bell");
+  ovBelKnopEl.classList.toggle("verborgen", belAantal === 0);
+  if (belAantal > 0) {
+    ovBelBadgeEl.textContent = String(belAantal);
+    ovBelKnopEl.onclick = () => {
+      gaNaarTab("overzicht");
+      waarschuwingenEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+  }
+
+  // Samenvattingskaarten — echte data; bedrag/controleren pas na "Zoek
+  // producten op" (daarvoor is er simpelweg nog geen betrouwbaar cijfer).
+  const gerechtenAantal = staat.weekmenu.length;
+  let productenAantal;
+  let controlerenAantal = null;
+  let bedragTekst = null;
+
+  if (staat.productVoorstellen) {
+    const namen = Object.keys(staat.productVoorstellen).filter((n) => {
+      const info = staat.productVoorstellen[n];
+      return !info.verwijderd && !info.geparkeerd;
+    });
+    productenAantal = namen.length;
+    const herkomst = berekenIngredientHerkomst(staat.weekmenu);
+    let aandacht = 0;
+    let totaalCent = 0;
+    let onbekend = false;
+    for (const naam of namen) {
+      const info = staat.productVoorstellen[naam];
+      const kandidaten = info.kandidaten || [];
+      const idx = staat.productKeuzeIndex[naam] ?? 0;
+      const gekozen = kandidaten[idx];
+      if (!gekozen || info.nieuw || heeftVoorkeurMismatch(naam, gekozen)) aandacht++;
+      if (gekozen && typeof gekozen.prijs_cent === "number") {
+        totaalCent += gekozen.prijs_cent * bepaalTeBestellenAantal(info.aantal, gekozen, herkomst.has(naam.toLowerCase()));
+      } else {
+        onbekend = true;
+      }
+    }
+    controlerenAantal = aandacht;
+    bedragTekst = onbekend ? null : `± €${(totaalCent / 100).toFixed(2).replace(".", ",")}`;
+  } else {
+    const alleProducten = [...gekozenStandaardProducten(), ...voorraadTeBestellen(), ...staat.losseProducten];
+    productenAantal = berekenTotalen(staat.weekmenu, alleProducten, voorraadArtikelNamen(staat.voorraadCategorieen)).length;
+  }
+
+  const kaarten = [
+    { icoon: "utensils", kleur: "green", waarde: String(gerechtenAantal), label: "gerechten" },
+    { icoon: "basket", kleur: "blue", waarde: String(productenAantal), label: "producten" },
+  ];
+  if (controlerenAantal !== null) {
+    kaarten.push({ icoon: "alertTriangle", kleur: "orange", waarde: String(controlerenAantal), label: "controleren" });
+  }
+  if (bedragTekst) {
+    kaarten.push({ icoon: null, kleur: "purple", waarde: bedragTekst, label: "totaalbedrag" });
+  }
+
+  ovStatskaartenEl.innerHTML = "";
+  for (const k of kaarten) {
+    const kaart = maakEl("div", "ov-statkaart");
+    const icoon = maakEl("div", `ov-statkaart-icoon ov-tint-${k.kleur}`);
+    icoon.innerHTML = k.icoon ? icoonSvg(k.icoon) : `<span style="font-weight:800;">€</span>`;
+    kaart.appendChild(icoon);
+    kaart.appendChild(maakEl("div", "ov-statkaart-waarde", k.waarde));
+    kaart.appendChild(maakEl("div", "ov-statkaart-label", k.label));
+    ovStatskaartenEl.appendChild(kaart);
+  }
+
+  // Primaire acties
+  ovPrimaireActiesEl.innerHTML = "";
+  ovPrimaireActiesEl.appendChild(
+    bouwOvActieKnop({
+      icoon: "utensils",
+      kleur: "green",
+      titel: "Gerechten kiezen",
+      sub: "Bekijk, vervang of pas je gerechten aan",
+      onClick: () => gaNaarTab("gerechten"),
+    })
+  );
+  ovPrimaireActiesEl.appendChild(
+    bouwOvActieKnop({
+      icoon: "basket",
+      kleur: "blue",
+      titel: "Boodschappen controleren",
+      sub: "Controleer producten, hoeveelheden en verpakkingen",
+      badge: controlerenAantal ? `${controlerenAantal} controleren` : null,
+      onClick: () => gaNaarTab("controle"),
+    })
+  );
+  ovPrimaireActiesEl.appendChild(
+    bouwOvActieKnop({
+      icoon: "truck",
+      kleur: "red",
+      titel: "Toevoegen aan Picnic",
+      sub: "Verstuur je boodschappenlijst naar Picnic",
+      onClick: () => gaNaarTab("controle"),
+    })
+  );
+
+  // Snelle acties
+  ovSnelleActiesEl.innerHTML = "";
+  ovSnelleActiesEl.appendChild(
+    bouwOvSnelKnop({
+      icoon: "plusCircle",
+      kleur: "blue",
+      label: "Los product toevoegen",
+      onClick: () => {
+        gaNaarTab("boodschappen");
+        setTimeout(() => losNaamEl && losNaamEl.focus(), 50);
+      },
+    })
+  );
+  ovSnelleActiesEl.appendChild(
+    bouwOvSnelKnop({
+      icoon: "clipboardList",
+      kleur: "orange",
+      label: "Vaste boodschappen",
+      onClick: () => gaNaarTab("boodschappen"),
+    })
+  );
+  ovSnelleActiesEl.appendChild(
+    bouwOvSnelKnop({
+      icoon: "package",
+      kleur: "green",
+      label: "Voorraad controleren",
+      onClick: () => {
+        staat.voorraadOpen = true;
+        gaNaarTab("boodschappen");
+        renderVoorraad();
+      },
+    })
+  );
+  const openstaand = overzichtOpenstaandeBeoordelingen();
+  ovSnelleActiesEl.appendChild(
+    openstaand.length > 0
+      ? bouwOvSnelKnop({
+          icoon: "refresh",
+          kleur: "purple",
+          label: "Vorige week beoordelen",
+          onClick: () => gaNaarTab("gerechten"),
+        })
+      : bouwOvSnelKnop({
+          icoon: "refresh",
+          kleur: "purple",
+          label: "Recepten beheren",
+          onClick: () => {
+            staat.receptenbeheerOpen = true;
+            gaNaarTab("meer");
+            renderReceptenbeheer();
+          },
+        })
+  );
+
+  // Automatiseringskaart (enige echte, bekende "volgende afspraak": de
+  // zondag-check — er is geen Picnic-bezorgmoment-data in deze app).
+  ovVolgendeWrapEl.innerHTML = "";
+  const nu = new Date();
+  const dagenTotZondag = (7 - nu.getDay()) % 7 || 7;
+  const volgendeKaart = maakEl("div", "ov-volgende");
+  const volgendeIcoon = maakEl("div", "ov-volgende-icoon");
+  volgendeIcoon.innerHTML = icoonSvg("calendar");
+  volgendeKaart.appendChild(volgendeIcoon);
+  const volgendeTekst = maakEl("div", "ov-volgende-tekst");
+  volgendeTekst.appendChild(maakEl("div", "ov-volgende-titel", "Automatische controle"));
+  volgendeTekst.appendChild(
+    maakEl("div", "ov-volgende-sub", "Zondag: al bevestigd? Niets nodig. Anders krijg je alleen een herinnering.")
+  );
+  volgendeKaart.appendChild(volgendeTekst);
+  volgendeKaart.appendChild(
+    maakEl("div", "ov-volgende-badge", `Over ${dagenTotZondag} dag${dagenTotZondag === 1 ? "" : "en"}`)
+  );
+  ovVolgendeWrapEl.appendChild(volgendeKaart);
+}
+
+// --- "Meer"-scherm ---
+
+function renderMeer() {
+  if (!meerTokenStatusEl) return;
+
+  meerTokenStatusEl.textContent = localStorage.getItem(TOKEN_KEY) ? "Ingesteld op dit toestel" : "Nog niet ingesteld";
+
+  const aantalVoorkeuren =
+    staat.productVoorkeuren && staat.productVoorkeuren.ingredient ? Object.keys(staat.productVoorkeuren.ingredient).length : 0;
+  meerVoorkeurenDetailEl.textContent =
+    aantalVoorkeuren > 0 ? `${aantalVoorkeuren} ingrediënt${aantalVoorkeuren === 1 ? "" : "en"} met een geleerde voorkeur` : "Nog geen voorkeuren geleerd";
+
+  if (staat.laatsteBestelling && staat.laatsteBestelling.datum) {
+    const statusLabel =
+      staat.laatsteBestelling.status === "voltooid" ? "Geslaagd" : staat.laatsteBestelling.status === "mislukt" ? "Mislukt" : staat.laatsteBestelling.status;
+    meerLaatsteBestellingEl.textContent = `${statusLabel} · ${relatieveTijd(staat.laatsteBestelling.datum)}`;
+  } else {
+    meerLaatsteBestellingEl.textContent = "Nog geen bestelling geplaatst";
+  }
+}
+
+if (meerTokenWijzigKnop) {
+  meerTokenWijzigKnop.onclick = () => {
+    if (!confirm("Weet je zeker dat je de opgeslagen GitHub-sleutel wilt verwijderen? Je moet 'm dan opnieuw invoeren.")) return;
+    localStorage.removeItem(TOKEN_KEY);
+    location.reload();
+  };
+}
+
+document.querySelectorAll(".nav-icoon[data-icoon]").forEach((el) => {
+  el.innerHTML = icoonSvg(el.dataset.icoon);
+});
 
 // --- Standaardlijst ---
 
@@ -2472,7 +2786,7 @@ async function laadWeekmenuScherm() {
     staat.productKeuzeIndex = bewaard.productKeuzeIndex;
     renderLosseProducten();
   }
-  gaNaarStap(bewaard ? "controleren" : "weekmenu");
+  gaNaarTab(bewaard ? "controle" : "overzicht");
   toonScherm(appEl);
 }
 
@@ -2587,7 +2901,7 @@ async function startZoeken() {
     staat.productKeuzeIndex = {};
     pasProductVoorkeurenToe();
     statusEl.textContent = "";
-    gaNaarStap("controleren");
+    gaNaarTab("controle");
   } catch (e) {
     statusEl.textContent = "Er ging iets mis: " + e.message;
   } finally {

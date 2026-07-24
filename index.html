@@ -32,25 +32,51 @@
   </div>
 
   <div id="app" class="verborgen">
-    <header class="top">
+    <header class="top" id="header-top">
       <div class="eyebrow">Picnic · deze week</div>
       <h1>Weekplanner</h1>
       <p id="week-info"></p>
       <div class="kop-rij">
-        <div class="stappen-indicator" id="stappen-indicator">
-          <span class="stap-bolletje" data-stap="weekmenu">1</span>
-          <span class="stap-bolletje" data-stap="voorraad">2</span>
-          <span class="stap-bolletje" data-stap="controleren">3</span>
-        </div>
         <div class="laatst-besteld" id="laatst-besteld"></div>
       </div>
     </header>
 
-    <div id="weekmenu-scherm">
+    <div id="waarschuwingen"></div>
+
+    <div id="overzicht-scherm">
+      <main class="ov-wrap">
+        <div class="ov-kop">
+          <div class="ov-kop-tekst">
+            <p class="ov-groet" id="ov-groet"></p>
+            <h1 class="ov-titel" id="ov-titel">Jouw boodschappen</h1>
+            <p class="ov-subtitel" id="ov-subtitel"></p>
+          </div>
+          <button id="ov-bel-knop" class="ov-bel verborgen" type="button" aria-label="Meldingen">
+            <span class="ov-bel-icoon" id="ov-bel-icoon"></span>
+            <span class="ov-bel-badge" id="ov-bel-badge"></span>
+          </button>
+        </div>
+
+        <div class="ov-statskaarten" id="ov-statskaarten"></div>
+
+        <section class="ov-kaart">
+          <div class="ov-kaart-titel">Wat wil je doen?</div>
+          <div class="ov-acties" id="ov-primaire-acties"></div>
+        </section>
+
+        <section class="ov-sectie">
+          <div class="ov-sectie-titel">Snelle acties</div>
+          <div class="ov-snel-grid" id="ov-snelle-acties"></div>
+        </section>
+
+        <div id="ov-volgende-wrap"></div>
+      </main>
+    </div>
+
+    <div id="weekmenu-scherm" class="verborgen">
       <main id="dagen-wrap">
         <div id="beoordeling-blok"></div>
         <div id="dagen"></div>
-        <div id="receptenbeheer"></div>
       </main>
     </div>
 
@@ -113,18 +139,93 @@
         </div>
         <div class="std-footnote">
           Deze lijst is al opgeslagen als het plan voor deze week. Bevestig
-          hieronder om nu te bestellen — laat je het staan, dan wordt dit
-          automatisch besteld op zondagochtend.
+          hieronder om nu te versturen naar Picnic — laat je het staan zonder
+          te bevestigen, dan krijg je zondag alleen een herinnering (er wordt
+          nooit stilzwijgend besteld).
         </div>
       </div>
     </div>
 
-    <div id="bestel-knop-wrap">
-      <div id="waarschuwingen"></div>
-      <div id="status"></div>
-      <button id="terug-knop" class="secundair verborgen">‹ Terug</button>
-      <button id="actie-knop">Volgende: voorraad</button>
+    <div id="meer-scherm" class="verborgen">
+      <main class="meer-wrap">
+        <section class="ov-sectie">
+          <div class="ov-sectie-titel">Recepten</div>
+          <div id="receptenbeheer"></div>
+        </section>
+
+        <section class="ov-sectie">
+          <div class="ov-sectie-titel">Account</div>
+          <div class="meer-kaart">
+            <div class="meer-rij">
+              <div>
+                <div class="meer-rij-titel">GitHub-sleutel</div>
+                <div class="meer-rij-detail" id="meer-token-status">Ingesteld op dit toestel</div>
+              </div>
+              <button id="meer-token-wijzig-knop" class="secundair meer-rij-knop">Wijzigen</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="ov-sectie">
+          <div class="ov-sectie-titel">Productvoorkeuren</div>
+          <div class="meer-kaart">
+            <div class="meer-rij">
+              <div>
+                <div class="meer-rij-titel">Geleerde voorkeuren</div>
+                <div class="meer-rij-detail" id="meer-voorkeuren-detail">—</div>
+              </div>
+            </div>
+            <div class="std-footnote">Wordt automatisch bijgehouden: elke definitieve bestelling wordt de nieuwe standaardkeuze voor dat ingrediënt.</div>
+          </div>
+        </section>
+
+        <section class="ov-sectie">
+          <div class="ov-sectie-titel">Status &amp; automatisering</div>
+          <div class="meer-kaart">
+            <div class="meer-rij">
+              <div>
+                <div class="meer-rij-titel">Laatste bestelling</div>
+                <div class="meer-rij-detail" id="meer-laatste-bestelling">—</div>
+              </div>
+            </div>
+            <div class="std-footnote">
+              Elke zondagochtend controleert een automatische actie of je die
+              week al hebt bevestigd. Zo niet, dan krijg je een herinnering
+              (GitHub Issue) — er wordt nooit automatisch en ongecontroleerd
+              besteld.
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
+
+    <div id="bestel-knop-wrap" class="verborgen">
+      <div id="status"></div>
+      <button id="actie-knop">Volgende</button>
+    </div>
+
+    <nav id="onder-nav" aria-label="Hoofdnavigatie">
+      <button class="nav-item" data-tab="overzicht" type="button">
+        <span class="nav-icoon" data-icoon="home"></span>
+        <span class="nav-label">Overzicht</span>
+      </button>
+      <button class="nav-item" data-tab="gerechten" type="button">
+        <span class="nav-icoon" data-icoon="utensils"></span>
+        <span class="nav-label">Gerechten</span>
+      </button>
+      <button class="nav-item" data-tab="boodschappen" type="button">
+        <span class="nav-icoon" data-icoon="basket"></span>
+        <span class="nav-label">Boodschappen</span>
+      </button>
+      <button class="nav-item" data-tab="controle" type="button">
+        <span class="nav-icoon" data-icoon="check"></span>
+        <span class="nav-label">Controle</span>
+      </button>
+      <button class="nav-item" data-tab="meer" type="button">
+        <span class="nav-icoon" data-icoon="meer"></span>
+        <span class="nav-label">Meer</span>
+      </button>
+    </nav>
   </div>
 
   <div id="toast-wrap"></div>

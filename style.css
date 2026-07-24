@@ -18,6 +18,31 @@
   --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* --- Overzicht (hoofdpagina) + onderste navigatie: eigen --ov-*-tokens,
+     bewust in hetzelfde :root-blok i.p.v. een los blok (een los tweede
+     :root{}-blok verderop in dit bestand bleek door Chromium stilzwijgend
+     genegeerd te worden — zie de git-geschiedenis). --- */
+  --ov-bg: #f6f7f9;
+  --ov-surface: #ffffff;
+  --ov-text: #111827;
+  --ov-text-secondary: #6b7280;
+  --ov-border: #e5e7eb;
+  --ov-primary: #e2001a;
+  --ov-primary-soft: #fde8e9;
+  --ov-green: #16a34a;
+  --ov-green-soft: #e3f6e9;
+  --ov-blue: #2563eb;
+  --ov-blue-soft: #e6edfe;
+  --ov-orange: #d97706;
+  --ov-orange-soft: #fdf0dc;
+  --ov-purple: #7c3aed;
+  --ov-purple-soft: #efe6fd;
+  --ov-radius-s: 12px;
+  --ov-radius-m: 18px;
+  --ov-radius-l: 24px;
+  --ov-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --ov-space: 20px;
+  --ov-nav-height: 64px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,6 +62,21 @@
     --warn: #e0a83f;
     --warn-soft: #3a2c12;
     --receipt: #1c1610;
+    --ov-bg: #0f1115;
+    --ov-surface: #1a1d23;
+    --ov-text: #f3f4f6;
+    --ov-text-secondary: #9ca3af;
+    --ov-border: #2b2f38;
+    --ov-primary: #ff4d5a;
+    --ov-primary-soft: #3a1c1f;
+    --ov-green: #4ade80;
+    --ov-green-soft: #16321f;
+    --ov-blue: #60a5fa;
+    --ov-blue-soft: #17263e;
+    --ov-orange: #fbbf5f;
+    --ov-orange-soft: #3a2c14;
+    --ov-purple: #b794f6;
+    --ov-purple-soft: #2b2140;
   }
 }
 
@@ -56,6 +96,21 @@
   --warn: #e0a83f;
   --warn-soft: #3a2c12;
   --receipt: #1c1610;
+  --ov-bg: #0f1115;
+  --ov-surface: #1a1d23;
+  --ov-text: #f3f4f6;
+  --ov-text-secondary: #9ca3af;
+  --ov-border: #2b2f38;
+  --ov-primary: #ff4d5a;
+  --ov-primary-soft: #3a1c1f;
+  --ov-green: #4ade80;
+  --ov-green-soft: #16321f;
+  --ov-blue: #60a5fa;
+  --ov-blue-soft: #17263e;
+  --ov-orange: #fbbf5f;
+  --ov-orange-soft: #3a2c14;
+  --ov-purple: #b794f6;
+  --ov-purple-soft: #2b2140;
 }
 
 :root[data-theme="light"] {
@@ -74,6 +129,21 @@
   --warn: #935b06;
   --warn-soft: #f5e3bd;
   --receipt: #fffdf7;
+  --ov-bg: #f6f7f9;
+  --ov-surface: #ffffff;
+  --ov-text: #111827;
+  --ov-text-secondary: #6b7280;
+  --ov-border: #e5e7eb;
+  --ov-primary: #e2001a;
+  --ov-primary-soft: #fde8e9;
+  --ov-green: #16a34a;
+  --ov-green-soft: #e3f6e9;
+  --ov-blue: #2563eb;
+  --ov-blue-soft: #e6edfe;
+  --ov-orange: #d97706;
+  --ov-orange-soft: #fdf0dc;
+  --ov-purple: #7c3aed;
+  --ov-purple-soft: #efe6fd;
 }
 
 * {
@@ -1536,4 +1606,491 @@ button.dag-verwijder {
   border-color: var(--accent);
   color: var(--accent-text);
   font-weight: 600;
+}
+
+/* ===========================================================================
+   Overzicht (hoofdpagina) + onderste navigatie — nieuw, "Apple/Linear"-stijl
+   design-systeem. Eigen --ov-*-tokens (gedefinieerd in de :root-blokken
+   bovenaan dit bestand) i.p.v. de bestaande --bg/--card/--text/... (het
+   warme kassabon-thema van de overige schermen), zodat dit nieuwe ontwerp
+   niets van de bestaande schermen kan breken. Alleen toegepast binnen de
+   klassen ov- en meer-, en #onder-nav.
+   =========================================================================== */
+
+#overzicht-scherm, #meer-scherm {
+  background: var(--ov-bg);
+}
+
+.ov-wrap, .meer-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--ov-space) var(--ov-space) calc(var(--ov-nav-height) + var(--ov-space) + env(safe-area-inset-bottom));
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--ov-text);
+}
+
+.ov-kop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ov-groet {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  color: var(--ov-text-secondary);
+}
+
+.ov-titel {
+  margin: 0 0 6px 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ov-text);
+  line-height: 1.2;
+}
+
+.ov-subtitel {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ov-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ov-bel {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  max-width: none;
+  border-radius: 50%;
+  background: var(--ov-surface);
+  border: 1px solid var(--ov-border);
+  box-shadow: var(--ov-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ov-bel-icoon {
+  width: 20px;
+  height: 20px;
+  color: var(--ov-text);
+}
+.ov-bel-icoon svg { width: 100%; height: 100%; }
+
+.ov-bel-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--ov-primary);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Samenvattingskaarten --- */
+.ov-statskaarten {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 420px) {
+  .ov-statskaarten {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(96px, 1fr);
+  }
+}
+
+.ov-statkaart {
+  background: var(--ov-surface);
+  border-radius: var(--ov-radius-m);
+  box-shadow: var(--ov-shadow);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ov-statkaart-icoon {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ov-statkaart-icoon svg { width: 17px; height: 17px; }
+
+/* Zachte icoon-tint-achtergronden, hergebruikt door statskaarten,
+   primaire acties en snelle acties. */
+.ov-tint-green { background: var(--ov-green-soft); color: var(--ov-green); }
+.ov-tint-blue { background: var(--ov-blue-soft); color: var(--ov-blue); }
+.ov-tint-orange { background: var(--ov-orange-soft); color: var(--ov-orange); }
+.ov-tint-purple { background: var(--ov-purple-soft); color: var(--ov-purple); }
+.ov-tint-red { background: var(--ov-primary-soft); color: var(--ov-primary); }
+
+.ov-statkaart-waarde {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ov-text);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.ov-statkaart-label {
+  font-size: 0.72rem;
+  color: var(--ov-text-secondary);
+}
+
+/* --- Kaart "Wat wil je doen?" + primaire acties --- */
+.ov-kaart {
+  background: var(--ov-surface);
+  border-radius: var(--ov-radius-l);
+  box-shadow: var(--ov-shadow);
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.ov-kaart-titel {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ov-text);
+  margin-bottom: 12px;
+}
+
+.ov-acties {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ov-actie {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px;
+  border-radius: var(--ov-radius-m);
+  border: 1px solid var(--ov-border);
+  background: var(--ov-surface);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, transform 0.05s ease;
+  max-width: none;
+  font-family: inherit;
+}
+
+.ov-actie:active {
+  transform: scale(0.98);
+  background: var(--ov-bg);
+}
+
+.ov-actie-icoon {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ov-actie-icoon svg { width: 22px; height: 22px; }
+
+.ov-actie-tekst {
+  flex: 1;
+  min-width: 0;
+}
+
+.ov-actie-titel-rij {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ov-actie-titel {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ov-text);
+}
+
+.ov-actie-sub {
+  font-size: 0.8rem;
+  color: var(--ov-text-secondary);
+  margin-top: 2px;
+}
+
+.ov-actie-badge {
+  flex: 0 0 auto;
+  background: var(--ov-primary-soft);
+  color: var(--ov-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.ov-actie-chevron {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: var(--ov-text-secondary);
+}
+.ov-actie-chevron svg { width: 100%; height: 100%; }
+
+/* --- Snelle acties --- */
+.ov-sectie {
+  margin-bottom: 24px;
+}
+
+.ov-sectie-titel {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ov-text);
+  margin-bottom: 12px;
+}
+
+.ov-snel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ov-snel-knop {
+  background: var(--ov-surface);
+  border-radius: var(--ov-radius-m);
+  box-shadow: var(--ov-shadow);
+  border: none;
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  cursor: pointer;
+  max-width: none;
+  font-family: inherit;
+  text-align: center;
+}
+
+.ov-snel-knop:active {
+  transform: scale(0.98);
+}
+
+.ov-snel-icoon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ov-snel-icoon svg { width: 18px; height: 18px; }
+
+.ov-snel-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ov-text);
+  line-height: 1.25;
+}
+
+/* --- Volgende / automatisering-kaart --- */
+.ov-volgende {
+  background: var(--ov-blue-soft);
+  border-radius: var(--ov-radius-m);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ov-volgende-icoon {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--ov-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ov-blue);
+}
+.ov-volgende-icoon svg { width: 20px; height: 20px; }
+
+.ov-volgende-tekst {
+  flex: 1;
+  min-width: 0;
+}
+
+.ov-volgende-titel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ov-text);
+}
+
+.ov-volgende-sub {
+  font-size: 0.8rem;
+  color: var(--ov-text-secondary);
+  margin-top: 1px;
+}
+
+.ov-volgende-badge {
+  flex: 0 0 auto;
+  background: var(--ov-surface);
+  color: var(--ov-blue);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* --- Leeg/laad-statussen (herbruikbaar) --- */
+.ov-leeg {
+  text-align: center;
+  padding: 18px 10px;
+  color: var(--ov-text-secondary);
+  font-size: 0.85rem;
+}
+
+/* --- "Meer"-scherm --- */
+.meer-kaart {
+  background: var(--ov-surface);
+  border-radius: var(--ov-radius-m);
+  box-shadow: var(--ov-shadow);
+  padding: 16px;
+}
+
+.meer-rij {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.meer-rij-titel {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ov-text);
+}
+
+.meer-rij-detail {
+  font-size: 0.8rem;
+  color: var(--ov-text-secondary);
+  margin-top: 2px;
+}
+
+.meer-rij-knop {
+  width: auto;
+  max-width: none;
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+}
+
+#meer-scherm .std-footnote {
+  margin-top: 10px;
+}
+
+/* --- Onderste navigatie --- */
+#onder-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  background: var(--ov-surface);
+  border-top: 1px solid var(--ov-border);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.05);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  padding: 6px 2px;
+  min-height: 48px;
+  color: var(--ov-text-secondary);
+  cursor: pointer;
+  max-width: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.nav-icoon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+.nav-icoon svg { width: 100%; height: 100%; }
+
+.nav-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.nav-item.actief {
+  color: var(--ov-primary);
+}
+
+.nav-item.actief .nav-label {
+  position: relative;
+}
+
+.nav-item .nav-badge {
+  position: absolute;
+  margin-left: 14px;
+  margin-top: -18px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--ov-primary);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Zorg dat de vaste onderste navigatie nooit inhoud bedekt, ook op schermen
+   die het oude (niet-overzicht) ontwerp nog gebruiken. */
+#app {
+  padding-bottom: calc(var(--ov-nav-height) + env(safe-area-inset-bottom));
+}
+
+#bestel-knop-wrap {
+  position: sticky;
+  bottom: calc(var(--ov-nav-height) + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 380px) {
+  .ov-snel-label { font-size: 0.85rem; }
 }
