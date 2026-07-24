@@ -883,6 +883,7 @@ function renderStandaardlijst() {
       stepper.appendChild(
         maakKnop("stap-knop", "–", () => {
           item.aantal = Math.max(1, item.aantal - 1);
+          staat.standaardlijstGewijzigd = true;
           ververs();
         })
       );
@@ -890,6 +891,7 @@ function renderStandaardlijst() {
       stepper.appendChild(
         maakKnop("stap-knop", "+", () => {
           item.aantal += 1;
+          staat.standaardlijstGewijzigd = true;
           ververs();
         })
       );
