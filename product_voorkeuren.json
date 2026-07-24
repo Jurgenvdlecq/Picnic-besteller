@@ -214,11 +214,14 @@
       "laatst": "2026-07-23T12:42:22.088557+00:00"
     },
     "patatairfryer": {
-      "id": "s1160977",
-      "naam": "Picnic verse friet",
-      "bron": "impliciet",
-      "bevestigd": 2,
-      "laatst": "2026-07-23T12:42:22.459073+00:00"
+      "id": "s1011212",
+      "naam": "Aviko SuperCrunch Franse frites",
+      "prijs_cent": 249,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/57cac9082f8388163b272d4902868c6c24da09fddc30de4b2592a8d0385aec66/small.png",
+      "subtitle": "750 gram",
+      "bron": "expliciet",
+      "bevestigd": 3,
+      "laatst": "2026-07-24T07:52:57.452Z"
     },
     "kipnuggets": {
       "id": "s1010015",
