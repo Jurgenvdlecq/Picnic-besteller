@@ -1,35 +1,38 @@
 # Weekmenu:
-#   Maandag: Rijst met roerei en groente
-#   Dinsdag: Aardappelblokjes + Kipburger + Broccoli
-#   Woensdag: Kip caesar bowl
-#   Donderdag: Linzencurry met rijst
-#   Vrijdag (4p): Aardappelblokjes met hamburger en broccoli
-#   Zaterdag (4p): Spareribs met aardappelpartjes
-#   Zondag: Patat + Oude kaas stengels + Carrero
+#   Maandag: Teriyaki noedels met kip en groente
+#   Dinsdag: Aardappelblokjes + Kipburger + Bloemkool
+#   Woensdag: Varkenshaas met champignonsaus en aardappelpuree
+#   Donderdag: Kip pad thai
+#   Vrijdag (4p): Loaded fries met kipreepjes
+#   Zaterdag (4p): Nacho's met gekruid gehakt
+#   Zondag: Patat + Mini kaassoufflé
 #
-3 x rijst
-10 x eieren
-2 x wokgroente
-2 x Aardappelblokjes
+9 x kipfilet
+1 x noedels
+1 x teriyakisaus
+1 x wokgroente
+1 x sesamzaad
+1 x Aardappelblokjes
 1 x Kipburger
-2 x Broccoli
-1 x kipfilet
-1 x romeinse sla
-1 x caesardressing
-1 x croutons
-1 x parmezaanse kaas
-1 x rode linzen
-1 x kokosmelk
-1 x currypasta
-1 x spinazie
-4 x hamburger
-1 x spareribs
-1 x aardappelpartjes
-1 x barbecuesaus
-1 x coleslaw
+1 x Bloemkool
+1 x varkenshaas
+1 x champignons
+1 x champignonsaus
+1 x aardappelpuree
+1 x pad thai noedels
+1 x pad thai saus
+1 x taugé
+1 x pinda's
+1 x aviko friet
+2 x geraspte kaas
+1 x knoflooksaus
+2 x rundergehakt (500 gram)
+1 x nachochips
+1 x salsa
+1 x guacamole
+1 x zure room
 1 x Patat (airfryer)
-1 x Oude kaas stengels
-1 x Carrero
+1 x Mini kaassoufflé
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels
 1 x Hagelslag XXL
@@ -41,9 +44,10 @@
 1 x Bananen
 1 x Kanzi appels klein
 4 x Melkunie Proteine kwark aardbei 200 gram
-2 x Koffie cups
+2 x Picnic lungo
 1 x Coca cola zero 250 ml
 1 x WC papier
 1 x Keukenrol
 1 x Komo trekbandzakken 60
 2 x Aviko Super crunch franse friet
+1 x Rijst
