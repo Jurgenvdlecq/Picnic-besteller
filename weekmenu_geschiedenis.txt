@@ -12,7 +12,7 @@ maandag|Rijst met roerei en groente
 maandag|Teriyaki noedels met kip en groente
 maandag|Pasta bolognese uit een pot
 maandag|Kipsaté met rijst
-maandag|Burrito bowl met gehakt en rijst
+maandag|Kipsaté met rijst en boontjes
 dinsdag|Kroketjes + Kipschnitzel + Sperziebonen
 dinsdag|Aardappelblokjes + Hamburger + Bloemkool
 dinsdag|Aardappelblokjes + Hamburger + Broccoli
@@ -42,7 +42,7 @@ woensdag|Kip caesar bowl
 woensdag|Varkenshaas met champignonsaus en aardappelpuree
 woensdag|Falafel wraps met tzatziki
 woensdag|Kip met rijst en paprika
-woensdag|Kip fajita bowl
+woensdag|Kip met rijst en paprika
 donderdag|Rundergehakt-curry
 donderdag|Gehaktschotel met bloemkoolpuree
 donderdag|Kip fajita bowl
@@ -93,11 +93,11 @@ vrijdag_veel|Aardappelblokjes met hamburger en broccoli
 vrijdag_veel|Loaded fries met kipreepjes
 vrijdag_veel|Nacho's met gekruid gehakt
 vrijdag_veel|Aardappelblokjes met hamburger en broccoli
-vrijdag_veel|Kip shoarma met patat en knoflooksaus
+vrijdag_veel|Aardappelblokjes met hamburger en broccoli
 zaterdag_veel|Kip shoarma met patat en knoflooksaus
 zaterdag_veel|Loaded fries met kipreepjes
 zaterdag_veel|Spareribs met aardappelpartjes
 zaterdag_veel|Nacho's met gekruid gehakt
 zaterdag_veel|Kip curry met naanbrood
 zaterdag_veel|Pannenkoeken
-zaterdag_veel|Aardappelblokjes met hamburger en broccoli
+zaterdag_veel|Pannenkoeken
