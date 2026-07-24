@@ -134,11 +134,14 @@
       "laatst": "2026-07-23T12:42:17.612599+00:00"
     },
     "rijst": {
-      "id": "s1012905",
-      "naam": "Picnic basmatirijst",
+      "id": "s1016785",
+      "naam": "Picnic snelkook zilvervliesrijst",
+      "prijs_cent": 145,
+      "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5f5a6e76dff93d02d48fffbf97cebc8155e7ac76c029f312dc03fa0ac0f8dc32/small.png",
+      "subtitle": "1 kilo",
       "bron": "expliciet",
-      "bevestigd": 3,
-      "laatst": "2026-07-24T07:15:25.326Z"
+      "bevestigd": 4,
+      "laatst": "2026-07-24T07:52:47.147Z"
     },
     "paprika": {
       "id": "s1001333",
