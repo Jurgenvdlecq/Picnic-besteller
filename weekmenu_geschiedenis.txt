@@ -12,7 +12,7 @@ maandag|Kofta uit pakje met rijst
 maandag|Gehaktwraps met taco kruiden en salsa
 maandag|Kofta uit pakje met rijst
 maandag|Kofta uit pakje met rijst
-maandag|Kip wraps met paprika en knoflooksaus
+maandag|Griekse kip bowl met tzatziki
 dinsdag|Kroketjes + Hamburger + Sperziebonen
 dinsdag|Rostirondjes + Kipschnitzel + Sperziebonen
 dinsdag|Aardappelblokjes + Kipschnitzel + Sperziebonen
@@ -27,7 +27,7 @@ dinsdag|Aardappelblokjes + Kipschnitzel + Snijbonen
 dinsdag|Rostirondjes + Kipschnitzel + Snijbonen
 dinsdag|Aardappelblokjes + Kipschnitzel + Snijbonen
 dinsdag|Aardappelblokjes + Kipschnitzel + Sperziebonen
-dinsdag|Aardappelblokjes + Hamburger + Sperziebonen
+dinsdag|Rostirondjes + Hamburger + Sperziebonen
 woensdag|Gevulde paprika met gehakt en rijst
 woensdag|Kip tikka masala met rijst
 woensdag|Kip met rijst en paprika
@@ -42,7 +42,7 @@ woensdag|Kip met rijst en paprika
 woensdag|Omelet met spinazie en kip
 woensdag|Kip met rijst en paprika
 woensdag|Kip met rijst en paprika
-woensdag|Beef stroganoff met rijst
+woensdag|Pasta carbonara
 donderdag|Kip met rijst en paprika
 donderdag|Beef stroganoff met rijst
 donderdag|Omelet met spinazie en kip
@@ -86,7 +86,7 @@ zondag|Patat + Carrero + Frikandel
 zondag|Patat + Frikandel
 zondag|Patat + Carrero + Frikandel
 zondag|Patat + Kipnuggets
-zondag|Patat + Oude kaas stengels
+zondag|Patat + Kipnuggets
 vrijdag_veel|Kip curry met naanbrood
 vrijdag_veel|Ovenschotel aardappel, gehakt en groente
 vrijdag_veel|Aardappelblokjes met hamburger en broccoli
@@ -99,7 +99,7 @@ vrijdag_veel|Aardappelblokjes met hamburger en broccoli
 vrijdag_veel|Pannenkoeken
 vrijdag_veel|Aardappelblokjes met hamburger en broccoli
 vrijdag_veel|Aardappelblokjes met hamburger en broccoli
-vrijdag_veel|Vegetarische chili sin carne met nacho's
+vrijdag_veel|Spareribs met aardappelpartjes
 zaterdag_veel|Kip shoarma met patat en knoflooksaus
 zaterdag_veel|Loaded fries met kipreepjes
 zaterdag_veel|Spareribs met aardappelpartjes
