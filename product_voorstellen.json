@@ -1,152 +1,133 @@
 {
-  "rundergehakt": {
-    "aantal": 1,
+  "kipfilet": {
+    "aantal": 8,
     "kandidaten": [
       {
-        "id": "s1001363",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 425,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7b7986d6d4aad144b41a72db26b320c4a170b4f516cd8249eb1225d1962b5c5f/small.png",
-        "subtitle": "300 gram"
+        "id": "s1014735",
+        "naam": "'t Slagershuys kipfilets",
+        "prijs_cent": 599,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e32842498a1857e83992e53f98f22309432adf9d1700ec69c2eeda1eb5be33d6/small.png",
+        "subtitle": "400 gram"
       },
       {
-        "id": "s1001382",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 555,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bb79ee58b6da37bc9e87e01ffd6298fdbb29fdbb98ec4339106fa0a687b5e398/small.png",
-        "subtitle": "500 gram"
+        "id": "s1010671",
+        "naam": "Picnic kipfilet",
+        "prijs_cent": 335,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/608c2fe697ddedf4af0f985dfd0c30aae820b3eb7f7f3a25ea317ed4e5a0fa77/small.png",
+        "subtitle": "200 gram"
       },
       {
-        "id": "s1001363",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 425,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7b7986d6d4aad144b41a72db26b320c4a170b4f516cd8249eb1225d1962b5c5f/small.png",
-        "subtitle": "300 gram"
+        "id": "s1016142",
+        "naam": "'t Slagershuys kipfilets",
+        "prijs_cent": 829,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/fc53034fccddc62f880687e6c94227bc8275b9956e90ca54e1019fe3f086aa6b/small.png",
+        "subtitle": "600 gram"
       },
       {
-        "id": "s1001382",
-        "naam": "'t Slagershuys rundergehakt",
-        "prijs_cent": 555,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bb79ee58b6da37bc9e87e01ffd6298fdbb29fdbb98ec4339106fa0a687b5e398/small.png",
-        "subtitle": "500 gram"
+        "id": "s1014735",
+        "naam": "'t Slagershuys kipfilets",
+        "prijs_cent": 599,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e32842498a1857e83992e53f98f22309432adf9d1700ec69c2eeda1eb5be33d6/small.png",
+        "subtitle": "400 gram"
       }
     ]
   },
-  "wereldgerecht kofta": {
+  "nasi kruidenmix": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1185339",
-        "naam": "Redefine Meat lamb kofta",
-        "prijs_cent": 455,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/964b605fec99734faa7e1a4eeb81c8a88aefa2180b8c1ce0397bdc110f03c7eb/small.png",
-        "subtitle": "250 gram"
+        "id": "s1112257",
+        "naam": "Picnic nasi kruidenmix",
+        "prijs_cent": 115,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a0210e8ffb67b41742685c2a10f67cadf9977f232fae96fd35af330309e97e06/small.png",
+        "subtitle": "37 gram"
       },
       {
-        "id": "s1006267",
-        "naam": "Knorr Griekse kofta",
-        "prijs_cent": 479,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6461578c3198a8806504730d08bc3b778e32b616a15027dcc2c84ab42c43c7e4/small.png",
-        "subtitle": "2-3 porties"
+        "id": "s1015399",
+        "naam": "Euroma nasi bami kruidenmix",
+        "prijs_cent": 399,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6a008c904baed045f0d3059b6844bafb289218b644b3fa366ce9bdbd0cb74a41/small.png",
+        "subtitle": "68 gram"
+      },
+      {
+        "id": "s1012503",
+        "naam": "Conimex kruidenmix nasi",
+        "prijs_cent": 99,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/842b084abb8d60af103867b04e9e842cf5e78d0566554397fd0341d9e9cb00ec/small.png",
+        "subtitle": "20 gram"
+      },
+      {
+        "id": "s1063780",
+        "naam": "Verstegen kruidenmix nasi bami",
+        "prijs_cent": 149,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c26b10450be01b96ff0b6b1c73072dcd4196597c0a66c4be0e1108a782590c0b/small.png",
+        "subtitle": "30 gram"
       }
     ]
   },
-  "courgette": {
+  "wokgroente": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1001440",
-        "naam": "Courgette",
-        "prijs_cent": 89,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/742e21071e1c85a360753cf6234f5e1715a0f1c930ae98de22672f11319cee32/small.png",
-        "subtitle": "1 stuk"
-      },
-      {
-        "id": "s1001440",
-        "naam": "Courgette",
-        "prijs_cent": 89,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/742e21071e1c85a360753cf6234f5e1715a0f1c930ae98de22672f11319cee32/small.png",
-        "subtitle": "1 stuk"
-      },
-      {
-        "id": "s1015964",
-        "naam": "Bio courgette",
-        "prijs_cent": 119,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/46b5c4a22ebedd5785100864e2373b3f7fa00fe425d2ed4a9750ebb977ac3d3e/small.png",
-        "subtitle": "1 stuk"
-      },
-      {
-        "id": "s1004220",
-        "naam": "Gele courgette",
-        "prijs_cent": 119,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3a59481ef61349fc2f78bd901702e714c9ec7d5a0761a0a6f6b38104279575e3/small.png",
-        "subtitle": "1 stuk"
-      }
-    ]
-  },
-  "tomaat": {
-    "aantal": 2,
-    "kandidaten": [
-      {
-        "id": "s1015589",
-        "naam": "Tomaten",
-        "prijs_cent": 179,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b7abcb429b5a074428b0688a01a562bdfbdc31abcc25e218d4e261c09215c854/small.png",
-        "subtitle": "500 gram"
-      },
-      {
-        "id": "s1015589",
-        "naam": "Tomaten",
-        "prijs_cent": 179,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b7abcb429b5a074428b0688a01a562bdfbdc31abcc25e218d4e261c09215c854/small.png",
-        "subtitle": "500 gram"
-      },
-      {
-        "id": "s1016003",
-        "naam": "Snacktomaatjes",
-        "prijs_cent": 329,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7b4c91b3c105d5790da426f3f5cd5eaf3a3a826cadeaa2d525bcbfffa0db4fb9/small.png",
-        "subtitle": "500 gram"
-      },
-      {
-        "id": "s1015566",
-        "naam": "Trostomaten",
+        "id": "s1002987",
+        "naam": "Mexicaanse roerbakgroenten",
         "prijs_cent": 249,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/26dcdd5dbbeae3ea67897d5d4461ecf53eb72d23c52322382f7572ac7267ded1/small.png",
-        "subtitle": "500 gram"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/04af937de6dfd2fc0bccd15e9e7a6313f05d69d574e206019d6954cae0f29b67/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1000534",
+        "naam": "Italiaanse roerbakgroenten",
+        "prijs_cent": 229,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c426f8d3799dceabd047791a7d8d11c4df86bbc2a4b39bb3101fedaae8d97147/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1151321",
+        "naam": "Macaroni & spaghettigroenten",
+        "prijs_cent": 189,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/cd35de2e263fff35a93a26574bf7f1942557477ad3773203242ed81db8990e08/small.png",
+        "subtitle": "450 gram"
+      },
+      {
+        "id": "s1000492",
+        "naam": "Japanse wokmix",
+        "prijs_cent": 249,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/95904973089264a80586220628fc55cef9af46529388919fb68d6116b6c68575/small.png",
+        "subtitle": "400 gram"
       }
     ]
   },
-  "Aardappelblokjes": {
-    "aantal": 2,
+  "Rostirondjes": {
+    "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1010301",
-        "naam": "Aviko aardappeldobbelsteentjes",
-        "prijs_cent": 269,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c7cdbc129f841065857e61cb46411f7acd2e23fbcd459f20eb56c340654b8e99/small.png",
+        "id": "s1009065",
+        "naam": "Aviko rösti rondjes",
+        "prijs_cent": 289,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/446ecab7dcac5f3333aafbbfb4603a1d4589cf705b73d78a76267cd23ec52990/small.png",
         "subtitle": "750 gram"
       },
       {
-        "id": "s1173414",
-        "naam": "Picnic aardappel balletjes",
-        "prijs_cent": 199,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/84d10994e36ce76c2b947eb71fc393c2fd0b9cd89b3473d5dd2848c28518c6b8/small.png",
-        "subtitle": "600 gram"
-      },
-      {
-        "id": "s1010301",
-        "naam": "Aviko aardappeldobbelsteentjes",
-        "prijs_cent": 269,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c7cdbc129f841065857e61cb46411f7acd2e23fbcd459f20eb56c340654b8e99/small.png",
+        "id": "s1009065",
+        "naam": "Aviko rösti rondjes",
+        "prijs_cent": 289,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/446ecab7dcac5f3333aafbbfb4603a1d4589cf705b73d78a76267cd23ec52990/small.png",
         "subtitle": "750 gram"
       },
       {
-        "id": "s1001981",
-        "naam": "Kruimige aardappelen",
-        "prijs_cent": 139,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/328f21cada10aa31136dd2478d579f5246774482afb1975ed06979e02a06203e/small.png",
+        "id": "s1131195",
+        "naam": "Picnic rösti rondjes",
+        "prijs_cent": 149,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5a54c88fe5858cad267ecbcae6dcf0de328cc6ea66ad81ab959c276f42b9c298/small.png",
         "subtitle": "600 gram"
+      },
+      {
+        "id": "s1185596",
+        "naam": "Aviko rösti rondjes bacon & ui",
+        "prijs_cent": 299,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/50d808fa7f1781941983cf9c7e07f665bfcce3b13e835dea610c873096220ff9/small.png",
+        "subtitle": "450 gram"
       }
     ]
   },
@@ -183,102 +164,95 @@
       }
     ]
   },
-  "Sperziebonen": {
+  "Snijbonen": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1051840",
-        "naam": "Picnic bio sperziebonen",
-        "prijs_cent": 135,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c14ab138541cfb303a1bd63c26c3e5edc6dbdbe7b0325cc58737ab0bc597b0f3/small.png",
-        "subtitle": "450 gram"
+        "id": "s1000560",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 239,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/004e829a977df1a4cbceaebf1cdbbfccb3d1844e6567a56bfcce547e7b0fb4fd/small.png",
+        "subtitle": "400 gram"
       },
       {
-        "id": "s1016083",
-        "naam": "Picnic sperziebonen gebroken",
-        "prijs_cent": 349,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ee63247f3b2f91d75717d010606b1762f379f76e143af79206002688cbaa9cd6/small.png",
+        "id": "s1010401",
+        "naam": "Snijbonen",
+        "prijs_cent": 259,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/722a8b34033e8d2cc6e6a6c395264db3cea78300b6cb49e55d7d0ce860146c7c/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1016546",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 379,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d72e04de8bc9afd23d5cf8d31f2af717ed43445163b9855fb0603d928c451afe/small.png",
         "subtitle": "600 gram"
       },
       {
-        "id": "s1003578",
-        "naam": "Picnic sperziebonen gebroken",
-        "prijs_cent": 239,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e44b6997d1e1687b28ef5a7e89736a95943389359b1aad191713a646df057eec/small.png",
-        "subtitle": "400 gram"
-      },
-      {
-        "id": "s1003578",
-        "naam": "Picnic sperziebonen gebroken",
-        "prijs_cent": 239,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e44b6997d1e1687b28ef5a7e89736a95943389359b1aad191713a646df057eec/small.png",
-        "subtitle": "400 gram"
+        "id": "s1017039",
+        "naam": "Picnic snijbonen gesneden",
+        "prijs_cent": 199,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e0afde842071a968b45070eb582674468991745a912e7ef673ca32f86fa1e3dc/small.png",
+        "subtitle": "200 gram"
       }
     ]
   },
-  "kipfilet": {
-    "aantal": 2,
+  "runderreepjes": {
+    "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1014735",
-        "naam": "'t Slagershuys kipfilets",
-        "prijs_cent": 599,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e32842498a1857e83992e53f98f22309432adf9d1700ec69c2eeda1eb5be33d6/small.png",
-        "subtitle": "400 gram"
+        "id": "s1004636",
+        "naam": "'t Slagershuys runderreepjes",
+        "prijs_cent": 875,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/27666c819a3ea847c88afc2ff3f51dac394c42000fc9defd9b8c184ab7a8c0c3/small.png",
+        "subtitle": "300 gram"
       },
       {
-        "id": "s1010671",
-        "naam": "Picnic kipfilet",
-        "prijs_cent": 335,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/608c2fe697ddedf4af0f985dfd0c30aae820b3eb7f7f3a25ea317ed4e5a0fa77/small.png",
+        "id": "s1184280",
+        "naam": "'t Slagershuys bio runderreepjes",
+        "prijs_cent": 599,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e77c90ba3711f58d700c3617b40819301967104e0d1bdc1d49dd448d2e895d65/small.png",
         "subtitle": "200 gram"
       },
       {
-        "id": "s1016142",
-        "naam": "'t Slagershuys kipfilets",
-        "prijs_cent": 829,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/fc53034fccddc62f880687e6c94227bc8275b9956e90ca54e1019fe3f086aa6b/small.png",
-        "subtitle": "600 gram"
-      },
-      {
-        "id": "s1014735",
-        "naam": "'t Slagershuys kipfilets",
-        "prijs_cent": 599,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e32842498a1857e83992e53f98f22309432adf9d1700ec69c2eeda1eb5be33d6/small.png",
-        "subtitle": "400 gram"
+        "id": "s1185341",
+        "naam": "'t Slagershuys biefstukpuntjes rode ui",
+        "prijs_cent": 636,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c48179276ceb6bc2a2d0271329d8c432c959bd0783a806f26dbc51ad65899cf0/small.png",
+        "subtitle": "250 gram"
       }
     ]
   },
-  "paprika": {
-    "aantal": 2,
+  "champignons": {
+    "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1001333",
-        "naam": "Paprika mix",
+        "id": "s1004441",
+        "naam": "Witte champignons",
+        "prijs_cent": 129,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/96b76aabc80046bda78771fa36267648b017f1d4b5524bde33350ee596f901bb/small.png",
+        "subtitle": "250 gram"
+      },
+      {
+        "id": "s1000110",
+        "naam": "Witte champignons",
         "prijs_cent": 199,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3e014badcfb39b77b131a74fc3fe99f352cf185a2e5be6c6f8e1467600938ffe/small.png",
-        "subtitle": "3 stuks"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c3690ea1a8abeff75ff0f37beee633384fe91846b30e218f74563a1afe55d1dc/small.png",
+        "subtitle": "400 gram"
       },
       {
-        "id": "s1001504",
-        "naam": "Rode paprika",
-        "prijs_cent": 99,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0add4064b10a9e82b413c8ccb15d882a4f1c4bd2457fa9a789d9e84d7ae19548/small.png",
-        "subtitle": "1 stuk"
+        "id": "s1008738",
+        "naam": "Bio witte champignons",
+        "prijs_cent": 199,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/36a2e8f5f31f2524dd6072ea52a1f7166522f999bfafad872a0d5d976ad6934e/small.png",
+        "subtitle": "250 gram"
       },
       {
-        "id": "s1001504",
-        "naam": "Rode paprika",
-        "prijs_cent": 99,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0add4064b10a9e82b413c8ccb15d882a4f1c4bd2457fa9a789d9e84d7ae19548/small.png",
-        "subtitle": "1 stuk"
-      },
-      {
-        "id": "s1016073",
-        "naam": "Gele paprika",
-        "prijs_cent": 109,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e0a234ed90641d81e20512e04434cdad4809fefab439256b4e805a9ae9d64be0/small.png",
-        "subtitle": "1 stuk"
+        "id": "s1003890",
+        "naam": "Kastanjechampignons",
+        "prijs_cent": 195,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a82d9a934a6224022950283696fc25049ea07c9a8f39477a5629fe563071190b/small.png",
+        "subtitle": "250 gram"
       }
     ]
   },
@@ -315,161 +289,436 @@
       }
     ]
   },
-  "tikka masala saus": {
+  "creme fraiche": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1186600",
-        "naam": "Tilda tikka masala saus",
-        "prijs_cent": 289,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/908d048659d3702c77a8a299d038d4b53c9975bba01807e2e4486874a82b5ec4/small.png",
-        "subtitle": "375 gram"
+        "id": "s1174517",
+        "naam": "Öing crème fraîche",
+        "prijs_cent": 99,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/35b86cba0d616cbe1cb6852c5e6196c606578dd182e5362d09ffffbb89acd0ba/small.png",
+        "subtitle": "200 gram"
       },
       {
-        "id": "s1002512",
-        "naam": "Patak's tikka masala saus",
-        "prijs_cent": 329,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/030178201270efcfa04e37cd77239de0f3fc0bcf9cb4bac7622fa1b21af5222d/small.png",
-        "subtitle": "450 gram"
+        "id": "s1016505",
+        "naam": "Picnic crème fraîche",
+        "prijs_cent": 139,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3f09161ba042914cc6b9ec694501b5f69b8ed0896d4f91211087a9473b5c75b9/small.png",
+        "subtitle": "125 gram"
       },
       {
-        "id": "s1188211",
-        "naam": "The Spice Tailor original tikka masala",
-        "prijs_cent": 399,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/31dbaa86bcc47fcc639e94c372aa6d776a1bd52edef92c8e0697b453463526a3/small.png",
-        "subtitle": "300 gram"
-      }
-    ]
-  },
-  "hamburger": {
-    "aantal": 4,
-    "kandidaten": [
-      {
-        "id": "s1004024",
-        "naam": "'t Slagershuys runderburgers",
-        "prijs_cent": 489,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/79919e766c0fc9baf46fceb913cf8fd75a721ca10b14ee9d6a96ee252a5148e8/small.png",
-        "subtitle": "4 x 100 gram"
+        "id": "s1016531",
+        "naam": "Picnic crème fraîche",
+        "prijs_cent": 179,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e539afda235e414eb5b5abcd28d677d97b2a81c924a73b9f1d5092704783c0bf/small.png",
+        "subtitle": "200 gram"
       },
       {
-        "id": "s1167535",
-        "naam": "'t Slagershuys smash burger",
-        "prijs_cent": 749,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/87b2e2797958c9d2aa87715c6a2991efd2cb32a96487b6b45aa466a4931b59bf/small.png",
-        "subtitle": "5 x 88 gram"
-      },
-      {
-        "id": "s1002500",
-        "naam": "Premium Black Angus burgers",
-        "prijs_cent": 469,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/faeac321b0a00eb2093faa112eb529602092a8c0fc3796d3bbf66cfc2908409f/small.png",
-        "subtitle": "2 x 90 gram"
-      },
-      {
-        "id": "s1002500",
-        "naam": "Premium Black Angus burgers",
-        "prijs_cent": 469,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/faeac321b0a00eb2093faa112eb529602092a8c0fc3796d3bbf66cfc2908409f/small.png",
-        "subtitle": "2 x 90 gram"
-      }
-    ]
-  },
-  "broccoli": {
-    "aantal": 1,
-    "kandidaten": [
-      {
-        "id": "s1151146",
-        "naam": "Picnic broccoli",
+        "id": "s1179698",
+        "naam": "Picnic bio crème fraîche",
         "prijs_cent": 149,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/56e452f825b367491a06573dac78a3af7451c804438e3722c315d7d542850c3d/small.png",
-        "subtitle": "450 gram"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a8f297c4168e1b43698c2a9ee5de548bfe0ec4729f619cfcbb1519ec7f1238d0/small.png",
+        "subtitle": "125 gram"
+      }
+    ]
+  },
+  "rundergehakt": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7b7986d6d4aad144b41a72db26b320c4a170b4f516cd8249eb1225d1962b5c5f/small.png",
+        "subtitle": "300 gram"
       },
       {
-        "id": "s1000549",
-        "naam": "Broccoli",
-        "prijs_cent": 135,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b5931f6d655da91c4f7b9a1d5d6c53b92fbcc87bb160a74bc250d6ea8f154712/small.png",
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bb79ee58b6da37bc9e87e01ffd6298fdbb29fdbb98ec4339106fa0a687b5e398/small.png",
         "subtitle": "500 gram"
       },
       {
-        "id": "s1015921",
-        "naam": "Bio broccoli",
-        "prijs_cent": 279,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c11c5222a7112a2c24a5ebfe66c03e5743a45273b2c63fe106db8372a8ea96e6/small.png",
+        "id": "s1001363",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 425,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7b7986d6d4aad144b41a72db26b320c4a170b4f516cd8249eb1225d1962b5c5f/small.png",
         "subtitle": "300 gram"
       },
       {
-        "id": "s1151146",
-        "naam": "Picnic broccoli",
-        "prijs_cent": 149,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/56e452f825b367491a06573dac78a3af7451c804438e3722c315d7d542850c3d/small.png",
-        "subtitle": "450 gram"
+        "id": "s1001382",
+        "naam": "'t Slagershuys rundergehakt",
+        "prijs_cent": 555,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bb79ee58b6da37bc9e87e01ffd6298fdbb29fdbb98ec4339106fa0a687b5e398/small.png",
+        "subtitle": "500 gram"
       }
     ]
   },
-  "pannenkoekenmix": {
+  "kokosmelk": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1003197",
-        "naam": "Koopmans pannenkoekenmix compleet",
-        "prijs_cent": 165,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/56f80cd249f2c87caaf6f4ef2b54b8a49f24880be748e447ddbcae72b8862a8d/small.png",
-        "subtitle": "Voor 10 stuks"
-      },
-      {
-        "id": "s1012427",
-        "naam": "Koopmans pannenkoekenmix origineel",
-        "prijs_cent": 109,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2140524a74610f10d0fc3228c9b298f71e7e04687bfc817161d96d514e2da4a3/small.png",
-        "subtitle": "Voor 11-13 stuks"
-      },
-      {
-        "id": "s1003245",
-        "naam": "Koopmans bio meergranen pannenkoekenmix",
-        "prijs_cent": 189,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d02f3d91cdeaa3baeae949128dc87c1b7e6ae6870161bd320be9ee2500f62282/small.png",
-        "subtitle": "Voor 12-14 stuks"
-      },
-      {
-        "id": "s1017508",
-        "naam": "Koopmans pannenkoekenmix compleet schudfles",
-        "prijs_cent": 229,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/1023926d60932213b46ca68b884b3741b627a3b194de9aba96b526499935b903/small.png",
-        "subtitle": "Voor 4-6 stuks"
-      }
-    ]
-  },
-  "stroop": {
-    "aantal": 1,
-    "kandidaten": [
-      {
-        "id": "s1004888",
-        "naam": "Van Gilse schenkstroop",
-        "prijs_cent": 199,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/48d6c7ee3551f78db1f486285caf55c6ccca438c4566a957754500ce590d2388/small.png",
-        "subtitle": "600 gram"
-      },
-      {
-        "id": "s1065160",
-        "naam": "Timson rinse appelstroop",
+        "id": "s1090475",
+        "naam": "Go-Tan kokosmelk",
         "prijs_cent": 299,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/839867b3ad70e0276b5069eb95586984daee93d9d5efe3bacff099f5d00f97d3/small.png",
-        "subtitle": "450 gram"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b524e093902bedc34d1b6f8e92415fe998ecca326d2625e909b84bd19d1c6148/small.png",
+        "subtitle": "500 ml"
       },
       {
-        "id": "s1156570",
-        "naam": "Van Gilse bungel stroopstift",
+        "id": "s1014020",
+        "naam": "Picnic kokosmelk",
+        "prijs_cent": 169,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/79547db17613c9a95e86c60c3adf20ffcde23bc7b6ea4555d9218d893a70b504/small.png",
+        "subtitle": "250 ml"
+      },
+      {
+        "id": "s1090476",
+        "naam": "Go-Tan bio kokosmelk",
+        "prijs_cent": 269,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6b31e496db0f82abb9e5e2b26218ce5caa66d4a36bc7f6a5b351858cea6b8765/small.png",
+        "subtitle": "400 ml"
+      },
+      {
+        "id": "s1184170",
+        "naam": "Go-Tan bio kokosmelk",
+        "prijs_cent": 229,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/634fe4c79eafd2f9d28c8d8f1a320e1d20f6c56367bcb6630c709579d461bcf0/small.png",
+        "subtitle": "250 ml"
+      }
+    ]
+  },
+  "paprika": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1001333",
+        "naam": "Paprika mix",
         "prijs_cent": 199,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/7514fd28f782d2b3e12f80bbc8337d76a7459e3c3e4cf940fab3e07e14eb52eb/small.png",
-        "subtitle": "500 gram"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/1511282e7afe2af1e4afeee88189377696137576c8b390a697b5607af6f60f0b/small.png",
+        "subtitle": "3 stuks"
       },
       {
-        "id": "s1001860",
-        "naam": "Melvita bio agave siroop",
+        "id": "s1001504",
+        "naam": "Rode paprika",
+        "prijs_cent": 99,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0add4064b10a9e82b413c8ccb15d882a4f1c4bd2457fa9a789d9e84d7ae19548/small.png",
+        "subtitle": "1 stuk"
+      },
+      {
+        "id": "s1001504",
+        "naam": "Rode paprika",
+        "prijs_cent": 99,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/0add4064b10a9e82b413c8ccb15d882a4f1c4bd2457fa9a789d9e84d7ae19548/small.png",
+        "subtitle": "1 stuk"
+      },
+      {
+        "id": "s1016073",
+        "naam": "Gele paprika",
+        "prijs_cent": 109,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e0a234ed90641d81e20512e04434cdad4809fefab439256b4e805a9ae9d64be0/small.png",
+        "subtitle": "1 stuk"
+      }
+    ]
+  },
+  "currypasta": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1002023",
+        "naam": "Patak's currypasta",
+        "prijs_cent": 329,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/8f9aa29287d193cb91014894fe04926c46b7e94ddcc805a349dfad9611e0c926/small.png",
+        "subtitle": "165 gram"
+      },
+      {
+        "id": "s1075015",
+        "naam": "Conimex red curry paste",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/5b4ac584b21108ab6b3e7e0465dc72cd0bdbb0c3be2572fe42160b2ae1e192c9/small.png",
+        "subtitle": "90 gram"
+      },
+      {
+        "id": "s1075016",
+        "naam": "Conimex yellow curry paste",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/50c5d868de552460d761e8550e4286dd8a429e433150b7aa2dc3022fe2639a7c/small.png",
+        "subtitle": "90 gram"
+      },
+      {
+        "id": "s1148113",
+        "naam": "Sempio gochujang hete rode peper pasta",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/25de5d82cc41a55e5feecb688a6c7c16ae8279ea0640ff331781c25e464206eb/small.png",
+        "subtitle": "250 gram"
+      }
+    ]
+  },
+  "kidneybonen": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1071325",
+        "naam": "Bonduelle kidneybonen",
+        "prijs_cent": 219,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f12a7e3dfa0562c55f0360dd7846b6dfc777123841044b7d23ebb423e3ae6a89/small.png",
+        "subtitle": "2 x 125 gram"
+      },
+      {
+        "id": "s1048775",
+        "naam": "Bonduelle rode kidneybonen",
+        "prijs_cent": 169,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ea8be2671f661051477dc491486fd607273e389183676245dd736d26a3794e0e/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1001941",
+        "naam": "Bonduelle rode kidneybonen",
+        "prijs_cent": 139,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/78ab53b4bd3053697c3ea6b4850eba88d93d03ca7b6e29ff58afe37e73e67c90/small.png",
+        "subtitle": "160 gram"
+      },
+      {
+        "id": "s1045876",
+        "naam": "Bonduelle rode kidneybonen",
+        "prijs_cent": 175,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/12c891f835c08235357c4fe6868dd33aa594e4f3ef1eabec129f64bc212e0e4b/small.png",
+        "subtitle": "310 gram"
+      }
+    ]
+  },
+  "zwarte bonen": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1005222",
+        "naam": "Hak zwarte bonen",
+        "prijs_cent": 219,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/1cd6469257091d59285f5aa1a7bb1351ebca52357e15cf98524de3495e67ef1e/small.png",
+        "subtitle": "225 gram"
+      },
+      {
+        "id": "s1176303",
+        "naam": "Hak zwarte bonen",
+        "prijs_cent": 149,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3c6e4d03c4831e1a806b7edd8471185b1f05a89a66e2d80b97edc4f70e7772bd/small.png",
+        "subtitle": "380 gram"
+      },
+      {
+        "id": "s1164243",
+        "naam": "Picnic zwarte bonen",
+        "prijs_cent": 105,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/00cd61afd0850688b239b392f1dc6701ae63e1bb8740afe6687e448c39928c87/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1185285",
+        "naam": "Amaizin Zwarte bonen",
+        "prijs_cent": 229,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/a7e29b51ab11c5a931866dc07b7892f5ad90616359b89abecb7b80ffbbeb05e9/small.png",
+        "subtitle": "400 gram"
+      }
+    ]
+  },
+  "maïs": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1132724",
+        "naam": "Bonduelle maïssalsa",
+        "prijs_cent": 249,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/10d5324c286eaaf6b4e20cc65e3a45d1d24dc749b86859da8d4ef8ca43032cd2/small.png",
+        "subtitle": "300 gram"
+      },
+      {
+        "id": "s1050074",
+        "naam": "Bonduelle crispy maïs",
+        "prijs_cent": 129,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/cdd74e667d9aa3c399f7934d335907032436064f14c37ee4fe2d38a70a272dd7/small.png",
+        "subtitle": "150 gram"
+      },
+      {
+        "id": "s1001956",
+        "naam": "Bonduelle crispy maïs",
+        "prijs_cent": 219,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/e0a4abbda0623444a705c8e977c0a0db92a5883a8b35b04f2470b9b80f34fd01/small.png",
+        "subtitle": "300 gram"
+      },
+      {
+        "id": "s1007131",
+        "naam": "Bonduelle crispy maïs",
+        "prijs_cent": 139,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2b5b2d2c6a2c7b996cb65c935b61fd50b477108cbc25855a1477cf5b81f38090/small.png",
+        "subtitle": "150 gram"
+      }
+    ]
+  },
+  "tomatenblokjes": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1011130",
+        "naam": "Picnic tomatenblokjes",
+        "prijs_cent": 119,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f878e072795054f96d954987adcf6bc2055dfc1e5b2e5ce0c71ac9c42f3fdf99/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1156413",
+        "naam": "Picnic tomatenblokjes",
+        "prijs_cent": 45,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2878023073d4dd6c52562e600788bd0da9a578c9046a44d04ca486ce13e6ad28/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1011130",
+        "naam": "Picnic tomatenblokjes",
+        "prijs_cent": 119,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/f878e072795054f96d954987adcf6bc2055dfc1e5b2e5ce0c71ac9c42f3fdf99/small.png",
+        "subtitle": "400 gram"
+      },
+      {
+        "id": "s1156413",
+        "naam": "Picnic tomatenblokjes",
+        "prijs_cent": 45,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/2878023073d4dd6c52562e600788bd0da9a578c9046a44d04ca486ce13e6ad28/small.png",
+        "subtitle": "400 gram"
+      }
+    ]
+  },
+  "paprikapoeder komijn kruidenmix": {
+    "aantal": 1,
+    "kandidaten": []
+  },
+  "geraspte kaas": {
+    "aantal": 2,
+    "kandidaten": [
+      {
+        "id": "s1151622",
+        "naam": "Picnic tex mex geraspte kaas",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ea9012182866034fcd897d5e2e661a9834f2b4c177fc7ce63d00ec3a6aae269f/small.png",
+        "subtitle": "150 gram"
+      },
+      {
+        "id": "s1013803",
+        "naam": "Picnic geraspte jonge kaas 48+",
+        "prijs_cent": 339,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/541bd36429721e5d4f640ac66c673c5c73a16c01edf200e202ff9b6f618b308a/small.png",
+        "subtitle": "175 gram"
+      },
+      {
+        "id": "s1013573",
+        "naam": "Picnic geraspte belegen kaas 48+",
+        "prijs_cent": 389,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/32d3db485942f4169d110f48bc998a88c940692d1eb44b57ba5ecfb34c5e1404/small.png",
+        "subtitle": "175 gram"
+      },
+      {
+        "id": "s1150348",
+        "naam": "Picnic geraspte jong belegen kaas 30+",
+        "prijs_cent": 299,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d1162405d5aae39eefb2b460acffebe7b25f0c540deeb26192675584c42467b1/small.png",
+        "subtitle": "150 gram"
+      }
+    ]
+  },
+  "nachochips": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1161239",
+        "naam": "Doritos nacho cheese",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/4ef80c6a9ec92c6fbcbbc60e259de8dc80cf422bdb42a56a18d5f2fdef476a26/small.png",
+        "subtitle": "272 gram"
+      },
+      {
+        "id": "s1161239",
+        "naam": "Doritos nacho cheese",
+        "prijs_cent": 279,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/4ef80c6a9ec92c6fbcbbc60e259de8dc80cf422bdb42a56a18d5f2fdef476a26/small.png",
+        "subtitle": "272 gram"
+      },
+      {
+        "id": "s1152072",
+        "naam": "Santa Maria nacho chips original",
         "prijs_cent": 399,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/1dd2036c7f52ef9930c1fdac50a56d1d202db9740cd13994b55a39bf05f91a47/small.png",
-        "subtitle": "350 ml"
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/115f2d8296a79b92b356ca2ecf992eda369f34f85b5be768739158a2c27658fa/small.png",
+        "subtitle": "475 gram"
+      },
+      {
+        "id": "s1152071",
+        "naam": "Santa Maria tortilla chips salted",
+        "prijs_cent": 399,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/c01119d74582e7dbc362c39acb9da36c4d8ae731001eea395c37a0196d7cfcfa/small.png",
+        "subtitle": "475 gram"
+      }
+    ]
+  },
+  "aviko friet": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1010214",
+        "naam": "Aviko pommes frites",
+        "prijs_cent": 275,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/640c023fdc73908c66652c8b2b96dca7cb6f73ffc421cac0f0fa11eb88733086/small.png",
+        "subtitle": "1 kilo"
+      },
+      {
+        "id": "s1006435",
+        "naam": "Aviko Franse frites",
+        "prijs_cent": 299,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/89d4c82f931c019152f9ba0ca4961977889e7c1f2f44050c6b4d295342033d16/small.png",
+        "subtitle": "1 kilo"
+      },
+      {
+        "id": "s1000081",
+        "naam": "Aviko oma's smulfrieten",
+        "prijs_cent": 289,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/bdd273bea2c457646234aef88f5613945fbae55dc9ac7802f126f8297022c25b/small.png",
+        "subtitle": "750 gram"
+      },
+      {
+        "id": "s1010336",
+        "naam": "Aviko SuperCrunch kreukel frieten",
+        "prijs_cent": 299,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/6c0c4d752189fccf6c007e7f7aae8436d5ba013420b62e94537517bcdb424d88/small.png",
+        "subtitle": "750 gram"
+      }
+    ]
+  },
+  "knoflooksaus": {
+    "aantal": 1,
+    "kandidaten": [
+      {
+        "id": "s1018496",
+        "naam": "Calvé knoflooksaus",
+        "prijs_cent": 289,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d226b65f0d8ef4ff049df7cf425c638200a47d7c16381f754304672388b56a0b/small.png",
+        "subtitle": "250 ml"
+      },
+      {
+        "id": "s1018496",
+        "naam": "Calvé knoflooksaus",
+        "prijs_cent": 289,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/d226b65f0d8ef4ff049df7cf425c638200a47d7c16381f754304672388b56a0b/small.png",
+        "subtitle": "250 ml"
+      },
+      {
+        "id": "s1123004",
+        "naam": "Remia knoflooksaus",
+        "prijs_cent": 225,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/4857b0cdf7c07a0c2067b0082db6a068fa003c630cb0a7e76ea1a767031d10d7/small.png",
+        "subtitle": "500 ml"
+      },
+      {
+        "id": "s1013879",
+        "naam": "Yildriz Turkse knoflooksaus",
+        "prijs_cent": 249,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/baec7493ba2510c299dd0cae97d023d232bc376b1488e41e158e561831805a8f/small.png",
+        "subtitle": "265 ml"
       }
     ]
   },
@@ -506,36 +755,36 @@
       }
     ]
   },
-  "Kipnuggets": {
+  "Mini kaassoufflé": {
     "aantal": 1,
     "kandidaten": [
       {
-        "id": "s1184592",
-        "naam": "Picnic kipnuggets",
-        "prijs_cent": 265,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3cf02d146897cb888d52ee15a31ba111c9f8f5267f03e2a6c485b2782340c6e6/small.png",
-        "subtitle": "500 gram"
-      },
-      {
-        "id": "s1010015",
-        "naam": "Mora kipnuggets",
-        "prijs_cent": 599,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/ce10eaa86ef3336ec5d761fb3b8c5cbf39a4761070a62e6deb79ffe2ee297f9e/small.png",
-        "subtitle": "30 stuks"
-      },
-      {
-        "id": "s1184595",
-        "naam": "Picnic Dino kipnuggets",
-        "prijs_cent": 399,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/278d27891a9dc69be86b64ad81f6ab638e0ff44408aaa2f6a9eb90ca8fd48934/small.png",
+        "id": "s1160997",
+        "naam": "Picnic mini kaassoufflés",
+        "prijs_cent": 339,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/3c0fb6939568aada8a2f27f75ad1280cc2639f39306a3b7fef94c0153db06ac3/small.png",
         "subtitle": "10 stuks"
       },
       {
-        "id": "s1009831",
-        "naam": "Duca kipnuggets de luxe",
-        "prijs_cent": 399,
-        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/4ac821e49682cb2d54e1ce9ec76d55bb87544a244dbf1cbe37e4f39826c75831/small.png",
-        "subtitle": "250 gram"
+        "id": "s1154314",
+        "naam": "Mora mini kaassoufflés",
+        "prijs_cent": 319,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/b5989867931a8b5451dcc5ba49140f0dd269ad597f213a7322643982b7ca823a/small.png",
+        "subtitle": "12 stuks"
+      },
+      {
+        "id": "s1007758",
+        "naam": "Mora kaassoufflés",
+        "prijs_cent": 339,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/74e3c08338a6e55f3d1aa230dc61cf57ef945be9279ca8e51b3d9a01be930dd2/small.png",
+        "subtitle": "6 stuks"
+      },
+      {
+        "id": "s1016658",
+        "naam": "Mora oven Goudse mini kaassoufflés",
+        "prijs_cent": 499,
+        "image_url": "https://storefront-prod.nl.picnicinternational.com/static/images/462108c85b1af6320628558674e8a9f99a756622c4ed4afd29c95416902dfee0/small.png",
+        "subtitle": "14 stuks"
       }
     ]
   },
