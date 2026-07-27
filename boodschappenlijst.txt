@@ -1,38 +1,34 @@
 # Weekmenu:
-#   Maandag: Kip wraps met paprika en knoflooksaus
-#   Dinsdag: Aardappelblokjes + Hamburger + Sperziebonen
-#   Woensdag: Beef stroganoff met rijst
+#   Maandag: Griekse kip bowl met tzatziki
+#   Dinsdag: Rostirondjes + Hamburger + Sperziebonen
+#   Woensdag: Pasta carbonara
 #   Donderdag: Eieren met spek en avocado
-#   Vrijdag (4p): Vegetarische chili sin carne met nacho's
+#   Vrijdag (4p): Spareribs met aardappelpartjes
 #   Zaterdag (4p): Aardappelblokjes met hamburger en broccoli
-#   Zondag: Patat + Oude kaas stengels
+#   Zondag: Patat + Kipnuggets
 #
 4 x kipfilet
-8 x tortilla wraps
-2 x paprika
-1 x ijsbergsla
-1 x knoflooksaus
-1 x fajitakruiden
-2 x Aardappelblokjes
+1 x tzatziki
+1 x komkommer
+1 x cherrytomaatjes
+1 x Rostirondjes
 5 x Hamburger
 1 x Sperziebonen
-1 x runderreepjes
-1 x champignons
-1 x ui
-1 x creme fraiche
+1 x spaghetti
+1 x guancale
+2 x pecorino
+1 x parmezaanse kaas
 6 x eieren
 1 x spekreepjes
 2 x avocado
-1 x kidneybonen
-1 x zwarte bonen
-1 x maïs
-1 x tomatenblokjes
-1 x paprikapoeder komijn kruidenmix
-1 x geraspte kaas
-1 x nachochips
+1 x spareribs
+1 x aardappelpartjes
+1 x barbecuesaus
+1 x coleslaw
+1 x aardappelblokjes
 1 x broccoli
 1 x Patat (airfryer)
-1 x Oude kaas stengels
+1 x Kipnuggets
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels
 1 x Hagelslag XXL
@@ -50,3 +46,4 @@
 1 x Keukenrol
 1 x Komo trekbandzakken 60
 2 x Aviko Super crunch franse friet
+1 x Appel
