@@ -1,29 +1,37 @@
 # Weekmenu:
-#   Maandag: Kofta uit pakje met rijst
-#   Dinsdag: Aardappelblokjes + Kipschnitzel + Sperziebonen
-#   Woensdag: Kip met rijst en paprika
-#   Donderdag: Kip tikka masala met rijst
-#   Vrijdag (4p): Aardappelblokjes met hamburger en broccoli
-#   Zaterdag (4p): Pannenkoeken
-#   Zondag: Patat + Kipnuggets
+#   Maandag: Nasi met kipreepjes en ei
+#   Dinsdag: Rostirondjes + Kipschnitzel + Snijbonen
+#   Woensdag: Beef stroganoff met rijst
+#   Donderdag: Rundergehakt-curry
+#   Vrijdag (4p): Vegetarische chili sin carne met nacho's
+#   Zaterdag (4p): Loaded fries met kipreepjes
+#   Zondag: Patat + Mini kaassoufflé
 #
-1 x rundergehakt
-1 x wereldgerecht kofta
-1 x courgette
-2 x tomaat
-2 x Aardappelblokjes
+8 x kipfilet
+1 x nasi kruidenmix
+1 x wokgroente
+1 x Rostirondjes
 1 x Kipschnitzel
-1 x Sperziebonen
-2 x kipfilet
-2 x paprika
+1 x Snijbonen
+1 x runderreepjes
+1 x champignons
 2 x ui
-1 x tikka masala saus
-4 x hamburger
-1 x broccoli
-1 x pannenkoekenmix
-1 x stroop
+1 x creme fraiche
+1 x rundergehakt
+1 x kokosmelk
+1 x paprika
+1 x currypasta
+1 x kidneybonen
+1 x zwarte bonen
+1 x maïs
+1 x tomatenblokjes
+1 x paprikapoeder komijn kruidenmix
+2 x geraspte kaas
+1 x nachochips
+1 x aviko friet
+1 x knoflooksaus
 1 x Patat (airfryer)
-1 x Kipnuggets
+1 x Mini kaassoufflé
 3 x Alpro yoghurt mild & creamy natural
 1 x Rijstwafels
 1 x Hagelslag XXL
